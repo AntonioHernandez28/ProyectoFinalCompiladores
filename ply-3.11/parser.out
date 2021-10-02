@@ -1,0 +1,2584 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    AND
+    END
+    FROM
+    MODA
+    PLOTXY
+    SIMPLEREGRESSION
+    VARIANZA
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> PROGRAM ID SEMMICOLON program1
+Rule 2     program1 -> vars functions principal
+Rule 3     program1 -> vars functions
+Rule 4     program1 -> program2
+Rule 5     program2 -> principal
+Rule 6     principal -> PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY
+Rule 7     statements -> assign SEMMICOLON statements
+Rule 8     statements -> functionCall statements
+Rule 9     statements -> read statements
+Rule 10    statements -> write statements
+Rule 11    statements -> for statements
+Rule 12    statements -> while statements
+Rule 13    statements -> if statements
+Rule 14    statements -> empty
+Rule 15    assign -> ID EQUALS exp
+Rule 16    functionCall -> ID LPAREN exp RPAREN SEMMICOLON
+Rule 17    read -> READ LPAREN read1 RPAREN SEMMICOLON
+Rule 18    read1 -> ID read2
+Rule 19    read2 -> COMMA read1
+Rule 20    read2 -> empty
+Rule 21    media -> MEDIA LPAREN arr RPAREN SEMMICOLON
+Rule 22    write -> WRITE LPAREN write1 RPAREN SEMMICOLON
+Rule 23    write1 -> write2 COMMA write2
+Rule 24    write1 -> write2
+Rule 25    write2 -> CTESTRING
+Rule 26    write2 -> CTEI
+Rule 27    write2 -> CTEF
+Rule 28    write2 -> exp
+Rule 29    for -> FOR assign TO CTEI DO LCURLY statements RCURLY
+Rule 30    while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+Rule 31    if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+Rule 32    if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+Rule 33    else -> ELSE LCURLY statements RCURLY
+Rule 34    else -> empty
+Rule 35    exp -> texp
+Rule 36    exp -> texp OR texp
+Rule 37    gexp -> mexp
+Rule 38    gexp -> gexp1 mexp
+Rule 39    gexp1 -> mexp GT mexp
+Rule 40    gexp1 -> mexp LT mexp
+Rule 41    gexp1 -> mexp GTE mexp
+Rule 42    gexp1 -> mexp LTE mexp
+Rule 43    gexp1 -> mexp NE mexp
+Rule 44    mexp -> texp
+Rule 45    mexp -> texp PLUS texp
+Rule 46    mexp -> texp MINUS texp
+Rule 47    texp -> fexp
+Rule 48    texp -> fexp MUL fexp
+Rule 49    texp -> fexp DIV fexp
+Rule 50    fexp -> var1
+Rule 51    fexp -> ID
+Rule 52    fexp -> CTEI
+Rule 53    fexp -> CTEF
+Rule 54    fexp -> CTEC
+Rule 55    fexp -> functionCall
+Rule 56    fexp -> LPAREN exp RPAREN
+Rule 57    vars -> VARS var1
+Rule 58    vars -> empty
+Rule 59    var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2
+Rule 60    var2 -> var1
+Rule 61    var2 -> empty
+Rule 62    MultipleVars -> COMMA ID MultipleVars
+Rule 63    MultipleVars -> COMMA ID LBRACKET CTEI RBRACKET MultipleVars
+Rule 64    MultipleVars -> empty
+Rule 65    type -> INT
+Rule 66    type -> CHAR
+Rule 67    type -> FLOAT
+Rule 68    arr -> LBRACKET CTEI RBRACKET
+Rule 69    arr -> LBRACKET exp RBRACKET
+Rule 70    functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY
+Rule 71    functions -> FUNCTION VOID ID LPAREN args RPAREN vars LCURLY statements RCURLY
+Rule 72    functions -> empty
+Rule 73    args -> type TWOPOINTS ID MultipleArgs
+Rule 74    args -> empty
+Rule 75    MultipleArgs -> COMMA args
+Rule 76    MultipleArgs -> empty
+Rule 77    return -> RETURN exp SEMMICOLON
+Rule 78    empty -> <empty>
+
+Terminals, with rules where they appear
+
+AND                  : 
+CHAR                 : 66
+COMMA                : 19 23 62 63 75
+CTEC                 : 54
+CTEF                 : 27 53
+CTEI                 : 26 29 52 63 68
+CTESTRING            : 25
+DIV                  : 49
+DO                   : 29
+ELSE                 : 33
+END                  : 
+EQUALS               : 15
+FLOAT                : 67
+FOR                  : 29
+FROM                 : 
+FUNCTION             : 70 71
+GT                   : 39
+GTE                  : 41
+ID                   : 1 15 16 18 51 59 62 63 70 71 73
+IF                   : 31 32
+INT                  : 65
+LBRACKET             : 63 68 69
+LCURLY               : 6 29 30 31 32 33 70 71
+LPAREN               : 6 16 17 21 22 30 31 32 56 70 71
+LT                   : 40
+LTE                  : 42
+MEDIA                : 21
+MINUS                : 46
+MODA                 : 
+MUL                  : 48
+NE                   : 43
+OR                   : 36
+PLOTXY               : 
+PLUS                 : 45
+PRINCIPAL            : 6
+PROGRAM              : 1
+RBRACKET             : 63 68 69
+RCURLY               : 6 29 30 31 32 33 70 71
+READ                 : 17
+RETURN               : 77
+RPAREN               : 6 16 17 21 22 30 31 32 56 70 71
+SEMMICOLON           : 1 7 16 17 21 22 59 70 77
+SIMPLEREGRESSION     : 
+THEN                 : 31 32
+TO                   : 29
+TWOPOINTS            : 59 73
+VARIANZA             : 
+VARS                 : 57
+VOID                 : 71
+WHILE                : 30
+WRITE                : 22
+error                : 
+
+Nonterminals, with rules where they appear
+
+MultipleArgs         : 73
+MultipleVars         : 59 62 63
+args                 : 70 71 75
+arr                  : 21
+assign               : 7 29
+else                 : 32
+empty                : 14 20 34 58 61 64 72 74 76
+exp                  : 15 16 28 30 31 32 56 69 70 77
+fexp                 : 47 48 48 49 49
+for                  : 11
+functionCall         : 8 55
+functions            : 2 3
+gexp                 : 
+gexp1                : 38
+if                   : 13
+media                : 
+mexp                 : 37 38 39 39 40 40 41 41 42 42 43 43
+principal            : 2 5
+program              : 0
+program1             : 1
+program2             : 4
+read                 : 9
+read1                : 17 19
+read2                : 18
+return               : 70
+statements           : 6 7 8 9 10 11 12 13 29 30 31 32 33 70 71
+texp                 : 35 36 36 44 45 45 46 46
+type                 : 59 70 73
+var1                 : 50 57 60
+var2                 : 59
+vars                 : 2 3 70 71
+while                : 12
+write                : 10
+write1               : 22
+write2               : 23 23 24
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . PROGRAM ID SEMMICOLON program1
+
+    PROGRAM         shift and go to state 2
+
+    program                        shift and go to state 1
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> PROGRAM . ID SEMMICOLON program1
+
+    ID              shift and go to state 3
+
+
+state 3
+
+    (1) program -> PROGRAM ID . SEMMICOLON program1
+
+    SEMMICOLON      shift and go to state 4
+
+
+state 4
+
+    (1) program -> PROGRAM ID SEMMICOLON . program1
+    (2) program1 -> . vars functions principal
+    (3) program1 -> . vars functions
+    (4) program1 -> . program2
+    (57) vars -> . VARS var1
+    (58) vars -> . empty
+    (5) program2 -> . principal
+    (78) empty -> .
+    (6) principal -> . PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY
+
+  ! shift/reduce conflict for PRINCIPAL resolved as shift
+    VARS            shift and go to state 9
+    FUNCTION        reduce using rule 78 (empty -> .)
+    $end            reduce using rule 78 (empty -> .)
+    PRINCIPAL       shift and go to state 11
+
+  ! PRINCIPAL       [ reduce using rule 78 (empty -> .) ]
+
+    program1                       shift and go to state 5
+    vars                           shift and go to state 6
+    principal                      shift and go to state 7
+    program2                       shift and go to state 8
+    empty                          shift and go to state 10
+
+state 5
+
+    (1) program -> PROGRAM ID SEMMICOLON program1 .
+
+    $end            reduce using rule 1 (program -> PROGRAM ID SEMMICOLON program1 .)
+
+
+state 6
+
+    (2) program1 -> vars . functions principal
+    (3) program1 -> vars . functions
+    (70) functions -> . FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY
+    (71) functions -> . FUNCTION VOID ID LPAREN args RPAREN vars LCURLY statements RCURLY
+    (72) functions -> . empty
+    (78) empty -> .
+
+    FUNCTION        shift and go to state 13
+    PRINCIPAL       reduce using rule 78 (empty -> .)
+    $end            reduce using rule 78 (empty -> .)
+
+    functions                      shift and go to state 12
+    empty                          shift and go to state 14
+
+state 7
+
+    (5) program2 -> principal .
+
+    $end            reduce using rule 5 (program2 -> principal .)
+
+
+state 8
+
+    (4) program1 -> program2 .
+
+    $end            reduce using rule 4 (program1 -> program2 .)
+
+
+state 9
+
+    (57) vars -> VARS . var1
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    var1                           shift and go to state 15
+    type                           shift and go to state 16
+
+state 10
+
+    (58) vars -> empty .
+
+    FUNCTION        reduce using rule 58 (vars -> empty .)
+    PRINCIPAL       reduce using rule 58 (vars -> empty .)
+    $end            reduce using rule 58 (vars -> empty .)
+    LCURLY          reduce using rule 58 (vars -> empty .)
+
+
+state 11
+
+    (6) principal -> PRINCIPAL . LPAREN RPAREN LCURLY statements RCURLY
+
+    LPAREN          shift and go to state 20
+
+
+state 12
+
+    (2) program1 -> vars functions . principal
+    (3) program1 -> vars functions .
+    (6) principal -> . PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY
+
+    $end            reduce using rule 3 (program1 -> vars functions .)
+    PRINCIPAL       shift and go to state 11
+
+    principal                      shift and go to state 21
+
+state 13
+
+    (70) functions -> FUNCTION . type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY
+    (71) functions -> FUNCTION . VOID ID LPAREN args RPAREN vars LCURLY statements RCURLY
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    VOID            shift and go to state 23
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    type                           shift and go to state 22
+
+state 14
+
+    (72) functions -> empty .
+
+    PRINCIPAL       reduce using rule 72 (functions -> empty .)
+    $end            reduce using rule 72 (functions -> empty .)
+
+
+state 15
+
+    (57) vars -> VARS var1 .
+
+    FUNCTION        reduce using rule 57 (vars -> VARS var1 .)
+    PRINCIPAL       reduce using rule 57 (vars -> VARS var1 .)
+    $end            reduce using rule 57 (vars -> VARS var1 .)
+    LCURLY          reduce using rule 57 (vars -> VARS var1 .)
+
+
+state 16
+
+    (59) var1 -> type . TWOPOINTS ID MultipleVars SEMMICOLON var2
+
+    TWOPOINTS       shift and go to state 24
+
+
+state 17
+
+    (65) type -> INT .
+
+    TWOPOINTS       reduce using rule 65 (type -> INT .)
+    ID              reduce using rule 65 (type -> INT .)
+
+
+state 18
+
+    (66) type -> CHAR .
+
+    TWOPOINTS       reduce using rule 66 (type -> CHAR .)
+    ID              reduce using rule 66 (type -> CHAR .)
+
+
+state 19
+
+    (67) type -> FLOAT .
+
+    TWOPOINTS       reduce using rule 67 (type -> FLOAT .)
+    ID              reduce using rule 67 (type -> FLOAT .)
+
+
+state 20
+
+    (6) principal -> PRINCIPAL LPAREN . RPAREN LCURLY statements RCURLY
+
+    RPAREN          shift and go to state 25
+
+
+state 21
+
+    (2) program1 -> vars functions principal .
+
+    $end            reduce using rule 2 (program1 -> vars functions principal .)
+
+
+state 22
+
+    (70) functions -> FUNCTION type . ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY
+
+    ID              shift and go to state 26
+
+
+state 23
+
+    (71) functions -> FUNCTION VOID . ID LPAREN args RPAREN vars LCURLY statements RCURLY
+
+    ID              shift and go to state 27
+
+
+state 24
+
+    (59) var1 -> type TWOPOINTS . ID MultipleVars SEMMICOLON var2
+
+    ID              shift and go to state 28
+
+
+state 25
+
+    (6) principal -> PRINCIPAL LPAREN RPAREN . LCURLY statements RCURLY
+
+    LCURLY          shift and go to state 29
+
+
+state 26
+
+    (70) functions -> FUNCTION type ID . LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY
+
+    LPAREN          shift and go to state 30
+
+
+state 27
+
+    (71) functions -> FUNCTION VOID ID . LPAREN args RPAREN vars LCURLY statements RCURLY
+
+    LPAREN          shift and go to state 31
+
+
+state 28
+
+    (59) var1 -> type TWOPOINTS ID . MultipleVars SEMMICOLON var2
+    (62) MultipleVars -> . COMMA ID MultipleVars
+    (63) MultipleVars -> . COMMA ID LBRACKET CTEI RBRACKET MultipleVars
+    (64) MultipleVars -> . empty
+    (78) empty -> .
+
+    COMMA           shift and go to state 33
+    SEMMICOLON      reduce using rule 78 (empty -> .)
+
+    MultipleVars                   shift and go to state 32
+    empty                          shift and go to state 34
+
+state 29
+
+    (6) principal -> PRINCIPAL LPAREN RPAREN LCURLY . statements RCURLY
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+
+    statements                     shift and go to state 35
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 30
+
+    (70) functions -> FUNCTION type ID LPAREN . args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY
+    (73) args -> . type TWOPOINTS ID MultipleArgs
+    (74) args -> . empty
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+    (78) empty -> .
+
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+    RPAREN          reduce using rule 78 (empty -> .)
+
+    type                           shift and go to state 50
+    args                           shift and go to state 51
+    empty                          shift and go to state 52
+
+state 31
+
+    (71) functions -> FUNCTION VOID ID LPAREN . args RPAREN vars LCURLY statements RCURLY
+    (73) args -> . type TWOPOINTS ID MultipleArgs
+    (74) args -> . empty
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+    (78) empty -> .
+
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+    RPAREN          reduce using rule 78 (empty -> .)
+
+    args                           shift and go to state 53
+    type                           shift and go to state 50
+    empty                          shift and go to state 52
+
+state 32
+
+    (59) var1 -> type TWOPOINTS ID MultipleVars . SEMMICOLON var2
+
+    SEMMICOLON      shift and go to state 54
+
+
+state 33
+
+    (62) MultipleVars -> COMMA . ID MultipleVars
+    (63) MultipleVars -> COMMA . ID LBRACKET CTEI RBRACKET MultipleVars
+
+    ID              shift and go to state 55
+
+
+state 34
+
+    (64) MultipleVars -> empty .
+
+    SEMMICOLON      reduce using rule 64 (MultipleVars -> empty .)
+
+
+state 35
+
+    (6) principal -> PRINCIPAL LPAREN RPAREN LCURLY statements . RCURLY
+
+    RCURLY          shift and go to state 56
+
+
+state 36
+
+    (7) statements -> assign . SEMMICOLON statements
+
+    SEMMICOLON      shift and go to state 57
+
+
+state 37
+
+    (8) statements -> functionCall . statements
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+
+    functionCall                   shift and go to state 37
+    statements                     shift and go to state 58
+    assign                         shift and go to state 36
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 38
+
+    (9) statements -> read . statements
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+
+    read                           shift and go to state 38
+    statements                     shift and go to state 59
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 39
+
+    (10) statements -> write . statements
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+
+    write                          shift and go to state 39
+    statements                     shift and go to state 60
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 40
+
+    (11) statements -> for . statements
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+
+    for                            shift and go to state 40
+    statements                     shift and go to state 61
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 41
+
+    (12) statements -> while . statements
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+
+    while                          shift and go to state 41
+    statements                     shift and go to state 62
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 42
+
+    (13) statements -> if . statements
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+
+    if                             shift and go to state 42
+    statements                     shift and go to state 63
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    empty                          shift and go to state 43
+
+state 43
+
+    (14) statements -> empty .
+
+    RCURLY          reduce using rule 14 (statements -> empty .)
+    RETURN          reduce using rule 14 (statements -> empty .)
+
+
+state 44
+
+    (15) assign -> ID . EQUALS exp
+    (16) functionCall -> ID . LPAREN exp RPAREN SEMMICOLON
+
+    EQUALS          shift and go to state 64
+    LPAREN          shift and go to state 65
+
+
+state 45
+
+    (17) read -> READ . LPAREN read1 RPAREN SEMMICOLON
+
+    LPAREN          shift and go to state 66
+
+
+state 46
+
+    (22) write -> WRITE . LPAREN write1 RPAREN SEMMICOLON
+
+    LPAREN          shift and go to state 67
+
+
+state 47
+
+    (29) for -> FOR . assign TO CTEI DO LCURLY statements RCURLY
+    (15) assign -> . ID EQUALS exp
+
+    ID              shift and go to state 69
+
+    assign                         shift and go to state 68
+
+state 48
+
+    (30) while -> WHILE . LPAREN exp RPAREN LCURLY statements RCURLY
+
+    LPAREN          shift and go to state 70
+
+
+state 49
+
+    (31) if -> IF . LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> IF . LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+
+    LPAREN          shift and go to state 71
+
+
+state 50
+
+    (73) args -> type . TWOPOINTS ID MultipleArgs
+
+    TWOPOINTS       shift and go to state 72
+
+
+state 51
+
+    (70) functions -> FUNCTION type ID LPAREN args . RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY
+
+    RPAREN          shift and go to state 73
+
+
+state 52
+
+    (74) args -> empty .
+
+    RPAREN          reduce using rule 74 (args -> empty .)
+
+
+state 53
+
+    (71) functions -> FUNCTION VOID ID LPAREN args . RPAREN vars LCURLY statements RCURLY
+
+    RPAREN          shift and go to state 74
+
+
+state 54
+
+    (59) var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON . var2
+    (60) var2 -> . var1
+    (61) var2 -> . empty
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (78) empty -> .
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    FUNCTION        reduce using rule 78 (empty -> .)
+    PRINCIPAL       reduce using rule 78 (empty -> .)
+    $end            reduce using rule 78 (empty -> .)
+    LCURLY          reduce using rule 78 (empty -> .)
+    MUL             reduce using rule 78 (empty -> .)
+    DIV             reduce using rule 78 (empty -> .)
+    OR              reduce using rule 78 (empty -> .)
+    SEMMICOLON      reduce using rule 78 (empty -> .)
+    TO              reduce using rule 78 (empty -> .)
+    RPAREN          reduce using rule 78 (empty -> .)
+    COMMA           reduce using rule 78 (empty -> .)
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    type                           shift and go to state 16
+    var2                           shift and go to state 75
+    var1                           shift and go to state 76
+    empty                          shift and go to state 77
+
+state 55
+
+    (62) MultipleVars -> COMMA ID . MultipleVars
+    (63) MultipleVars -> COMMA ID . LBRACKET CTEI RBRACKET MultipleVars
+    (62) MultipleVars -> . COMMA ID MultipleVars
+    (63) MultipleVars -> . COMMA ID LBRACKET CTEI RBRACKET MultipleVars
+    (64) MultipleVars -> . empty
+    (78) empty -> .
+
+    LBRACKET        shift and go to state 79
+    COMMA           shift and go to state 33
+    SEMMICOLON      reduce using rule 78 (empty -> .)
+
+    MultipleVars                   shift and go to state 78
+    empty                          shift and go to state 34
+
+state 56
+
+    (6) principal -> PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY .
+
+    $end            reduce using rule 6 (principal -> PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY .)
+
+
+state 57
+
+    (7) statements -> assign SEMMICOLON . statements
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+
+    assign                         shift and go to state 36
+    statements                     shift and go to state 80
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 58
+
+    (8) statements -> functionCall statements .
+
+    RCURLY          reduce using rule 8 (statements -> functionCall statements .)
+    RETURN          reduce using rule 8 (statements -> functionCall statements .)
+
+
+state 59
+
+    (9) statements -> read statements .
+
+    RCURLY          reduce using rule 9 (statements -> read statements .)
+    RETURN          reduce using rule 9 (statements -> read statements .)
+
+
+state 60
+
+    (10) statements -> write statements .
+
+    RCURLY          reduce using rule 10 (statements -> write statements .)
+    RETURN          reduce using rule 10 (statements -> write statements .)
+
+
+state 61
+
+    (11) statements -> for statements .
+
+    RCURLY          reduce using rule 11 (statements -> for statements .)
+    RETURN          reduce using rule 11 (statements -> for statements .)
+
+
+state 62
+
+    (12) statements -> while statements .
+
+    RCURLY          reduce using rule 12 (statements -> while statements .)
+    RETURN          reduce using rule 12 (statements -> while statements .)
+
+
+state 63
+
+    (13) statements -> if statements .
+
+    RCURLY          reduce using rule 13 (statements -> if statements .)
+    RETURN          reduce using rule 13 (statements -> if statements .)
+
+
+state 64
+
+    (15) assign -> ID EQUALS . exp
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    exp                            shift and go to state 82
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 65
+
+    (16) functionCall -> ID LPAREN . exp RPAREN SEMMICOLON
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    exp                            shift and go to state 91
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 66
+
+    (17) read -> READ LPAREN . read1 RPAREN SEMMICOLON
+    (18) read1 -> . ID read2
+
+    ID              shift and go to state 93
+
+    read1                          shift and go to state 92
+
+state 67
+
+    (22) write -> WRITE LPAREN . write1 RPAREN SEMMICOLON
+    (23) write1 -> . write2 COMMA write2
+    (24) write1 -> . write2
+    (25) write2 -> . CTESTRING
+    (26) write2 -> . CTEI
+    (27) write2 -> . CTEF
+    (28) write2 -> . exp
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    CTESTRING       shift and go to state 96
+    CTEI            shift and go to state 97
+    CTEF            shift and go to state 98
+    ID              shift and go to state 81
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    write1                         shift and go to state 94
+    write2                         shift and go to state 95
+    exp                            shift and go to state 99
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 68
+
+    (29) for -> FOR assign . TO CTEI DO LCURLY statements RCURLY
+
+    TO              shift and go to state 100
+
+
+state 69
+
+    (15) assign -> ID . EQUALS exp
+
+    EQUALS          shift and go to state 64
+
+
+state 70
+
+    (30) while -> WHILE LPAREN . exp RPAREN LCURLY statements RCURLY
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    exp                            shift and go to state 101
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 71
+
+    (31) if -> IF LPAREN . exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> IF LPAREN . exp RPAREN THEN LCURLY statements RCURLY else
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    exp                            shift and go to state 102
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 72
+
+    (73) args -> type TWOPOINTS . ID MultipleArgs
+
+    ID              shift and go to state 103
+
+
+state 73
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN . vars LCURLY statements return exp SEMMICOLON RCURLY
+    (57) vars -> . VARS var1
+    (58) vars -> . empty
+    (78) empty -> .
+
+    VARS            shift and go to state 9
+    LCURLY          reduce using rule 78 (empty -> .)
+
+    vars                           shift and go to state 104
+    empty                          shift and go to state 10
+
+state 74
+
+    (71) functions -> FUNCTION VOID ID LPAREN args RPAREN . vars LCURLY statements RCURLY
+    (57) vars -> . VARS var1
+    (58) vars -> . empty
+    (78) empty -> .
+
+    VARS            shift and go to state 9
+    LCURLY          reduce using rule 78 (empty -> .)
+
+    vars                           shift and go to state 105
+    empty                          shift and go to state 10
+
+state 75
+
+    (59) var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .
+
+    FUNCTION        reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    PRINCIPAL       reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    $end            reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    LCURLY          reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    MUL             reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    DIV             reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    OR              reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    SEMMICOLON      reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    TO              reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    RPAREN          reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+    COMMA           reduce using rule 59 (var1 -> type TWOPOINTS ID MultipleVars SEMMICOLON var2 .)
+
+
+state 76
+
+    (60) var2 -> var1 .
+
+    FUNCTION        reduce using rule 60 (var2 -> var1 .)
+    PRINCIPAL       reduce using rule 60 (var2 -> var1 .)
+    $end            reduce using rule 60 (var2 -> var1 .)
+    LCURLY          reduce using rule 60 (var2 -> var1 .)
+    MUL             reduce using rule 60 (var2 -> var1 .)
+    DIV             reduce using rule 60 (var2 -> var1 .)
+    OR              reduce using rule 60 (var2 -> var1 .)
+    SEMMICOLON      reduce using rule 60 (var2 -> var1 .)
+    TO              reduce using rule 60 (var2 -> var1 .)
+    RPAREN          reduce using rule 60 (var2 -> var1 .)
+    COMMA           reduce using rule 60 (var2 -> var1 .)
+
+
+state 77
+
+    (61) var2 -> empty .
+
+    FUNCTION        reduce using rule 61 (var2 -> empty .)
+    PRINCIPAL       reduce using rule 61 (var2 -> empty .)
+    $end            reduce using rule 61 (var2 -> empty .)
+    LCURLY          reduce using rule 61 (var2 -> empty .)
+    MUL             reduce using rule 61 (var2 -> empty .)
+    DIV             reduce using rule 61 (var2 -> empty .)
+    OR              reduce using rule 61 (var2 -> empty .)
+    SEMMICOLON      reduce using rule 61 (var2 -> empty .)
+    TO              reduce using rule 61 (var2 -> empty .)
+    RPAREN          reduce using rule 61 (var2 -> empty .)
+    COMMA           reduce using rule 61 (var2 -> empty .)
+
+
+state 78
+
+    (62) MultipleVars -> COMMA ID MultipleVars .
+
+    SEMMICOLON      reduce using rule 62 (MultipleVars -> COMMA ID MultipleVars .)
+
+
+state 79
+
+    (63) MultipleVars -> COMMA ID LBRACKET . CTEI RBRACKET MultipleVars
+
+    CTEI            shift and go to state 106
+
+
+state 80
+
+    (7) statements -> assign SEMMICOLON statements .
+
+    RCURLY          reduce using rule 7 (statements -> assign SEMMICOLON statements .)
+    RETURN          reduce using rule 7 (statements -> assign SEMMICOLON statements .)
+
+
+state 81
+
+    (51) fexp -> ID .
+    (16) functionCall -> ID . LPAREN exp RPAREN SEMMICOLON
+
+    MUL             reduce using rule 51 (fexp -> ID .)
+    DIV             reduce using rule 51 (fexp -> ID .)
+    OR              reduce using rule 51 (fexp -> ID .)
+    SEMMICOLON      reduce using rule 51 (fexp -> ID .)
+    TO              reduce using rule 51 (fexp -> ID .)
+    RPAREN          reduce using rule 51 (fexp -> ID .)
+    COMMA           reduce using rule 51 (fexp -> ID .)
+    LPAREN          shift and go to state 65
+
+
+state 82
+
+    (15) assign -> ID EQUALS exp .
+
+    SEMMICOLON      reduce using rule 15 (assign -> ID EQUALS exp .)
+    TO              reduce using rule 15 (assign -> ID EQUALS exp .)
+
+
+state 83
+
+    (35) exp -> texp .
+    (36) exp -> texp . OR texp
+
+    SEMMICOLON      reduce using rule 35 (exp -> texp .)
+    TO              reduce using rule 35 (exp -> texp .)
+    RPAREN          reduce using rule 35 (exp -> texp .)
+    COMMA           reduce using rule 35 (exp -> texp .)
+    OR              shift and go to state 107
+
+
+state 84
+
+    (47) texp -> fexp .
+    (48) texp -> fexp . MUL fexp
+    (49) texp -> fexp . DIV fexp
+
+    OR              reduce using rule 47 (texp -> fexp .)
+    SEMMICOLON      reduce using rule 47 (texp -> fexp .)
+    TO              reduce using rule 47 (texp -> fexp .)
+    RPAREN          reduce using rule 47 (texp -> fexp .)
+    COMMA           reduce using rule 47 (texp -> fexp .)
+    MUL             shift and go to state 108
+    DIV             shift and go to state 109
+
+
+state 85
+
+    (50) fexp -> var1 .
+
+    MUL             reduce using rule 50 (fexp -> var1 .)
+    DIV             reduce using rule 50 (fexp -> var1 .)
+    OR              reduce using rule 50 (fexp -> var1 .)
+    SEMMICOLON      reduce using rule 50 (fexp -> var1 .)
+    TO              reduce using rule 50 (fexp -> var1 .)
+    RPAREN          reduce using rule 50 (fexp -> var1 .)
+    COMMA           reduce using rule 50 (fexp -> var1 .)
+
+
+state 86
+
+    (52) fexp -> CTEI .
+
+    MUL             reduce using rule 52 (fexp -> CTEI .)
+    DIV             reduce using rule 52 (fexp -> CTEI .)
+    OR              reduce using rule 52 (fexp -> CTEI .)
+    SEMMICOLON      reduce using rule 52 (fexp -> CTEI .)
+    TO              reduce using rule 52 (fexp -> CTEI .)
+    RPAREN          reduce using rule 52 (fexp -> CTEI .)
+    COMMA           reduce using rule 52 (fexp -> CTEI .)
+
+
+state 87
+
+    (53) fexp -> CTEF .
+
+    MUL             reduce using rule 53 (fexp -> CTEF .)
+    DIV             reduce using rule 53 (fexp -> CTEF .)
+    OR              reduce using rule 53 (fexp -> CTEF .)
+    SEMMICOLON      reduce using rule 53 (fexp -> CTEF .)
+    TO              reduce using rule 53 (fexp -> CTEF .)
+    RPAREN          reduce using rule 53 (fexp -> CTEF .)
+    COMMA           reduce using rule 53 (fexp -> CTEF .)
+
+
+state 88
+
+    (54) fexp -> CTEC .
+
+    MUL             reduce using rule 54 (fexp -> CTEC .)
+    DIV             reduce using rule 54 (fexp -> CTEC .)
+    OR              reduce using rule 54 (fexp -> CTEC .)
+    SEMMICOLON      reduce using rule 54 (fexp -> CTEC .)
+    TO              reduce using rule 54 (fexp -> CTEC .)
+    RPAREN          reduce using rule 54 (fexp -> CTEC .)
+    COMMA           reduce using rule 54 (fexp -> CTEC .)
+
+
+state 89
+
+    (55) fexp -> functionCall .
+
+    MUL             reduce using rule 55 (fexp -> functionCall .)
+    DIV             reduce using rule 55 (fexp -> functionCall .)
+    OR              reduce using rule 55 (fexp -> functionCall .)
+    SEMMICOLON      reduce using rule 55 (fexp -> functionCall .)
+    TO              reduce using rule 55 (fexp -> functionCall .)
+    RPAREN          reduce using rule 55 (fexp -> functionCall .)
+    COMMA           reduce using rule 55 (fexp -> functionCall .)
+
+
+state 90
+
+    (56) fexp -> LPAREN . exp RPAREN
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    exp                            shift and go to state 110
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 91
+
+    (16) functionCall -> ID LPAREN exp . RPAREN SEMMICOLON
+
+    RPAREN          shift and go to state 111
+
+
+state 92
+
+    (17) read -> READ LPAREN read1 . RPAREN SEMMICOLON
+
+    RPAREN          shift and go to state 112
+
+
+state 93
+
+    (18) read1 -> ID . read2
+    (19) read2 -> . COMMA read1
+    (20) read2 -> . empty
+    (78) empty -> .
+
+    COMMA           shift and go to state 114
+    RPAREN          reduce using rule 78 (empty -> .)
+
+    read2                          shift and go to state 113
+    empty                          shift and go to state 115
+
+state 94
+
+    (22) write -> WRITE LPAREN write1 . RPAREN SEMMICOLON
+
+    RPAREN          shift and go to state 116
+
+
+state 95
+
+    (23) write1 -> write2 . COMMA write2
+    (24) write1 -> write2 .
+
+    COMMA           shift and go to state 117
+    RPAREN          reduce using rule 24 (write1 -> write2 .)
+
+
+state 96
+
+    (25) write2 -> CTESTRING .
+
+    COMMA           reduce using rule 25 (write2 -> CTESTRING .)
+    RPAREN          reduce using rule 25 (write2 -> CTESTRING .)
+
+
+state 97
+
+    (26) write2 -> CTEI .
+    (52) fexp -> CTEI .
+
+  ! reduce/reduce conflict for COMMA resolved using rule 26 (write2 -> CTEI .)
+  ! reduce/reduce conflict for RPAREN resolved using rule 26 (write2 -> CTEI .)
+    COMMA           reduce using rule 26 (write2 -> CTEI .)
+    RPAREN          reduce using rule 26 (write2 -> CTEI .)
+    MUL             reduce using rule 52 (fexp -> CTEI .)
+    DIV             reduce using rule 52 (fexp -> CTEI .)
+    OR              reduce using rule 52 (fexp -> CTEI .)
+
+  ! COMMA           [ reduce using rule 52 (fexp -> CTEI .) ]
+  ! RPAREN          [ reduce using rule 52 (fexp -> CTEI .) ]
+
+
+state 98
+
+    (27) write2 -> CTEF .
+    (53) fexp -> CTEF .
+
+  ! reduce/reduce conflict for COMMA resolved using rule 27 (write2 -> CTEF .)
+  ! reduce/reduce conflict for RPAREN resolved using rule 27 (write2 -> CTEF .)
+    COMMA           reduce using rule 27 (write2 -> CTEF .)
+    RPAREN          reduce using rule 27 (write2 -> CTEF .)
+    MUL             reduce using rule 53 (fexp -> CTEF .)
+    DIV             reduce using rule 53 (fexp -> CTEF .)
+    OR              reduce using rule 53 (fexp -> CTEF .)
+
+  ! COMMA           [ reduce using rule 53 (fexp -> CTEF .) ]
+  ! RPAREN          [ reduce using rule 53 (fexp -> CTEF .) ]
+
+
+state 99
+
+    (28) write2 -> exp .
+
+    COMMA           reduce using rule 28 (write2 -> exp .)
+    RPAREN          reduce using rule 28 (write2 -> exp .)
+
+
+state 100
+
+    (29) for -> FOR assign TO . CTEI DO LCURLY statements RCURLY
+
+    CTEI            shift and go to state 118
+
+
+state 101
+
+    (30) while -> WHILE LPAREN exp . RPAREN LCURLY statements RCURLY
+
+    RPAREN          shift and go to state 119
+
+
+state 102
+
+    (31) if -> IF LPAREN exp . RPAREN THEN LCURLY statements RCURLY
+    (32) if -> IF LPAREN exp . RPAREN THEN LCURLY statements RCURLY else
+
+    RPAREN          shift and go to state 120
+
+
+state 103
+
+    (73) args -> type TWOPOINTS ID . MultipleArgs
+    (75) MultipleArgs -> . COMMA args
+    (76) MultipleArgs -> . empty
+    (78) empty -> .
+
+    COMMA           shift and go to state 122
+    RPAREN          reduce using rule 78 (empty -> .)
+
+    MultipleArgs                   shift and go to state 121
+    empty                          shift and go to state 123
+
+state 104
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN vars . LCURLY statements return exp SEMMICOLON RCURLY
+
+    LCURLY          shift and go to state 124
+
+
+state 105
+
+    (71) functions -> FUNCTION VOID ID LPAREN args RPAREN vars . LCURLY statements RCURLY
+
+    LCURLY          shift and go to state 125
+
+
+state 106
+
+    (63) MultipleVars -> COMMA ID LBRACKET CTEI . RBRACKET MultipleVars
+
+    RBRACKET        shift and go to state 126
+
+
+state 107
+
+    (36) exp -> texp OR . texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    texp                           shift and go to state 127
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 108
+
+    (48) texp -> fexp MUL . fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    fexp                           shift and go to state 128
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 109
+
+    (49) texp -> fexp DIV . fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    fexp                           shift and go to state 129
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 110
+
+    (56) fexp -> LPAREN exp . RPAREN
+
+    RPAREN          shift and go to state 130
+
+
+state 111
+
+    (16) functionCall -> ID LPAREN exp RPAREN . SEMMICOLON
+
+    SEMMICOLON      shift and go to state 131
+
+
+state 112
+
+    (17) read -> READ LPAREN read1 RPAREN . SEMMICOLON
+
+    SEMMICOLON      shift and go to state 132
+
+
+state 113
+
+    (18) read1 -> ID read2 .
+
+    RPAREN          reduce using rule 18 (read1 -> ID read2 .)
+
+
+state 114
+
+    (19) read2 -> COMMA . read1
+    (18) read1 -> . ID read2
+
+    ID              shift and go to state 93
+
+    read1                          shift and go to state 133
+
+state 115
+
+    (20) read2 -> empty .
+
+    RPAREN          reduce using rule 20 (read2 -> empty .)
+
+
+state 116
+
+    (22) write -> WRITE LPAREN write1 RPAREN . SEMMICOLON
+
+    SEMMICOLON      shift and go to state 134
+
+
+state 117
+
+    (23) write1 -> write2 COMMA . write2
+    (25) write2 -> . CTESTRING
+    (26) write2 -> . CTEI
+    (27) write2 -> . CTEF
+    (28) write2 -> . exp
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    CTESTRING       shift and go to state 96
+    CTEI            shift and go to state 97
+    CTEF            shift and go to state 98
+    ID              shift and go to state 81
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    write2                         shift and go to state 135
+    exp                            shift and go to state 99
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 118
+
+    (29) for -> FOR assign TO CTEI . DO LCURLY statements RCURLY
+
+    DO              shift and go to state 136
+
+
+state 119
+
+    (30) while -> WHILE LPAREN exp RPAREN . LCURLY statements RCURLY
+
+    LCURLY          shift and go to state 137
+
+
+state 120
+
+    (31) if -> IF LPAREN exp RPAREN . THEN LCURLY statements RCURLY
+    (32) if -> IF LPAREN exp RPAREN . THEN LCURLY statements RCURLY else
+
+    THEN            shift and go to state 138
+
+
+state 121
+
+    (73) args -> type TWOPOINTS ID MultipleArgs .
+
+    RPAREN          reduce using rule 73 (args -> type TWOPOINTS ID MultipleArgs .)
+
+
+state 122
+
+    (75) MultipleArgs -> COMMA . args
+    (73) args -> . type TWOPOINTS ID MultipleArgs
+    (74) args -> . empty
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+    (78) empty -> .
+
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+    RPAREN          reduce using rule 78 (empty -> .)
+
+    args                           shift and go to state 139
+    type                           shift and go to state 50
+    empty                          shift and go to state 52
+
+state 123
+
+    (76) MultipleArgs -> empty .
+
+    RPAREN          reduce using rule 76 (MultipleArgs -> empty .)
+
+
+state 124
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY . statements return exp SEMMICOLON RCURLY
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RETURN          reduce using rule 78 (empty -> .)
+
+    statements                     shift and go to state 140
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 125
+
+    (71) functions -> FUNCTION VOID ID LPAREN args RPAREN vars LCURLY . statements RCURLY
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+
+    statements                     shift and go to state 141
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 126
+
+    (63) MultipleVars -> COMMA ID LBRACKET CTEI RBRACKET . MultipleVars
+    (62) MultipleVars -> . COMMA ID MultipleVars
+    (63) MultipleVars -> . COMMA ID LBRACKET CTEI RBRACKET MultipleVars
+    (64) MultipleVars -> . empty
+    (78) empty -> .
+
+    COMMA           shift and go to state 33
+    SEMMICOLON      reduce using rule 78 (empty -> .)
+
+    MultipleVars                   shift and go to state 142
+    empty                          shift and go to state 34
+
+state 127
+
+    (36) exp -> texp OR texp .
+
+    SEMMICOLON      reduce using rule 36 (exp -> texp OR texp .)
+    TO              reduce using rule 36 (exp -> texp OR texp .)
+    RPAREN          reduce using rule 36 (exp -> texp OR texp .)
+    COMMA           reduce using rule 36 (exp -> texp OR texp .)
+
+
+state 128
+
+    (48) texp -> fexp MUL fexp .
+
+    OR              reduce using rule 48 (texp -> fexp MUL fexp .)
+    SEMMICOLON      reduce using rule 48 (texp -> fexp MUL fexp .)
+    TO              reduce using rule 48 (texp -> fexp MUL fexp .)
+    RPAREN          reduce using rule 48 (texp -> fexp MUL fexp .)
+    COMMA           reduce using rule 48 (texp -> fexp MUL fexp .)
+
+
+state 129
+
+    (49) texp -> fexp DIV fexp .
+
+    OR              reduce using rule 49 (texp -> fexp DIV fexp .)
+    SEMMICOLON      reduce using rule 49 (texp -> fexp DIV fexp .)
+    TO              reduce using rule 49 (texp -> fexp DIV fexp .)
+    RPAREN          reduce using rule 49 (texp -> fexp DIV fexp .)
+    COMMA           reduce using rule 49 (texp -> fexp DIV fexp .)
+
+
+state 130
+
+    (56) fexp -> LPAREN exp RPAREN .
+
+    MUL             reduce using rule 56 (fexp -> LPAREN exp RPAREN .)
+    DIV             reduce using rule 56 (fexp -> LPAREN exp RPAREN .)
+    OR              reduce using rule 56 (fexp -> LPAREN exp RPAREN .)
+    SEMMICOLON      reduce using rule 56 (fexp -> LPAREN exp RPAREN .)
+    TO              reduce using rule 56 (fexp -> LPAREN exp RPAREN .)
+    RPAREN          reduce using rule 56 (fexp -> LPAREN exp RPAREN .)
+    COMMA           reduce using rule 56 (fexp -> LPAREN exp RPAREN .)
+
+
+state 131
+
+    (16) functionCall -> ID LPAREN exp RPAREN SEMMICOLON .
+
+    ID              reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    READ            reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    WRITE           reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    FOR             reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    WHILE           reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    IF              reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    RCURLY          reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    RETURN          reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    MUL             reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    DIV             reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    OR              reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    SEMMICOLON      reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    TO              reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    RPAREN          reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+    COMMA           reduce using rule 16 (functionCall -> ID LPAREN exp RPAREN SEMMICOLON .)
+
+
+state 132
+
+    (17) read -> READ LPAREN read1 RPAREN SEMMICOLON .
+
+    ID              reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+    READ            reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+    WRITE           reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+    FOR             reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+    WHILE           reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+    IF              reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+    RCURLY          reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+    RETURN          reduce using rule 17 (read -> READ LPAREN read1 RPAREN SEMMICOLON .)
+
+
+state 133
+
+    (19) read2 -> COMMA read1 .
+
+    RPAREN          reduce using rule 19 (read2 -> COMMA read1 .)
+
+
+state 134
+
+    (22) write -> WRITE LPAREN write1 RPAREN SEMMICOLON .
+
+    ID              reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+    READ            reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+    WRITE           reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+    FOR             reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+    WHILE           reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+    IF              reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+    RCURLY          reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+    RETURN          reduce using rule 22 (write -> WRITE LPAREN write1 RPAREN SEMMICOLON .)
+
+
+state 135
+
+    (23) write1 -> write2 COMMA write2 .
+
+    RPAREN          reduce using rule 23 (write1 -> write2 COMMA write2 .)
+
+
+state 136
+
+    (29) for -> FOR assign TO CTEI DO . LCURLY statements RCURLY
+
+    LCURLY          shift and go to state 143
+
+
+state 137
+
+    (30) while -> WHILE LPAREN exp RPAREN LCURLY . statements RCURLY
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+
+    statements                     shift and go to state 144
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 138
+
+    (31) if -> IF LPAREN exp RPAREN THEN . LCURLY statements RCURLY
+    (32) if -> IF LPAREN exp RPAREN THEN . LCURLY statements RCURLY else
+
+    LCURLY          shift and go to state 145
+
+
+state 139
+
+    (75) MultipleArgs -> COMMA args .
+
+    RPAREN          reduce using rule 75 (MultipleArgs -> COMMA args .)
+
+
+state 140
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements . return exp SEMMICOLON RCURLY
+    (77) return -> . RETURN exp SEMMICOLON
+
+    RETURN          shift and go to state 147
+
+    return                         shift and go to state 146
+
+state 141
+
+    (71) functions -> FUNCTION VOID ID LPAREN args RPAREN vars LCURLY statements . RCURLY
+
+    RCURLY          shift and go to state 148
+
+
+state 142
+
+    (63) MultipleVars -> COMMA ID LBRACKET CTEI RBRACKET MultipleVars .
+
+    SEMMICOLON      reduce using rule 63 (MultipleVars -> COMMA ID LBRACKET CTEI RBRACKET MultipleVars .)
+
+
+state 143
+
+    (29) for -> FOR assign TO CTEI DO LCURLY . statements RCURLY
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+
+    assign                         shift and go to state 36
+    statements                     shift and go to state 149
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 144
+
+    (30) while -> WHILE LPAREN exp RPAREN LCURLY statements . RCURLY
+
+    RCURLY          shift and go to state 150
+
+
+state 145
+
+    (31) if -> IF LPAREN exp RPAREN THEN LCURLY . statements RCURLY
+    (32) if -> IF LPAREN exp RPAREN THEN LCURLY . statements RCURLY else
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+
+    statements                     shift and go to state 151
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 146
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return . exp SEMMICOLON RCURLY
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    type                           shift and go to state 16
+    exp                            shift and go to state 152
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+
+state 147
+
+    (77) return -> RETURN . exp SEMMICOLON
+    (35) exp -> . texp
+    (36) exp -> . texp OR texp
+    (47) texp -> . fexp
+    (48) texp -> . fexp MUL fexp
+    (49) texp -> . fexp DIV fexp
+    (50) fexp -> . var1
+    (51) fexp -> . ID
+    (52) fexp -> . CTEI
+    (53) fexp -> . CTEF
+    (54) fexp -> . CTEC
+    (55) fexp -> . functionCall
+    (56) fexp -> . LPAREN exp RPAREN
+    (59) var1 -> . type TWOPOINTS ID MultipleVars SEMMICOLON var2
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (65) type -> . INT
+    (66) type -> . CHAR
+    (67) type -> . FLOAT
+
+    ID              shift and go to state 81
+    CTEI            shift and go to state 86
+    CTEF            shift and go to state 87
+    CTEC            shift and go to state 88
+    LPAREN          shift and go to state 90
+    INT             shift and go to state 17
+    CHAR            shift and go to state 18
+    FLOAT           shift and go to state 19
+
+    exp                            shift and go to state 153
+    texp                           shift and go to state 83
+    fexp                           shift and go to state 84
+    var1                           shift and go to state 85
+    functionCall                   shift and go to state 89
+    type                           shift and go to state 16
+
+state 148
+
+    (71) functions -> FUNCTION VOID ID LPAREN args RPAREN vars LCURLY statements RCURLY .
+
+    PRINCIPAL       reduce using rule 71 (functions -> FUNCTION VOID ID LPAREN args RPAREN vars LCURLY statements RCURLY .)
+    $end            reduce using rule 71 (functions -> FUNCTION VOID ID LPAREN args RPAREN vars LCURLY statements RCURLY .)
+
+
+state 149
+
+    (29) for -> FOR assign TO CTEI DO LCURLY statements . RCURLY
+
+    RCURLY          shift and go to state 154
+
+
+state 150
+
+    (30) while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .
+
+    ID              reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+    READ            reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+    WRITE           reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+    FOR             reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+    WHILE           reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+    IF              reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+    RCURLY          reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+    RETURN          reduce using rule 30 (while -> WHILE LPAREN exp RPAREN LCURLY statements RCURLY .)
+
+
+state 151
+
+    (31) if -> IF LPAREN exp RPAREN THEN LCURLY statements . RCURLY
+    (32) if -> IF LPAREN exp RPAREN THEN LCURLY statements . RCURLY else
+
+    RCURLY          shift and go to state 155
+
+
+state 152
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp . SEMMICOLON RCURLY
+
+    SEMMICOLON      shift and go to state 156
+
+
+state 153
+
+    (77) return -> RETURN exp . SEMMICOLON
+
+    SEMMICOLON      shift and go to state 157
+
+
+state 154
+
+    (29) for -> FOR assign TO CTEI DO LCURLY statements RCURLY .
+
+    ID              reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+    READ            reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+    WRITE           reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+    FOR             reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+    WHILE           reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+    IF              reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+    RCURLY          reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+    RETURN          reduce using rule 29 (for -> FOR assign TO CTEI DO LCURLY statements RCURLY .)
+
+
+state 155
+
+    (31) if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .
+    (32) if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY . else
+    (33) else -> . ELSE LCURLY statements RCURLY
+    (34) else -> . empty
+    (78) empty -> .
+
+  ! reduce/reduce conflict for ID resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+  ! reduce/reduce conflict for READ resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+  ! reduce/reduce conflict for WRITE resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+  ! reduce/reduce conflict for FOR resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+  ! reduce/reduce conflict for WHILE resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+  ! reduce/reduce conflict for IF resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+  ! reduce/reduce conflict for RCURLY resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+  ! reduce/reduce conflict for RETURN resolved using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    ID              reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    READ            reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    WRITE           reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    FOR             reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    WHILE           reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    IF              reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    RCURLY          reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    RETURN          reduce using rule 31 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY .)
+    ELSE            shift and go to state 159
+
+  ! ID              [ reduce using rule 78 (empty -> .) ]
+  ! READ            [ reduce using rule 78 (empty -> .) ]
+  ! WRITE           [ reduce using rule 78 (empty -> .) ]
+  ! FOR             [ reduce using rule 78 (empty -> .) ]
+  ! WHILE           [ reduce using rule 78 (empty -> .) ]
+  ! IF              [ reduce using rule 78 (empty -> .) ]
+  ! RCURLY          [ reduce using rule 78 (empty -> .) ]
+  ! RETURN          [ reduce using rule 78 (empty -> .) ]
+
+    else                           shift and go to state 158
+    empty                          shift and go to state 160
+
+state 156
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON . RCURLY
+
+    RCURLY          shift and go to state 161
+
+
+state 157
+
+    (77) return -> RETURN exp SEMMICOLON .
+
+    ID              reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+    CTEI            reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+    CTEF            reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+    CTEC            reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+    LPAREN          reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+    INT             reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+    CHAR            reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+    FLOAT           reduce using rule 77 (return -> RETURN exp SEMMICOLON .)
+
+
+state 158
+
+    (32) if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .
+
+    ID              reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+    READ            reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+    WRITE           reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+    FOR             reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+    WHILE           reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+    IF              reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+    RCURLY          reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+    RETURN          reduce using rule 32 (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else .)
+
+
+state 159
+
+    (33) else -> ELSE . LCURLY statements RCURLY
+
+    LCURLY          shift and go to state 162
+
+
+state 160
+
+    (34) else -> empty .
+
+    ID              reduce using rule 34 (else -> empty .)
+    READ            reduce using rule 34 (else -> empty .)
+    WRITE           reduce using rule 34 (else -> empty .)
+    FOR             reduce using rule 34 (else -> empty .)
+    WHILE           reduce using rule 34 (else -> empty .)
+    IF              reduce using rule 34 (else -> empty .)
+    RCURLY          reduce using rule 34 (else -> empty .)
+    RETURN          reduce using rule 34 (else -> empty .)
+
+
+state 161
+
+    (70) functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY .
+
+    PRINCIPAL       reduce using rule 70 (functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY .)
+    $end            reduce using rule 70 (functions -> FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY .)
+
+
+state 162
+
+    (33) else -> ELSE LCURLY . statements RCURLY
+    (7) statements -> . assign SEMMICOLON statements
+    (8) statements -> . functionCall statements
+    (9) statements -> . read statements
+    (10) statements -> . write statements
+    (11) statements -> . for statements
+    (12) statements -> . while statements
+    (13) statements -> . if statements
+    (14) statements -> . empty
+    (15) assign -> . ID EQUALS exp
+    (16) functionCall -> . ID LPAREN exp RPAREN SEMMICOLON
+    (17) read -> . READ LPAREN read1 RPAREN SEMMICOLON
+    (22) write -> . WRITE LPAREN write1 RPAREN SEMMICOLON
+    (29) for -> . FOR assign TO CTEI DO LCURLY statements RCURLY
+    (30) while -> . WHILE LPAREN exp RPAREN LCURLY statements RCURLY
+    (31) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY
+    (32) if -> . IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else
+    (78) empty -> .
+
+    ID              shift and go to state 44
+    READ            shift and go to state 45
+    WRITE           shift and go to state 46
+    FOR             shift and go to state 47
+    WHILE           shift and go to state 48
+    IF              shift and go to state 49
+    RCURLY          reduce using rule 78 (empty -> .)
+
+    statements                     shift and go to state 163
+    assign                         shift and go to state 36
+    functionCall                   shift and go to state 37
+    read                           shift and go to state 38
+    write                          shift and go to state 39
+    for                            shift and go to state 40
+    while                          shift and go to state 41
+    if                             shift and go to state 42
+    empty                          shift and go to state 43
+
+state 163
+
+    (33) else -> ELSE LCURLY statements . RCURLY
+
+    RCURLY          shift and go to state 164
+
+
+state 164
+
+    (33) else -> ELSE LCURLY statements RCURLY .
+
+    ID              reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+    READ            reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+    WRITE           reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+    FOR             reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+    WHILE           reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+    IF              reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+    RCURLY          reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+    RETURN          reduce using rule 33 (else -> ELSE LCURLY statements RCURLY .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for PRINCIPAL in state 4 resolved as shift
+WARNING: reduce/reduce conflict in state 97 resolved using rule (write2 -> CTEI)
+WARNING: rejected rule (fexp -> CTEI) in state 97
+WARNING: reduce/reduce conflict in state 98 resolved using rule (write2 -> CTEF)
+WARNING: rejected rule (fexp -> CTEF) in state 98
+WARNING: reduce/reduce conflict in state 155 resolved using rule (if -> IF LPAREN exp RPAREN THEN LCURLY statements RCURLY)
+WARNING: rejected rule (empty -> <empty>) in state 155
