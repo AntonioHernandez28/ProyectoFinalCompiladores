@@ -14,6 +14,7 @@ reserved = {
     'char' : 'CHAR', 
     'principal' : 'PRINCIPAL', 
     'if' : 'IF', 
+    'then' : 'THEN',
     'else' : 'ELSE', 
     'read' : 'READ',
     'write' : 'WRITE', 
@@ -58,8 +59,7 @@ tokens = [
     'LCURLY', 
     'RCURLY', 
     'TWOPOINTS', 
-    'EQUALS', 
-    'THEN'
+    'EQUALS'
 ] + list(reserved.values())
 
 t_PLUS =  r'\+' 
@@ -142,15 +142,17 @@ def p_principal(p):
     principal : PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY 
     '''
 
+# -------------- Statements --------------
 def p_statements(p): 
     '''
     statements : assign SEMMICOLON statements 
-        | functionCall statements 
-        | read statements 
-        | write statements 
+        | functionCall SEMMICOLON statements 
+        | read statements SEMMICOLON statements
+        | write statements SEMMICOLON statements 
         | for statements 
         | while statements 
         | if statements 
+        | return statements
         | empty
     '''
 
@@ -158,16 +160,17 @@ def p_statements(p):
 def p_assign(p): 
     '''
     assign : ID EQUALS exp
+            | ID LBRACKET exp RBRACKET EQUALS exp 
     '''
 
 def p_functionCall(p): 
     '''
-    functionCall : ID LPAREN exp RPAREN SEMMICOLON
+    functionCall : ID LPAREN exp RPAREN
     '''
 
 def p_read(p):
     '''
-    read : READ LPAREN read1 RPAREN SEMMICOLON 
+    read : READ LPAREN read1 RPAREN 
     '''
 
 def p_read1(p): 
@@ -188,7 +191,7 @@ def p_media(p):
 
 def p_write(p): 
     '''
-    write : WRITE LPAREN write1 RPAREN SEMMICOLON 
+    write : WRITE LPAREN write1 RPAREN
     '''
 
 def p_write1(p): 
@@ -204,7 +207,9 @@ def p_write2(p):
             | CTEF
             | exp 
     '''
+# ------------ End Statements ------------
 
+# ------------- Cycles -------------
 def p_for(p): 
     '''
     for : FOR assign TO CTEI DO LCURLY statements RCURLY 
@@ -212,13 +217,15 @@ def p_for(p):
 
 def p_while(p):
     '''
-    while : WHILE LPAREN exp RPAREN LCURLY statements RCURLY 
+    while : WHILE LPAREN exp RPAREN DO LCURLY statements RCURLY 
     '''
 
+# ------------ End Cycles -------------
+
+# --------------- If ----------------
 def p_if(p): 
     '''
-    if : IF LPAREN exp RPAREN THEN LCURLY statements RCURLY 
-        | IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else 
+    if : IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else 
     '''
 
 def p_else(p): 
@@ -226,12 +233,42 @@ def p_else(p):
     else : ELSE LCURLY statements RCURLY
             | empty 
     '''
+# ---------------- End If --------------
 
-# ---------------- expressions ----------------
+# ---------------- Expressions ----------------
 
-    
+def p_exp(p): 
+    '''
+    exp : ID BasicExp exp
+        | arr BasicExp exp
+        | expCons BasicExp exp 
+        | ID 
+        | functionCall
+        | ID LBRACKET exp RBRACKET
+        | expCons 
+    '''
 
-# ----------------- vars rules ----------------
+def p_expCons(p): 
+    '''
+    expCons : CTEI 
+            | CTEF  
+    '''
+
+def p_BasicExp(p): 
+    '''
+    BasicExp : PLUS 
+            | MINUS 
+            | MUL 
+            | DIV 
+            | GTE 
+            | LTE 
+            | LT 
+            | GT 
+    '''
+
+# ---------------- END Expressions ------------
+
+# ----------------- Vars rules ----------------
 
 def p_vars(p): 
     '''
@@ -271,13 +308,23 @@ def p_arr(p):
         | LBRACKET exp RBRACKET
     '''
 
-# Function Rules 
+# -------------- Functions ------------
 
 def p_functions(p): 
     '''
-    functions : FUNCTION type ID LPAREN args RPAREN vars LCURLY statements return exp SEMMICOLON RCURLY 
-        | FUNCTION VOID ID LPAREN args RPAREN vars LCURLY statements RCURLY 
-        | empty 
+    functions : FUNCTION VOID functionVoid functions 
+                | FUNCTION type functionType functions
+                | empty
+    '''
+
+def p_functionVoid(p): 
+    '''
+    functionVoid : ID LPAREN args RPAREN vars LCURLY statements RCURLY 
+    '''
+
+def p_functionType(p): 
+    '''
+    functionType : ID LPAREN args RPAREN vars LCURLY statements return SEMMICOLON RCURLY
     '''
 
 def p_args(p): 
@@ -294,8 +341,11 @@ def p_MultipleArgs(s):
 
 def p_return(s): 
     '''
-    return : RETURN exp SEMMICOLON
+    return : RETURN LPAREN exp RPAREN SEMMICOLON
+            | RETURN LPAREN exp RPAREN 
     '''
+
+# ------------- End Functions ---------------
 
 # Error handling 
 
