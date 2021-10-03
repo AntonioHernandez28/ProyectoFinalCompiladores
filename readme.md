@@ -8,3 +8,4 @@ Prueba dada en la descripción del proyecto fue ejecutada con éxito.
 Pendiente: 
 - Modificar Diágramas para que los arreglos se reconozcan sin duplicar código. 
 - Poder manejar expresiones entre paréntesis (). 
+- Llamada a Función con múltiples argumentos. 
