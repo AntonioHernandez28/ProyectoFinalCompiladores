@@ -2,7 +2,7 @@ import sys
 
 class VariablesTable: 
 
-    def _int_(self): 
+    def __int__(self): 
         self.variablesList = { } # Start Dictionary 
 
     def add(self, id, type): 

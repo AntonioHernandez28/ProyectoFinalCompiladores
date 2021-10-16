@@ -120,7 +120,7 @@ def t_error(t):
 
 lexer = lex.lex()
 
-functionDictionary = FunctionsDirectory() 
+functionsDirectory = FunctionsDirectory() 
 currentFunctionType = ''
 functionId = '' 
 
@@ -136,9 +136,20 @@ ConditionalJumpsStack = Stack()
 
 def p_program(p): 
     '''
-    program : PROGRAM ID SEMMICOLON program1 
+    program : PROGRAM ID addProgram SEMMICOLON program1 
     '''
     p[0] = 'COMPILED'
+
+def p_addProgram(p): 
+    '''
+    addProgram :
+    ''' 
+    global FunctionID 
+    global yType 
+    yType = 'program'
+    FunctionID = p[-1]
+    functionsDirectory.addFunction(yType, FunctionID, 0, [], [], 0)
+
 
 def p_program1(p): 
     '''
@@ -156,6 +167,9 @@ def p_principal(p):
     '''
     principal : PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY 
     '''
+    yType = 'main'
+    FunctionID = p[1]
+    functionsDirectory.addFunction(yType, FunctionID, 0, [], [], 0)
 
 # -------------- Statements --------------
 def p_statements(p): 
@@ -360,11 +374,21 @@ def p_functionVoid(p):
     '''
     functionVoid : ID LPAREN args RPAREN vars LCURLY statements RCURLY 
     '''
+    yType = p[-1]
+    FunctionID = p[1]
+    functionsDirectory.addFunction(yType, FunctionID, 0, [], [], 0)
 
 def p_functionType(p): 
     '''
-    functionType : ID LPAREN args RPAREN vars LCURLY statements return SEMMICOLON RCURLY
+    functionType : ID saveFunction LPAREN args RPAREN vars LCURLY statements return SEMMICOLON RCURLY
     '''
+
+def p_saveFunction(p): 
+    '''
+    saveFunction : 
+    '''
+    FunctionID = p[-1]
+    functionsDirectory.addFunction(yType, FunctionID, 0, [], [], 0)
 
 def p_args(p): 
     '''

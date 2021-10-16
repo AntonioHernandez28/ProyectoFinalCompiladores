@@ -2,10 +2,10 @@ from VariablesTable import VariablesTable
 import sys 
 
 #Functions Directory  
-class FunctionsDirectory: 
+class FunctionsDirectory(): 
 
-    def _init_ (self): 
-        self.funcDirectory = { } 
+    def __init__ (self): 
+        self.funcDirectory = {} 
     
     def addFunction(self, type, funcID, numberParams, typeParams, nameParams, numberVars): 
         if funcID not in self.funcDirectory.keys(): # Check if function do not exist in function directory yet 
