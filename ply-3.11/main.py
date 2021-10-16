@@ -1,5 +1,9 @@
 import ply.lex as lex 
 import ply.yacc as yacc 
+from VariablesTable import VariablesTable
+from FunctionsDirectory import FunctionsDirectory
+from SemanticCube import SemanticCube as Cube
+from stack import Stack
 import sys 
 import os
 
@@ -116,6 +120,17 @@ def t_error(t):
 
 lexer = lex.lex()
 
+functionDictionary = FunctionsDirectory() 
+currentFunctionType = ''
+functionId = '' 
+
+VarsNameStack = Stack()
+VarsTypeStack = Stack() 
+OperatorsStack = Stack() 
+Quads = []
+
+semanticCube = Cube
+ConditionalJumpsStack = Stack()
 
 ########################## Grammar Rules ###############################
 
@@ -239,31 +254,52 @@ def p_else(p):
 
 def p_exp(p): 
     '''
-    exp : ID BasicExp exp
-        | arr BasicExp exp
-        | expCons BasicExp exp 
-        | ID 
-        | functionCall
-        | ID LBRACKET exp RBRACKET
-        | expCons 
+    exp : nexp 
+        | nexp OR nexp 
     '''
 
-def p_expCons(p): 
+def p_nexp(p): 
     '''
-    expCons : CTEI 
-            | CTEF  
+    nexp : compexp 
+        | compexp AND compexp 
     '''
 
-def p_BasicExp(p): 
+def p_compexp(p): 
     '''
-    BasicExp : PLUS 
-            | MINUS 
-            | MUL 
-            | DIV 
-            | GTE 
-            | LTE 
-            | LT 
-            | GT 
+    compexp : sumexp 
+            | compexp1 sumexp 
+    '''
+
+def p_compexp1(p): 
+    '''
+    compexp1 : sumexp GT sumexp 
+             | sumexp LT sumexp 
+             | sumexp GTE sumexp 
+             | sumexp LTE sumexp 
+             | sumexp NE sumexp 
+    '''
+
+def p_sumexp(p): 
+    '''
+    sumexp : mulexp 
+           | mulexp PLUS mulexp 
+           | mulexp MINUS mulexp 
+    '''
+
+def p_mulexp(p): 
+    '''
+    mulexp : pexp 
+           | pexp MUL pexp 
+           | pexp DIV pexp  
+    '''
+
+def p_pexp(p):
+    '''
+    pexp : var1 
+         | CTEI 
+         | CTEF 
+         | functionCall 
+         | LPAREN exp RPAREN 
     '''
 
 # ---------------- END Expressions ------------
@@ -272,28 +308,31 @@ def p_BasicExp(p):
 
 def p_vars(p): 
     '''
-    vars : VARS var1
+    vars : var
         | empty
     '''
 
-def p_var1(p): 
+def p_var(p): 
     '''
-    var1 : type TWOPOINTS ID MultipleVars SEMMICOLON var2
-    '''
+    var : VARS var2 
+    ''' 
 
 def p_var2(p): 
     '''
-    var2 : var1 
-        | empty 
+    var2 : var2 type TWOPOINTS var1 SEMMICOLON 
+         | empty 
+    '''
+
+def p_var1(p):
+    '''
+    var1 : ID 
+         | ID COMMA var1 
+         | ID arr 
+         | ID arr COMMA var1 
+         | empty 
     '''
 
 
-def p_MultipleVars(p): 
-    '''
-    MultipleVars : COMMA ID MultipleVars
-                | COMMA ID LBRACKET CTEI RBRACKET MultipleVars
-                | empty 
-    '''
 
 def p_type(p): 
     '''
@@ -361,6 +400,7 @@ def p_empty(p):
     
 
 parser = yacc.yacc()
+
 
 def main(): 
     try: 
