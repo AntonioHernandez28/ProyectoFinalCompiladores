@@ -1,6 +1,6 @@
 import ply.lex as lex 
 import ply.yacc as yacc 
-from VariablesTable import VariablesTable
+from VariablesTable import VariablesTable, Var
 from FunctionsDirectory import FunctionsDirectory
 from SemanticCube import SemanticCube as Cube
 from stack import Stack
@@ -120,29 +120,51 @@ def t_error(t):
 
 lexer = lex.lex()
 
-functionDictionary = FunctionsDirectory() 
+functionsDirectory = FunctionsDirectory() 
 currentFunctionType = ''
-functionId = '' 
+FunctionID = '' 
+oper_name_types = Stack()
 
 VarsNameStack = Stack()
 VarsTypeStack = Stack() 
 OperatorsStack = Stack() 
 Quads = []
 
-semanticCube = Cube
+semanticCube = Cube()
 ConditionalJumpsStack = Stack()
 
 ########################## Grammar Rules ###############################
 
 def p_program(p): 
     '''
-    program : PROGRAM ID SEMMICOLON program1 
+    program : PROGRAM ID SEMMICOLON addProgram program1 
     '''
     p[0] = 'COMPILED'
 
+def p_addProgram(p): 
+    '''
+    addProgram :
+    ''' 
+    global FunctionID 
+    global currentFunctionType 
+    global functionsDirectory
+
+    currentFunctionType = 'program'
+    ProgramID = p[-2]
+    FunctionID = ProgramID
+
+    if functionsDirectory.searchFunction(FunctionID): 
+        print("Function already exists.")
+    else: 
+        functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
+        print("Function added: ", FunctionID, " | Type: ", currentFunctionType)
+
+        
+
+
 def p_program1(p): 
     '''
-    program1 : vars functions principal
+    program1 : vars functions program2
             | vars functions 
             | program2
     '''
@@ -154,8 +176,15 @@ def p_program2(p):
 
 def p_principal(p): 
     '''
-    principal : PRINCIPAL LPAREN RPAREN LCURLY statements RCURLY 
+    principal : PRINCIPAL LPAREN RPAREN LCURLY vars statements RCURLY 
     '''
+    global currentFunctionType
+    currentFunctionType = p[1]
+    global FunctionID
+    FunctionID = p[1]
+    global functionsDirectory
+
+    functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
 
 # -------------- Statements --------------
 def p_statements(p): 
@@ -174,9 +203,21 @@ def p_statements(p):
 
 def p_assign(p): 
     '''
-    assign : ID EQUALS exp
-            | ID LBRACKET exp RBRACKET EQUALS exp 
+    assign : ID add_id EQUALS exp
+            | ID add_id arr EQUALS exp 
     '''
+
+def p_add_id(p): 
+    ''' add_id : '''
+    
+    global varID, functionsDirectory, FunctionID
+    varID = p[-1]
+    if functionsDirectory.searchVariable(FunctionID, varID): 
+        varType = functionsDirectory.getVarType(FunctionID, varID)
+        currentVar = Var(varType, varID)
+        oper_name_types.push(currentVar)
+    else: 
+        sys.exit()
 
 def p_functionCall(p): 
     '''
@@ -272,25 +313,25 @@ def p_compexp(p):
 
 def p_compexp1(p): 
     '''
-    compexp1 : sumexp GT sumexp 
-             | sumexp LT sumexp 
-             | sumexp GTE sumexp 
-             | sumexp LTE sumexp 
-             | sumexp NE sumexp 
+    compexp1 : sumexp GT saveOperator sumexp 
+             | sumexp LT saveOperator sumexp 
+             | sumexp GTE saveOperator sumexp 
+             | sumexp LTE saveOperator sumexp 
+             | sumexp NE saveOperator sumexp 
     '''
 
 def p_sumexp(p): 
     '''
     sumexp : mulexp 
-           | mulexp PLUS mulexp 
-           | mulexp MINUS mulexp 
+           | mulexp PLUS saveOperator mulexp 
+           | mulexp MINUS saveOperator mulexp 
     '''
 
 def p_mulexp(p): 
     '''
     mulexp : pexp 
-           | pexp MUL pexp 
-           | pexp DIV pexp  
+           | pexp MUL saveOperator pexp 
+           | pexp DIV saveOperator pexp  
     '''
 
 def p_pexp(p):
@@ -301,6 +342,13 @@ def p_pexp(p):
          | functionCall 
          | LPAREN exp RPAREN 
     '''
+
+def p_saveOperator(p): 
+    ''' saveOperator : '''
+    global currentOperator 
+    currentOperator = p[-1]
+    OperatorsStack.push(currentOperator)
+    print(OperatorsStack.top())    
 
 # ---------------- END Expressions ------------
 
@@ -319,26 +367,47 @@ def p_var(p):
 
 def p_var2(p): 
     '''
-    var2 : var2 type TWOPOINTS var1 SEMMICOLON 
+    var2 : var2 type TWOPOINTS var1 SEMMICOLON addVar
          | empty 
     '''
 
 def p_var1(p):
     '''
     var1 : ID 
-         | ID COMMA var1 
+         | ID COMMA var1 addVar
          | ID arr 
-         | ID arr COMMA var1 
+         | ID arr COMMA var1 addVar
          | empty 
     '''
+    global varID 
+    varID = p[1]
 
+def p_addVar(p): 
+    'addVar :'
+    global functionsDirectory 
+    global varID 
+    global currentTypeVar
 
+    if functionsDirectory.searchFunction(FunctionID): 
+        functionsDirectory.addVariable(FunctionID, currentTypeVar, varID)
+        varDatos = Var(currentTypeVar, varID)
+        oper_name_types.push(varDatos)
+    else: 
+        SystemExit()
+
+def p_saveTypeVar(p): 
+    '''
+    saveTypeVar : 
+    '''
+    global currentTypeVar 
+    currentTypeVar = p[-1]
+    print("Current Type Var: ", currentTypeVar)
 
 def p_type(p): 
     '''
-    type : INT 
-        | CHAR 
-        | FLOAT 
+    type : INT saveTypeVar
+         | CHAR saveTypeVar
+         | FLOAT saveTypeVar 
     '''
 
 def p_arr(p): 
@@ -349,36 +418,47 @@ def p_arr(p):
 
 # -------------- Functions ------------
 
+
 def p_functions(p): 
     '''
-    functions : FUNCTION VOID functionVoid functions 
-                | FUNCTION type functionType functions
-                | empty
+    functions : FUNCTION INT functions1 functions
+              | FUNCTION CHAR functions1 functions
+              | FUNCTION FLOAT functions1 functions
+              | FUNCTION VOID functions1 functions
+              | empty
     '''
 
-def p_functionVoid(p): 
+def p_functions1(p): 
     '''
-    functionVoid : ID LPAREN args RPAREN vars LCURLY statements RCURLY 
+    functions1 : ID saveFunction LPAREN args RPAREN vars LCURLY statements RCURLY functions1 
+               | empty
     '''
 
-def p_functionType(p): 
+def p_saveFunction(p): 
     '''
-    functionType : ID LPAREN args RPAREN vars LCURLY statements return SEMMICOLON RCURLY
+    saveFunction : 
     '''
+    global currentFunctionType
+    currentFunctionType = p[-2]
+    global FunctionID
+    FunctionID = p[-1]
+    global functionsDirectory
+    functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
 
 def p_args(p): 
     '''
-    args : type TWOPOINTS ID MultipleArgs 
-        | empty 
+    args : type TWOPOINTS args1
+         | empty 
     '''
 
-def p_MultipleArgs(s): 
+def p_args1(p): 
     '''
-    MultipleArgs : COMMA args 
-        | empty 
+    args1 : ID 
+          | ID COMMA args1 
+          | empty 
     '''
 
-def p_return(s): 
+def p_return(p): 
     '''
     return : RETURN LPAREN exp RPAREN SEMMICOLON
             | RETURN LPAREN exp RPAREN 

@@ -1,9 +1,9 @@
 Program MyRlike; 
 VARS 
-    int: z, j, p, arreglo[1]; 
+    int: z, j, p; 
     float: valor; 
 
-function void fact (int: j)
+function int fact (int: j)
 VARS int: i;
 {
     i = j + p; 
@@ -13,30 +13,27 @@ VARS int: i;
     { return (j * fact(j - 1)); }    
 } 
 
+function int funint (int : h) 
+VARS int: n; 
+{
+    return(n + h); 
+}
+
 function void calcula (int: y)
 VARS int: x; 
 {
     x = 1; 
     while(x < 11) do 
     {
-        y = y * arreglo[x];
+        x = x * arreglo[x];
         x = x + 1; 
     }
-    write("acumulado", y); 
+    write("acumulado", x); 
 }
 
 principal() 
 {
+    VARS int: heh, brr, j;  
     read(p); j = p*2; 
-    i = fact(p); 
-    for i=1 to 10 do
-                {arreglo[i] = p+i;}
-    p = Media(arreglo); 
-    while(i>0) do 
-    {
-        calcula(p-i); 
-        j = fact(arreglo[i]); 
-        write(j, i); 
-        i = i + 1; 
-    }
+    heh = 1;
 }

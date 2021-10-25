@@ -2,7 +2,7 @@ import sys
 
 class Stack: 
 
-    def _int_(self): 
+    def __init__(self): 
         self.stack = []
     
     def push(self, item): 
@@ -21,3 +21,6 @@ class Stack:
     
     def empty(self): 
         return len(self.stack) == 0
+
+    def top(self): 
+        return self.stack[len(self.stack) - 1]
