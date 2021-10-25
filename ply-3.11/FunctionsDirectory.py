@@ -27,15 +27,27 @@ class FunctionsDirectory():
         return id in self.funcDirectory
     
     def addVariable(self, funcID, type, currentId): 
-        if(self.funcDirectory[funcID]['localVariables'].searchVariable(currentId)): 
+        if self.funcDirectory[funcID]['localVariables'].searchVariable(currentId): 
             print("This variable already exists for this function.", currentId)
         else: 
             self.funcDirectory[funcID]['localVariables'].add(currentId, type) 
-            print("Variable successfully added to function's local variables. ", funcID)
+            print("Variable successfully added to function's local variables: ", currentId, " -> ", funcID)
     
     def printFunctionVariables(self, funcID): 
         if funcID in self.funcDirectory: 
             self.funcDirectory[funcID]['localVariables'].printVariable()
+    
+    def searchVariable(self, funcID, varID):
+        if self.funcDirectory[funcID]['localVariables'].searchVariable(varID): 
+            return True 
+        else: 
+            print("Var: ", varID, " does NOT exist.")
+
+    def getVarType(self, funcID, varID): 
+        if self.funcDirectory[funcID]['localVariables'].searchVariable(varID): 
+            return self.funcDirectory[funcID]['localVariables'].getType(varID)
+        else: 
+            print("Variable: ", varID, " does NOT exist. ")
     
     def printFunction(self, funcID): 
         print("ID: " + funcID)
