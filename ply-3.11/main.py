@@ -226,6 +226,8 @@ def p_generateAssignQuad(p):
             LeftOp = NameStack.pop() 
             LeftType = TypeStack.pop() 
 
+            print('Left Type -> ', LeftType)
+            print('Right Type -> ', RightType)
             result = semanticCube.getType(LeftType, RightType, CurrentOperator)
 
             if result != 'ERROR': 
@@ -240,7 +242,7 @@ def p_generateAssignQuad(p):
 
 def p_add_id(p): 
     ''' add_id : '''
-    
+    print('ADD ID 1')
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     if functionsDirectory.searchVariable(FunctionID, varID): 
         varType = functionsDirectory.getVarType(FunctionID, varID)
@@ -250,12 +252,18 @@ def p_add_id(p):
 
 def p_add_id2(p): 
     ''' add_id2 : '''
+    print('ADD ID 2')
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     varID = p[-1]
+    print(varID)
     if functionsDirectory.searchVariable(FunctionID, varID): 
         types = functionsDirectory.getVarType(FunctionID, varID)
         TypeStack.push(types)
         NameStack.push(varID)
+    
+    else: 
+        print('EXIT')
+        SystemExit() 
 
 def p_functionCall(p): 
     '''
@@ -514,6 +522,7 @@ def p_pexp(p):
          | functionCall 
          | LPAREN exp RPAREN 
     '''
+    print("Paso x aki ")
 
 def p_saveOperator(p): 
     ''' saveOperator : '''
@@ -619,13 +628,13 @@ def p_saveFunction(p):
 
 def p_args(p): 
     '''
-    args : type TWOPOINTS args1
+    args : args type TWOPOINTS var1 addVar
          | empty 
     '''
 
 def p_args1(p): 
     '''
-    args1 : ID 
+    args1 : ID addVar
           | ID COMMA args1 
           | empty 
     '''
