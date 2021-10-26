@@ -1,0 +1,24 @@
+Program Prueba2; 
+
+function int Brr(int: x)
+VARS int: z; 
+{
+    z = z + 3; 
+    if(z <= 3) then 
+    {
+        print(z); 
+    }
+    return(z); 
+}
+
+principal()
+{
+    VARS int: a, b, c; 
+    a = 1; 
+    b = 2; 
+    c = 4; 
+    if(c > 4) then
+    {
+        a = 0; 
+    }
+}

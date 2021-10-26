@@ -14,308 +14,318 @@ class SemanticCube:
             9: '==',
             10: '!=',
             11: '&&',
-            12: '|'
-        }
-
+            12: '|',
+            13: '=',
+            14: '=='
+            }
+            
         self.types = {
             1: 'int',
             2: 'float',
             3: 'char',
             4: 'bool',
-            5: 'CTEI', # Constants
-            6: 'CTEF', # Constants
-            7: 'CTEC', # Constants 
+            5: 'CTEI',
+            6: 'CTEF',
+            7: 'CTEC',
             8: 'CTESTRING',
             9: 'ERROR',
-        }
+            }
 
-        self.compability = {
-            # INTEGER 
+
+        self.compatibility = {
+            # int
             self.types[1]: {
-                # INT - INT compability 
+                # int-int compatibility
                 self.types[1]: {
-                    self.operators[1] : self.types[1], 
-                    self.operators[2] : self.types[1], 
-                    self.operators[3] : self.types[1], 
-                    self.operators[4] : self.types[1], 
-                    self.operators[6] : self.types[4],
-                    self.operators[7] : self.types[4],
-                    self.operators[8] : self.types[4],
-                    self.operators[9] : self.types[4],
-                    self.operators[10] : self.types[4],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
+                    self.operators[1]: self.types[1],
+                    self.operators[2]: self.types[1],
+                    self.operators[3]: self.types[1],
+                    self.operators[4]: self.types[1],
+                    self.operators[5]: self.types[4],
+                    self.operators[6]: self.types[4],
+                    self.operators[7]: self.types[4],
+                    self.operators[8]: self.types[4],
+                    self.operators[9]: self.types[4],
+                    self.operators[10]: self.types[4],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[1],
+                    self.operators[14]: self.types[4],
                 },
-                
-                # INT - FLOAT compatibility 
+                # int-float compatibility
                 self.types[2]: {
-                    self.operators[1] : self.types[2],
-                    self.operators[2] : self.types[2],
-                    self.operators[3] : self.types[2],
-                    self.operators[4] : self.types[2],
-                    self.operators[5] : self.types[4],
-                    self.operators[6] : self.types[4],
-                    self.operators[7] : self.types[4],
-                    self.operators[8] : self.types[4],
-                    self.operators[9] : self.types[4],
-                    self.operators[10] : self.types[4],
-                    self.operators[11] : self.types[4],
-                    self.operators[12] : self.types[4],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-                }, 
-
-                # INT - CHAR compatibility 
-                 self.types[3]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
+                    self.operators[1]: self.types[2],
+                    self.operators[2]: self.types[2],
+                    self.operators[3]: self.types[2],
+                    self.operators[4]: self.types[2],
+                    self.operators[5]: self.types[4],
+                    self.operators[6]: self.types[4],
+                    self.operators[7]: self.types[4],
+                    self.operators[8]: self.types[4],
+                    self.operators[9]: self.types[4],
+                    self.operators[10]: self.types[4],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
-
-                # INT - BOOL compability 
-                 self.types[4]:{
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-                    
-                },
-
-
-            }, 
-            # FLOAT 
-             self.types[2]: {
-
-                    # FLOAT - INT compatibility
-                self.types[1]: {
-                    self.operators[1] : self.types[2],
-                    self.operators[2] : self.types[2],
-                    self.operators[3] : self.types[2],
-                    self.operators[4] : self.types[2],
-                    self.operators[5] : self.types[4],
-                    self.operators[6] : self.types[4],
-                    self.operators[7] : self.types[4],
-                    self.operators[8] : self.types[4],
-                    self.operators[9] : self.types[4],
-                    self.operators[10] : self.types[4],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-
-                },
-
-                # FLOAT - FLOAT compatibility
-                self.types[2]: {
-                    self.operators[1] : self.types[2],
-                    self.operators[2] : self.types[2],
-                    self.operators[3] : self.types[2],
-                    self.operators[4] : self.types[2],
-                    self.operators[5] : self.types[4],
-                    self.operators[6] : self.types[4],
-                    self.operators[7] : self.types[4],
-                    self.operators[8] : self.types[4],
-                    self.operators[9] : self.types[4],
-                    self.operators[10] : self.types[4],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-
-                },
-
-                # FLOAT - CHAR  compatibility
+                # int-char compatibility
                 self.types[3]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[9],
+                    self.operators[10]: self.types[9],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
+                },
+                 #int-bool compatibility
+                self.types[4]:{
+                    self.operators[1]:self.types[9],
+                    self.operators[2]:self.types[9],
+                    self.operators[3]:self.types[9],
+                    self.operators[4]:self.types[9],
+                    self.operators[5]:self.types[9],
+                    self.operators[6]:self.types[9],
+                    self.operators[7]:self.types[9],
+                    self.operators[8]:self.types[9],
+                    self.operators[9]:self.types[9],
+                    self.operators[10]:self.types[9],
+                    self.operators[11]:self.types[9],
+                    self.operators[12]:self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
 
-                 # BOOL - FLOAT compatibility
+            },
+            # float
+            self.types[2]: {
+                    # float-int compatibility
+                self.types[1]: {
+                    self.operators[1]: self.types[2],
+                    self.operators[2]: self.types[2],
+                    self.operators[3]: self.types[2],
+                    self.operators[4]: self.types[2],
+                    self.operators[5]: self.types[4],
+                    self.operators[6]: self.types[4],
+                    self.operators[7]: self.types[4],
+                    self.operators[8]: self.types[4],
+                    self.operators[9]: self.types[4],
+                    self.operators[10]: self.types[4],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
+
+                },
+                # float-float compatibility
+                self.types[2]: {
+                    self.operators[1]: self.types[2],
+                    self.operators[2]: self.types[2],
+                    self.operators[3]: self.types[2],
+                    self.operators[4]: self.types[2],
+                    self.operators[5]: self.types[4],
+                    self.operators[6]: self.types[4],
+                    self.operators[7]: self.types[4],
+                    self.operators[8]: self.types[4],
+                    self.operators[9]: self.types[4],
+                    self.operators[10]: self.types[4],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[2],
+                    self.operators[14]: self.types[4],
+                },
+                # float-char compatibility
+                self.types[3]: {
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[9],
+                    self.operators[10]: self.types[9],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
+                },
+                 #bool-float compatibility
                 self.types[4]:{
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-                    
+                    self.operators[1]:self.types[9],
+                    self.operators[2]:self.types[9],
+                    self.operators[3]:self.types[9],
+                    self.operators[4]:self.types[9],
+                    self.operators[5]:self.types[9],
+                    self.operators[6]:self.types[9],
+                    self.operators[7]:self.types[9],
+                    self.operators[8]:self.types[9],
+                    self.operators[9]:self.types[9],
+                    self.operators[10]:self.types[9],
+                    self.operators[11]:self.types[9],
+                    self.operators[12]:self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
             },
-
-            # CHAR 
+            # char
             self.types[3]: {
-
-                # CHAR - INT compatibility 
+                    # char-int compatibility
                 self.types[1]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[9],
+                    self.operators[10]: self.types[9],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
-
-                # CHAR - FLOAT compatibility
+                # char-float compatibility
                 self.types[2]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[9],
+                    self.operators[10]: self.types[9],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
-
-                # CHAR - CHAR compatibility
+                # char-char compatibility
                 self.types[3]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[4],
-                    self.operators[10] : self.types[4],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[4],
+                    self.operators[10]: self.types[4],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[3],
+                    self.operators[14]: self.types[4],
                 },
-
-                 # CHAR - BOOL compatibility
+                 #char-bool compatibility
                 self.types[4]:{
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-                    
+                    self.operators[1]:self.types[9],
+                    self.operators[2]:self.types[9],
+                    self.operators[3]:self.types[9],
+                    self.operators[4]:self.types[9],
+                    self.operators[5]:self.types[9],
+                    self.operators[6]:self.types[9],
+                    self.operators[7]:self.types[9],
+                    self.operators[8]:self.types[9],
+                    self.operators[9]:self.types[9],
+                    self.operators[10]:self.types[9],
+                    self.operators[11]:self.types[9],
+                    self.operators[12]:self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
 
             },
-
-             # BOOLEAN
+            # BOOLEAN
             self.types[4]: {
-
-                # BOOL - INT compatibility
+                # bool-int COMPAT
                 self.types[1]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[9],
+                    self.operators[10]: self.types[9],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
-
-                # BOOL - FLOAT compatibility
+                # bool-float compatibility
                 self.types[2]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
-
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[9],
+                    self.operators[10]: self.types[9],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
-
-                # BOOL - CHAR compatibility
+                # bool-char compatibility
                 self.types[3]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[9],
-                    self.operators[6] : self.types[9],
-                    self.operators[7] : self.types[9],
-                    self.operators[8] : self.types[9],
-                    self.operators[9] : self.types[9],
-                    self.operators[10] : self.types[9],
-                    self.operators[11] : self.types[9],
-                    self.operators[12] : self.types[9],
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[9],
+                    self.operators[6]: self.types[9],
+                    self.operators[7]: self.types[9],
+                    self.operators[8]: self.types[9],
+                    self.operators[9]: self.types[9],
+                    self.operators[10]: self.types[9],
+                    self.operators[11]: self.types[9],
+                    self.operators[12]: self.types[9],
+                    self.operators[13]: self.types[9],
+                    self.operators[14]: self.types[9],
                 },
-
-                # BOOL - BOOL compatibility
+                # bool bool compatibility
                 self.types[4]: {
-                    self.operators[1] : self.types[9],
-                    self.operators[2] : self.types[9],
-                    self.operators[3] : self.types[9],
-                    self.operators[4] : self.types[9],
-                    self.operators[5] : self.types[4],
-                    self.operators[6] : self.types[4],
-                    self.operators[7] : self.types[4],
-                    self.operators[8] : self.types[4],
-                    self.operators[9] : self.types[4],
-                    self.operators[10] : self.types[4],
-                    self.operators[11] : self.types[4],
-                    self.operators[12] : self.types[4],
+                    self.operators[1]: self.types[9],
+                    self.operators[2]: self.types[9],
+                    self.operators[3]: self.types[9],
+                    self.operators[4]: self.types[9],
+                    self.operators[5]: self.types[4],
+                    self.operators[6]: self.types[4],
+                    self.operators[7]: self.types[4],
+                    self.operators[8]: self.types[4],
+                    self.operators[9]: self.types[4],
+                    self.operators[10]: self.types[4],
+                    self.operators[11]: self.types[4],
+                    self.operators[12]: self.types[4],
+                    self.operators[13]: self.types[4],
+                    self.operators[14]: self.types[4],
                 },
             },
+
         }
     
     # Semantic Cube implemented for getting type 
     def getType(self, left, right, operator): 
-        return self.compability[left][right][operator]
+        return self.compatibility[left][right][operator]
 
     # Print Type Expected 
     def printExpected(self, left, right, operator): 

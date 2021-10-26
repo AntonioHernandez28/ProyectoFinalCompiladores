@@ -3,6 +3,7 @@ import ply.yacc as yacc
 from VariablesTable import VariablesTable, Var
 from FunctionsDirectory import FunctionsDirectory
 from SemanticCube import SemanticCube as Cube
+from avail import Avail
 from stack import Stack
 import sys 
 import os
@@ -43,6 +44,7 @@ tokens = [
     'CTEC', #Constante Char
     'CTEF', #Constante Float
     'CTESTRING', #Constante String 
+    'COMPARE',
     'PLUS', 
     'MINUS', 
     'DIV', 
@@ -63,7 +65,8 @@ tokens = [
     'LCURLY', 
     'RCURLY', 
     'TWOPOINTS', 
-    'EQUALS'
+    'EQUALS', 
+    'COMILLA'
 ] + list(reserved.values())
 
 t_PLUS =  r'\+' 
@@ -88,6 +91,8 @@ t_RCURLY = r'\}'
 t_TWOPOINTS = r'\:'
 t_EQUALS = r'\='
 t_ignore = ' \t\n'
+t_COMILLA = r'\"'
+t_COMPARE = r'\=='
 
 # Identify ID's 
 def t_ID(t): 
@@ -125,10 +130,12 @@ currentFunctionType = ''
 FunctionID = '' 
 oper_name_types = Stack()
 
-VarsNameStack = Stack()
-VarsTypeStack = Stack() 
+NameStack = Stack()
+TypeStack = Stack() 
 OperatorsStack = Stack() 
 Quads = []
+
+avail = Avail()
 
 semanticCube = Cube()
 ConditionalJumpsStack = Stack()
@@ -203,21 +210,52 @@ def p_statements(p):
 
 def p_assign(p): 
     '''
-    assign : ID add_id EQUALS exp
-            | ID add_id arr EQUALS exp 
+    assign : ID add_id2 EQUALS saveOperator exp generateAssignQuad
+            | ID add_id2 arr EQUALS saveOperator exp generateAssignQuad
     '''
+
+def p_generateAssignQuad(p): 
+    '''generateAssignQuad : '''
+    global TypeStack, NameStack, OperatorsStack, Quads
+
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '=': 
+            CurrentOperator = OperatorsStack.pop() 
+            RightOp = NameStack.pop() 
+            RightType = TypeStack.pop() 
+            LeftOp = NameStack.pop() 
+            LeftType = TypeStack.pop() 
+
+            result = semanticCube.getType(LeftType, RightType, CurrentOperator)
+
+            if result != 'ERROR': 
+                currentQuad = (CurrentOperator, RightOp, None, LeftOp)
+                print('Current Quad: ', str(currentQuad))
+                Quads.append(currentQuad)
+            
+            else: 
+                print('Type Dissmatch.')
+                sys.exit()
+
 
 def p_add_id(p): 
     ''' add_id : '''
     
-    global varID, functionsDirectory, FunctionID
-    varID = p[-1]
+    global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     if functionsDirectory.searchVariable(FunctionID, varID): 
         varType = functionsDirectory.getVarType(FunctionID, varID)
-        currentVar = Var(varType, varID)
-        oper_name_types.push(currentVar)
-    else: 
-        sys.exit()
+        if varType: 
+            TypeStack.push(varType)
+            NameStack.push(varID)
+
+def p_add_id2(p): 
+    ''' add_id2 : '''
+    global varID, functionsDirectory, FunctionID, NameStack, TypeStack
+    varID = p[-1]
+    if functionsDirectory.searchVariable(FunctionID, varID): 
+        types = functionsDirectory.getVarType(FunctionID, varID)
+        TypeStack.push(types)
+        NameStack.push(varID)
 
 def p_functionCall(p): 
     '''
@@ -226,19 +264,15 @@ def p_functionCall(p):
 
 def p_read(p):
     '''
-    read : READ LPAREN read1 RPAREN 
+    read : READ operatorRead LPAREN var1 generateQuadREAD RPAREN 
     '''
 
-def p_read1(p): 
+def p_operatorRead(p): 
     '''
-    read1 : ID read2 
+    operatorRead : 
     '''
-
-def p_read2(p): 
-    '''
-    read2 : COMMA read1 
-        | empty
-    '''
+    global OperatorsStack 
+    OperatorsStack.push('read')
 
 def p_media(p): 
     '''
@@ -258,10 +292,10 @@ def p_write1(p):
 
 def p_write2(p): 
     '''
-    write2 : CTESTRING
-            | CTEI 
-            | CTEF
-            | exp 
+    write2 : COMILLA CTESTRING COMILLA
+            | CTEI saveCTE generateQuadPRINT
+            | CTEF saveCTE generateQuadPRINT
+            | exp  
     '''
 # ------------ End Statements ------------
 
@@ -293,16 +327,152 @@ def p_else(p):
 
 # ---------------- Expressions ----------------
 
+def generateQuad(): 
+    global OperatorsStack, NameStack, TypeStack, Quads 
+
+    if OperatorsStack.size() > 0: 
+        currentOperator = OperatorsStack.pop() 
+        RightOp = NameStack.pop() 
+        RightType = TypeStack.pop() 
+        LeftOp = NameStack.pop() 
+        LeftType = TypeStack.pop() 
+
+        print("-> ", LeftType) 
+
+        typeResult = semanticCube.getType(LeftType, RightType, currentOperator)
+
+        if typeResult != 'ERROR' : 
+            result = avail.next() 
+            currentQuad = (currentOperator, LeftOp, RightOp, result)
+            print('Current Quad -> : ', str(currentQuad))
+            Quads.append(currentQuad)
+            NameStack.push(result)
+            TypeStack.push(typeResult)
+        
+        else : 
+            print('Type Dismatch.')
+        
+    else: 
+        print('Operators Stack empty.')
+
+
+def p_generateQuadOR(p): 
+    '''
+    generateQuadOR : 
+    '''
+    global OperatorsStack
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '|': 
+            generateQuad() 
+
+def p_generateQuadAND(p): 
+    '''
+    generateQuadAND : 
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '&&': 
+            generateQuad()
+
+def p_generateQuadCOMPARE(p): 
+    '''
+    generateQuadCOMPARE : 
+    '''
+    global OperatorsStack
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '<' or OperatorsStack.top() == '>' or OperatorsStack.top() == '<=' or OperatorsStack.top() == '>=' or OperatorsStack.top() == '==' or OperatorsStack.top() == '!=':
+            generateQuad() 
+
+def p_generateQuadIF(p): 
+    '''
+    generateQuadIF : 
+    '''
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    typeResult = TypeStack.pop() 
+    if typeResult == 'bool': 
+        value = NameStack.pop() 
+        currentQuad = ('GotoF', value, None, -1)
+        Quads.append(currentQuad)
+        ConditionalJumpsStack.push(len(Quads) -1)
+    
+    else: 
+        print('Type Dismatch.') 
+        return 
+
+def p_generateQuadSUM(p): 
+    '''
+    generateQuadSUM :
+    '''
+    global OperatorsStack
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '+' or OperatorsStack.top() == '-': 
+            generateQuad() 
+
+def p_generateQuadMUL(p): 
+    '''
+    generateQuadMUL : 
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '*' or OperatorsStack.top() == '/': 
+            generateQuad() 
+
+
+def p_generateQuadPRINT(p): 
+    '''
+    generateQuadPRINT :
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == 'print': 
+            OperatorAux = OperatorsStack.pop() 
+            value = NameStack.pop() 
+            TypeStack.pop() 
+            currentQuad = (OperatorAux, None, None, value)
+            print('Quad : ', str(currentQuad))
+            Quads.append(currentQuad)
+
+
+def p_generateQuadREAD(p): 
+    '''
+    generateQuadREAD : 
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == 'read': 
+            OperatorAux = OperatorsStack.pop() 
+            value = NameStack.pop() 
+            TypeStack.pop() 
+            currentQuad = (OperatorAux, None, None, value)
+            print('Read Quad : ', str(currentQuad))
+            Quads.append(currentQuad)
+        
+    
+def p_saveCTE(p): 
+    ''' saveCTE : '''
+    global cte, t 
+    cte = p[-1]
+    t = type(cte)
+    if t == int:
+        TypeStack.push('int')
+        NameStack.push(cte)
+    elif t == float: 
+        TypeStack.push('float')
+        NameStack.push(cte)
+    else: 
+        TypeStack.push('char')
+        NameStack.push(cte)
+ 
 def p_exp(p): 
     '''
-    exp : nexp 
-        | nexp OR nexp 
+    exp : nexp generateQuadOR
+        | nexp generateQuadOR OR saveOperator nexp 
     '''
 
 def p_nexp(p): 
     '''
-    nexp : compexp 
-        | compexp AND compexp 
+    nexp : compexp generateQuadAND
+        | compexp generateQuadAND AND saveOperator compexp 
     '''
 
 def p_compexp(p): 
@@ -313,42 +483,44 @@ def p_compexp(p):
 
 def p_compexp1(p): 
     '''
-    compexp1 : sumexp GT saveOperator sumexp 
-             | sumexp LT saveOperator sumexp 
-             | sumexp GTE saveOperator sumexp 
-             | sumexp LTE saveOperator sumexp 
-             | sumexp NE saveOperator sumexp 
+    compexp1 : sumexp GT saveOperator sumexp generateQuadCOMPARE
+             | sumexp LT saveOperator sumexp generateQuadCOMPARE
+             | sumexp GTE saveOperator sumexp generateQuadCOMPARE
+             | sumexp LTE saveOperator sumexp generateQuadCOMPARE
+             | sumexp NE saveOperator sumexp generateQuadCOMPARE
     '''
 
 def p_sumexp(p): 
     '''
     sumexp : mulexp 
-           | mulexp PLUS saveOperator mulexp 
-           | mulexp MINUS saveOperator mulexp 
+           | mulexp PLUS saveOperator mulexp generateQuadSUM 
+           | mulexp MINUS saveOperator mulexp generateQuadSUM
     '''
 
 def p_mulexp(p): 
     '''
     mulexp : pexp 
-           | pexp MUL saveOperator pexp 
-           | pexp DIV saveOperator pexp  
+           | pexp MUL saveOperator pexp generateQuadMUL
+           | pexp DIV saveOperator pexp generateQuadMUL
     '''
 
 def p_pexp(p):
     '''
-    pexp : var1 
-         | CTEI 
-         | CTEF 
+    pexp : var1 add_id
+         | CTEI saveCTE
+         | CTEF saveCTE
+         | CTEC saveCTE
+         | CTESTRING saveCTE
          | functionCall 
          | LPAREN exp RPAREN 
     '''
 
 def p_saveOperator(p): 
     ''' saveOperator : '''
-    global currentOperator 
+    global OperatorsStack 
     currentOperator = p[-1]
     OperatorsStack.push(currentOperator)
-    print(OperatorsStack.top())    
+    print("Operator saved: ", OperatorsStack.top())    
 
 # ---------------- END Expressions ------------
 
@@ -430,7 +602,7 @@ def p_functions(p):
 
 def p_functions1(p): 
     '''
-    functions1 : ID saveFunction LPAREN args RPAREN vars LCURLY statements RCURLY functions1 
+    functions1 : ID saveFunction LPAREN args RPAREN vars LCURLY statements RCURLY  
                | empty
     '''
 
@@ -484,7 +656,7 @@ parser = yacc.yacc()
 
 def main(): 
     try: 
-        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test.txt'
+        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test2.txt'
         currentFile = open(fileName, 'r')
         print("Current File is: " + fileName)
         info = currentFile.read() 
