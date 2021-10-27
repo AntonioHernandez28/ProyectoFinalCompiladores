@@ -226,8 +226,8 @@ def p_generateAssignQuad(p):
             LeftOp = NameStack.pop() 
             LeftType = TypeStack.pop() 
 
-            print('Left Type -> ', LeftType)
-            print('Right Type -> ', RightType)
+            #print('Left Type -> ', LeftType)
+            #print('Right Type -> ', RightType)
             result = semanticCube.getType(LeftType, RightType, CurrentOperator)
 
             if result != 'ERROR': 
@@ -242,7 +242,7 @@ def p_generateAssignQuad(p):
 
 def p_add_id(p): 
     ''' add_id : '''
-    print('ADD ID 1')
+    #print('ADD ID 1')
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     if functionsDirectory.searchVariable(FunctionID, varID): 
         varType = functionsDirectory.getVarType(FunctionID, varID)
@@ -252,7 +252,7 @@ def p_add_id(p):
 
 def p_add_id2(p): 
     ''' add_id2 : '''
-    print('ADD ID 2')
+    #print('ADD ID 2')
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     varID = p[-1]
     print(varID)
@@ -310,25 +310,88 @@ def p_write2(p):
 # ------------- Cycles -------------
 def p_for(p): 
     '''
-    for : FOR assign TO CTEI DO LCURLY statements RCURLY 
+    for : FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     '''
+
+def p_forOP(p): 
+    '''
+    forOP :
+    '''
+    global OperatorsStack, Quads, ConditionalJumpsStack
+    OperatorsStack.push('for')
+    ConditionalJumpsStack.push(len(Quads))
+
+def p_generateQuadFOR(p): 
+    '''
+    generateQuadFOR :
+    '''
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    ResultType = TypeStack.pop() 
+
+    if ResultType == 'bool': 
+        value = NameStack.pop() 
+        currentQuad = ('GotoV', value, None, -1)
+        print('Current Quad -> : ', str(currentQuad))
+        Quads.append(currentQuad)
+        ConditionalJumpsStack.push(len(Quads)-1)
+    else: 
+        print('Error in For Quad.')
+        sys.exit() 
+    
+def p_LoopEnd(p): 
+    '''
+    LoopEnd :
+    '''
+    print('Entro aki')
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    End = ConditionalJumpsStack.pop() 
+    Back = ConditionalJumpsStack.pop() 
+    currentQuad = ('Goto', None, None, Back)
+    print('Current Quad -> : ', str(currentQuad))
+    Quads.append(currentQuad)
+    FillQuad(End, -1)
 
 def p_while(p):
     '''
-    while : WHILE LPAREN exp RPAREN DO LCURLY statements RCURLY 
+    while : WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     '''
+
+def p_whileOP(p): 
+    '''
+    whileOP : 
+    '''
+    global OperatorsStack, Quads, ConditionalJumpsStack
+    OperatorsStack.push('while')
+    ConditionalJumpsStack.push(len(Quads))
+
+def p_generateQuadWHILE(p): 
+    '''
+    generateQuadWHILE :
+    '''
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    ResultType = TypeStack.pop() 
+
+    if ResultType == 'bool': 
+        value = NameStack.pop()
+        currentQuad = ('GotoF', value, None, -1)
+        Quads.append(currentQuad)
+        print('Current Quad -> : ', str(currentQuad))
+        ConditionalJumpsStack.push(len(Quads)-1)
+    else: 
+        print('Error in While Quad.')
+        sys.exit() 
 
 # ------------ End Cycles -------------
 
 # --------------- If ----------------
 def p_if(p): 
     '''
-    if : IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else 
+    if : IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
     '''
 
 def p_else(p): 
     '''
-    else : ELSE LCURLY statements RCURLY
+    else : ELSE generateQuadELSE LCURLY statements RCURLY
             | empty 
     '''
 # ---------------- End If --------------
@@ -345,7 +408,7 @@ def generateQuad():
         LeftOp = NameStack.pop() 
         LeftType = TypeStack.pop() 
 
-        print("-> ", LeftType) 
+        #print("-> ", LeftType) 
 
         typeResult = semanticCube.getType(LeftType, RightType, currentOperator)
 
@@ -400,6 +463,7 @@ def p_generateQuadIF(p):
     if typeResult == 'bool': 
         value = NameStack.pop() 
         currentQuad = ('GotoF', value, None, -1)
+        print('Current Quad -> : ', str(currentQuad))
         Quads.append(currentQuad)
         ConditionalJumpsStack.push(len(Quads) -1)
     
@@ -454,6 +518,32 @@ def p_generateQuadREAD(p):
             currentQuad = (OperatorAux, None, None, value)
             print('Read Quad : ', str(currentQuad))
             Quads.append(currentQuad)
+
+def p_endIF(p): 
+    '''
+    endIF : 
+    '''
+    global ConditionalJumpsStack 
+    End = ConditionalJumpsStack.pop() 
+    FillQuad(End, -1)
+
+def p_generateQuadELSE(p): 
+    '''
+    generateQuadELSE :
+    '''
+    global Quads, ConditionalJumpsStack 
+    currentQuad = ('Goto', None, None, -1)
+    Quads.append(currentQuad)
+    fAux = ConditionalJumpsStack.pop() 
+    ConditionalJumpsStack.push(len(Quads)-1)
+    FillQuad(fAux, -1)
+
+def FillQuad(end, cont): 
+    global Quads
+    temp = list(Quads[end])
+    temp[3] = len(Quads)
+    Quads[end] = tuple(temp)
+    print('Fill -> Quad', Quads[end])
         
     
 def p_saveCTE(p): 
@@ -522,14 +612,14 @@ def p_pexp(p):
          | functionCall 
          | LPAREN exp RPAREN 
     '''
-    print("Paso x aki ")
+    
 
 def p_saveOperator(p): 
     ''' saveOperator : '''
     global OperatorsStack 
     currentOperator = p[-1]
     OperatorsStack.push(currentOperator)
-    print("Operator saved: ", OperatorsStack.top())    
+    #print("Operator saved: ", OperatorsStack.top())    
 
 # ---------------- END Expressions ------------
 
@@ -582,7 +672,7 @@ def p_saveTypeVar(p):
     '''
     global currentTypeVar 
     currentTypeVar = p[-1]
-    print("Current Type Var: ", currentTypeVar)
+    #print("Current Type Var: ", currentTypeVar)
 
 def p_type(p): 
     '''
@@ -675,7 +765,7 @@ def main():
             tok = lexer.token() 
             if not tok: 
                 break 
-            print(tok)
+           # print(tok)
         if(parser.parse(info, tracking=True) == 'COMPILED'): 
             print("CORRECT SYNTAX")
         else: 

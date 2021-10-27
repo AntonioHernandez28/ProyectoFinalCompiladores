@@ -12,6 +12,17 @@ VARS int: z;
     return(z); 
 }
 
+function void function1(float: f)
+VARS int: m; 
+{
+    m = 1; 
+    while(m < 1) do 
+    {
+        m = m - 1; 
+        print(m); 
+    }
+}
+
 principal()
 {
     VARS int: a, b, c; 
