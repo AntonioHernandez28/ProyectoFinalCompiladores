@@ -1,0 +1,26 @@
+Program CheckFunctions; 
+VARS int: pe, q;  
+
+function int TestFunction1(int: x)
+VARS int: z; 
+{
+    x = x + z; 
+    return(x); 
+}
+
+function void TestFunction2(char: c)
+VARS int: m; 
+{
+    m = 1; 
+    write(m); 
+}
+
+principal()
+{
+    VARS int: a, b, c, qu; 
+    a = 1; 
+    b = 2; 
+    c = 4; 
+    a = b + c; 
+    b = pe; 
+}

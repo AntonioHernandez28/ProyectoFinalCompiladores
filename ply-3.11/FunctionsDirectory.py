@@ -27,7 +27,7 @@ class FunctionsDirectory():
         return id in self.funcDirectory
     
     def addVariable(self, funcID, type, currentId): 
-        if self.funcDirectory[funcID]['localVariables'].searchVariable(currentId): 
+        if self.funcDirectory[funcID]['localVariables'].searchVariable(currentId) or self.funcDirectory['program']['localVariables'].searchVariable(currentId): 
             print("This variable already exists for this function.", currentId)
         else: 
             self.funcDirectory[funcID]['localVariables'].add(currentId, type) 
@@ -38,16 +38,18 @@ class FunctionsDirectory():
             self.funcDirectory[funcID]['localVariables'].printVariable()
     
     def searchVariable(self, funcID, varID):
-        if self.funcDirectory[funcID]['localVariables'].searchVariable(varID): 
+        if self.funcDirectory[funcID]['localVariables'].searchVariable(varID) or self.funcDirectory['program']['localVariables'].searchVariable(varID): 
             return True 
         else: 
-            print("Var: ", varID, " does NOT exist.")
+            print("Var: ", varID, " does NOT exist in Scope: ", funcID)
 
     def getVarType(self, funcID, varID): 
-        if self.funcDirectory[funcID]['localVariables'].searchVariable(varID): 
+        if self.funcDirectory[funcID]['localVariables'].searchVariable(varID):
             return self.funcDirectory[funcID]['localVariables'].getType(varID)
+        elif self.funcDirectory['program']['localVariables'].searchVariable(varID): 
+            return self.funcDirectory['program']['localVariables'].getType(varID)
         else: 
-            print("Variable: ", varID, " does NOT exist. ")
+            print("Variable: ", varID, " does NOT exist in Scope: ", funcID)
     
     def printFunction(self, funcID): 
         print("ID: " + funcID)

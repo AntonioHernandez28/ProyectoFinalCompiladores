@@ -157,8 +157,7 @@ def p_addProgram(p):
     global functionsDirectory
 
     currentFunctionType = 'program'
-    ProgramID = p[-2]
-    FunctionID = ProgramID
+    FunctionID = 'program'
 
     if functionsDirectory.searchFunction(FunctionID): 
         print("Function already exists.")
@@ -183,15 +182,8 @@ def p_program2(p):
 
 def p_principal(p): 
     '''
-    principal : PRINCIPAL LPAREN RPAREN LCURLY vars statements RCURLY 
+    principal : PRINCIPAL saveFunction LPAREN RPAREN LCURLY vars statements RCURLY 
     '''
-    global currentFunctionType
-    currentFunctionType = p[1]
-    global FunctionID
-    FunctionID = p[1]
-    global functionsDirectory
-
-    functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
 
 # -------------- Statements --------------
 def p_statements(p): 
@@ -289,8 +281,16 @@ def p_media(p):
 
 def p_write(p): 
     '''
-    write : WRITE LPAREN write1 RPAREN
+    write : WRITE LPAREN writeOperator write1 generateQuadPRINT RPAREN
     '''
+
+def p_writeOperator(p): 
+    '''
+    writeOperator : 
+    '''
+    global OperatorsStack
+    OperatorsStack.push('write')
+
 
 def p_write1(p): 
     '''
@@ -303,8 +303,9 @@ def p_write2(p):
     write2 : COMILLA CTESTRING COMILLA
             | CTEI saveCTE generateQuadPRINT
             | CTEF saveCTE generateQuadPRINT
-            | exp  
+            | exp 
     '''
+
 # ------------ End Statements ------------
 
 # ------------- Cycles -------------
@@ -496,7 +497,7 @@ def p_generateQuadPRINT(p):
     '''
     global OperatorsStack 
     if OperatorsStack.size() > 0: 
-        if OperatorsStack.top() == 'print': 
+        if OperatorsStack.top() == 'write': 
             OperatorAux = OperatorsStack.pop() 
             value = NameStack.pop() 
             TypeStack.pop() 
@@ -755,7 +756,7 @@ parser = yacc.yacc()
 
 def main(): 
     try: 
-        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test2.txt'
+        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test3.txt'
         currentFile = open(fileName, 'r')
         print("Current File is: " + fileName)
         info = currentFile.read() 
@@ -765,7 +766,7 @@ def main():
             tok = lexer.token() 
             if not tok: 
                 break 
-           # print(tok)
+            print(tok)
         if(parser.parse(info, tracking=True) == 'COMPILED'): 
             print("CORRECT SYNTAX")
         else: 
