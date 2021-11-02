@@ -4,7 +4,7 @@ VARS
     float: valor; 
 
 function int fact (int: j)
-VARS int: i;
+VARS int: i, j, p ;
 {
     i = j + p; 
     if(j > 1) then 
@@ -28,12 +28,12 @@ VARS int: x;
         x = x * arreglo[x];
         x = x + 1; 
     }
-    write("acumulado", x); 
 }
 
 principal() 
 {
     VARS int: heh, brr, j;  
-    read(p); j = p*2; 
+    read(p); 
+    j = p*2; 
     heh = 1;
 }

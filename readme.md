@@ -27,3 +27,6 @@ Pendientes:
 - Una vez solucionado los errores se debe también implementar el guardado de variables para cada función. 
 
 Notas extra: Para este avance se dejaron pendientes importantes debido a que se priorizó estudiar para el parcial que es el próximo lunes pero tan pronto pase el parcial se trabajará en los pendientes y volver al corriente para el avance 4. 
+
+Pendientes: 
+- Manejar las variables globales. Además en principal las variables y quads se agregan a la última función declarada y no al principal. 

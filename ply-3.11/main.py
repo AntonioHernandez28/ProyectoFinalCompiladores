@@ -3,11 +3,17 @@ import ply.yacc as yacc
 from VariablesTable import VariablesTable, Var
 from FunctionsDirectory import FunctionsDirectory
 from SemanticCube import SemanticCube as Cube
+from avail import Avail
 from stack import Stack
 import sys 
 import os
 
-# Reserved Words 
+
+
+# =====================================================================
+# ---------------------------- RESERVED WORDS ----------------------
+# =====================================================================
+
 reserved = {
     'Program' : 'PROGRAM', 
     'function' : 'FUNCTION', 
@@ -36,13 +42,17 @@ reserved = {
     'do' : 'DO'
 }
 
-# Tokens 
+# =====================================================================
+# ------------------------------- TOKENS ----------------------------
+# =====================================================================
+
 tokens = [
     'ID', 
     'CTEI', #Constante Integer 
     'CTEC', #Constante Char
     'CTEF', #Constante Float
     'CTESTRING', #Constante String 
+    'COMPARE',
     'PLUS', 
     'MINUS', 
     'DIV', 
@@ -63,7 +73,8 @@ tokens = [
     'LCURLY', 
     'RCURLY', 
     'TWOPOINTS', 
-    'EQUALS'
+    'EQUALS', 
+    'COMILLA'
 ] + list(reserved.values())
 
 t_PLUS =  r'\+' 
@@ -88,6 +99,8 @@ t_RCURLY = r'\}'
 t_TWOPOINTS = r'\:'
 t_EQUALS = r'\='
 t_ignore = ' \t\n'
+t_COMILLA = r'\"'
+t_COMPARE = r'\=='
 
 # Identify ID's 
 def t_ID(t): 
@@ -120,20 +133,28 @@ def t_error(t):
 
 lexer = lex.lex()
 
+# =====================================================================
+# --------------------- INITIALIZE STACKS AND TABLES -----------------
+# =====================================================================
+
 functionsDirectory = FunctionsDirectory() 
 currentFunctionType = ''
 FunctionID = '' 
 oper_name_types = Stack()
 
-VarsNameStack = Stack()
-VarsTypeStack = Stack() 
+NameStack = Stack()
+TypeStack = Stack() 
 OperatorsStack = Stack() 
 Quads = []
+
+avail = Avail()
 
 semanticCube = Cube()
 ConditionalJumpsStack = Stack()
 
-########################## Grammar Rules ###############################
+# =====================================================================
+# --------------------------- GRAMMAR RULES --------------------------
+# =====================================================================
 
 def p_program(p): 
     '''
@@ -150,8 +171,7 @@ def p_addProgram(p):
     global functionsDirectory
 
     currentFunctionType = 'program'
-    ProgramID = p[-2]
-    FunctionID = ProgramID
+    FunctionID = 'program'
 
     if functionsDirectory.searchFunction(FunctionID): 
         print("Function already exists.")
@@ -176,17 +196,13 @@ def p_program2(p):
 
 def p_principal(p): 
     '''
-    principal : PRINCIPAL LPAREN RPAREN LCURLY vars statements RCURLY 
+    principal : PRINCIPAL saveFunction LPAREN RPAREN LCURLY vars statements RCURLY 
     '''
-    global currentFunctionType
-    currentFunctionType = p[1]
-    global FunctionID
-    FunctionID = p[1]
-    global functionsDirectory
 
-    functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
+# =====================================================================
+# --------------------------- STATEMENTS --------------------------
+# =====================================================================
 
-# -------------- Statements --------------
 def p_statements(p): 
     '''
     statements : assign SEMMICOLON statements 
@@ -200,44 +216,68 @@ def p_statements(p):
         | empty
     '''
 
-
 def p_assign(p): 
     '''
-    assign : ID add_id EQUALS exp
-            | ID add_id arr EQUALS exp 
+    assign : ID add_id2 EQUALS saveOperator exp generateAssignQuad
+            | ID add_id2 arr EQUALS saveOperator exp generateAssignQuad
     '''
+
+def p_generateAssignQuad(p): 
+    '''generateAssignQuad : '''
+    global TypeStack, NameStack, OperatorsStack, Quads
+
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '=': 
+            CurrentOperator = OperatorsStack.pop() 
+            RightOp = NameStack.pop() 
+            RightType = TypeStack.pop() 
+            LeftOp = NameStack.pop() 
+            LeftType = TypeStack.pop() 
+
+            #print('Left Type -> ', LeftType)
+            #print('Right Type -> ', RightType)
+            result = semanticCube.getType(LeftType, RightType, CurrentOperator)
+
+            if result != 'ERROR': 
+                currentQuad = (CurrentOperator, RightOp, None, LeftOp)
+                print('Current Quad: ', str(currentQuad))
+                Quads.append(currentQuad)
+            
+            else: 
+                print('Type Dissmatch.')
+                sys.exit()
+
 
 def p_add_id(p): 
     ''' add_id : '''
-    
-    global varID, functionsDirectory, FunctionID
-    varID = p[-1]
+    #print('ADD ID 1')
+    global varID, functionsDirectory, FunctionID, NameStack, TypeStack
+    print(varID)
     if functionsDirectory.searchVariable(FunctionID, varID): 
         varType = functionsDirectory.getVarType(FunctionID, varID)
-        currentVar = Var(varType, varID)
-        oper_name_types.push(currentVar)
+        if varType: 
+            TypeStack.push(varType)
+            NameStack.push(varID)
+
+
+def p_add_id2(p): 
+    ''' add_id2 : '''
+    #print('ADD ID 2')
+    global varID, functionsDirectory, FunctionID, NameStack, TypeStack
+    varID = p[-1]
+    print(varID)
+    if functionsDirectory.searchVariable(FunctionID, varID): 
+        types = functionsDirectory.getVarType(FunctionID, varID)
+        TypeStack.push(types)
+        NameStack.push(varID)
+    
     else: 
-        sys.exit()
+        print('EXIT')
+        SystemExit() 
 
 def p_functionCall(p): 
     '''
     functionCall : ID LPAREN exp RPAREN
-    '''
-
-def p_read(p):
-    '''
-    read : READ LPAREN read1 RPAREN 
-    '''
-
-def p_read1(p): 
-    '''
-    read1 : ID read2 
-    '''
-
-def p_read2(p): 
-    '''
-    read2 : COMMA read1 
-        | empty
     '''
 
 def p_media(p): 
@@ -245,66 +285,293 @@ def p_media(p):
     media : MEDIA LPAREN arr RPAREN SEMMICOLON
     '''
 
+# =====================================================================
+# -------------------------------- READ -----------------------------
+# =====================================================================
+
+def p_read(p):
+    '''
+    read : READ operatorRead LPAREN paramRead RPAREN 
+    '''
+
+def p_paramRead(p): 
+    '''
+    paramRead : paramReadAux 
+              | empty 
+    '''
+
+def p_paramReadAux(p): 
+    '''
+    paramReadAux : exp generateQuadREAD 
+                 | exp generateQuadREAD COMMA operatorRead paramReadAux 
+    '''
+
+def p_operatorRead(p): 
+    '''
+    operatorRead : 
+    '''
+    global OperatorsStack 
+    OperatorsStack.push('read')
+
+def p_generateQuadREAD(p): 
+    '''
+    generateQuadREAD : 
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == 'read': 
+            OperatorAux = OperatorsStack.pop() 
+            value = NameStack.pop() 
+            TypeStack.pop() 
+            currentQuad = (OperatorAux, None, None, value)
+            print('Read Quad : ', str(currentQuad))
+            Quads.append(currentQuad)
+
+# =====================================================================
+# -------------------------------- WRITE -----------------------------
+# =====================================================================
+
 def p_write(p): 
     '''
-    write : WRITE LPAREN write1 RPAREN
+    write : WRITE writeOperator LPAREN paramWrite RPAREN
     '''
 
-def p_write1(p): 
+def p_paramWrite(p): 
     '''
-    write1 : write2 COMMA write2 
-            | write2 
+    paramWrite : paramWriteAux 
+               | empty 
     '''
 
-def p_write2(p): 
+def p_paramWriteAux(p): 
     '''
-    write2 : CTESTRING
-            | CTEI 
-            | CTEF
-            | exp 
+    paramWriteAux : exp generateQuadPRINT 
+                  | exp generateQuadPRINT COMMA writeOperator paramWriteAux 
     '''
-# ------------ End Statements ------------
 
-# ------------- Cycles -------------
+def p_writeOperator(p): 
+    '''
+    writeOperator : 
+    '''
+    global OperatorsStack
+    OperatorsStack.push('write')
+
+def p_generateQuadPRINT(p): 
+    '''
+    generateQuadPRINT :
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == 'write': 
+            OperatorAux = OperatorsStack.pop() 
+            value = NameStack.pop() 
+            TypeStack.pop() 
+            currentQuad = (OperatorAux, None, None, value)
+            print('Quad : ', str(currentQuad))
+            Quads.append(currentQuad)
+
+# =====================================================================
+# -------------------------------- LOOPS -----------------------------
+# =====================================================================
+def p_LoopEnd(p): 
+    '''
+    LoopEnd :
+    '''
+    print('Entro aki')
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    End = ConditionalJumpsStack.pop() 
+    Back = ConditionalJumpsStack.pop() 
+    currentQuad = ('Goto', None, None, Back)
+    print('Current Quad -> : ', str(currentQuad))
+    Quads.append(currentQuad)
+    FillQuad(End, -1)
+
+def FillQuad(end, cont): #Used in IF section too. 
+    global Quads
+    temp = list(Quads[end])
+    temp[3] = len(Quads)
+    Quads[end] = tuple(temp)
+    print('Fill -> Quad', Quads[end])
+
+# FOR LOOP 
 def p_for(p): 
     '''
-    for : FOR assign TO CTEI DO LCURLY statements RCURLY 
+    for : FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     '''
 
+def p_forOP(p): 
+    '''
+    forOP :
+    '''
+    global OperatorsStack, Quads, ConditionalJumpsStack
+    OperatorsStack.push('for')
+    ConditionalJumpsStack.push(len(Quads))
+
+def p_generateQuadFOR(p): 
+    '''
+    generateQuadFOR :
+    '''
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    ResultType = TypeStack.pop() 
+
+    if ResultType == 'bool': 
+        value = NameStack.pop() 
+        currentQuad = ('GotoV', value, None, -1)
+        print('Current Quad -> : ', str(currentQuad))
+        Quads.append(currentQuad)
+        ConditionalJumpsStack.push(len(Quads)-1)
+    else: 
+        print('Error in For Quad.')
+        sys.exit() 
+
+# WHILE LOOP
 def p_while(p):
     '''
-    while : WHILE LPAREN exp RPAREN DO LCURLY statements RCURLY 
+    while : WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     '''
 
-# ------------ End Cycles -------------
+def p_whileOP(p): 
+    '''
+    whileOP : 
+    '''
+    global OperatorsStack, Quads, ConditionalJumpsStack
+    OperatorsStack.push('while')
+    ConditionalJumpsStack.push(len(Quads))
 
-# --------------- If ----------------
+def p_generateQuadWHILE(p): 
+    '''
+    generateQuadWHILE :
+    '''
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    ResultType = TypeStack.pop() 
+
+    if ResultType == 'bool': 
+        value = NameStack.pop()
+        currentQuad = ('GotoF', value, None, -1)
+        Quads.append(currentQuad)
+        print('Current Quad -> : ', str(currentQuad))
+        ConditionalJumpsStack.push(len(Quads)-1)
+    else: 
+        print('Error in While Quad.')
+        sys.exit() 
+
+    
+# =====================================================================
+# -------------------------------- IF ------------------------------
+# =====================================================================
+
 def p_if(p): 
     '''
-    if : IF LPAREN exp RPAREN THEN LCURLY statements RCURLY else 
+    if : IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
     '''
 
 def p_else(p): 
     '''
-    else : ELSE LCURLY statements RCURLY
+    else : ELSE generateQuadELSE LCURLY statements RCURLY
             | empty 
     '''
-# ---------------- End If --------------
 
-# ---------------- Expressions ----------------
+def p_generateQuadIF(p): 
+    '''
+    generateQuadIF : 
+    '''
+    global NameStack, TypeStack, Quads, ConditionalJumpsStack
+    typeResult = TypeStack.pop() 
+    if typeResult == 'bool': 
+        value = NameStack.pop() 
+        currentQuad = ('GotoF', value, None, -1)
+        print('Current Quad -> : ', str(currentQuad))
+        Quads.append(currentQuad)
+        ConditionalJumpsStack.push(len(Quads) -1)
+    
+    else: 
+        print('Type Dismatch.') 
+        return 
 
+def p_endIF(p): 
+    '''
+    endIF : 
+    '''
+    global ConditionalJumpsStack 
+    End = ConditionalJumpsStack.pop() 
+    FillQuad(End, -1)
+
+def p_generateQuadELSE(p): 
+    '''
+    generateQuadELSE :
+    '''
+    global Quads, ConditionalJumpsStack 
+    currentQuad = ('Goto', None, None, -1)
+    Quads.append(currentQuad)
+    fAux = ConditionalJumpsStack.pop() 
+    ConditionalJumpsStack.push(len(Quads)-1)
+    FillQuad(fAux, -1)
+
+# =====================================================================
+# ------------------------------ EXPRESSIONS -------------------------
+# =====================================================================
+
+def generateQuad(): 
+    global OperatorsStack, NameStack, TypeStack, Quads 
+
+    if OperatorsStack.size() > 0: 
+        currentOperator = OperatorsStack.pop() 
+        RightOp = NameStack.pop() 
+        RightType = TypeStack.pop() 
+        LeftOp = NameStack.pop() 
+        LeftType = TypeStack.pop() 
+
+        #print("-> ", LeftType) 
+
+        typeResult = semanticCube.getType(LeftType, RightType, currentOperator)
+
+        if typeResult != 'ERROR' : 
+            result = avail.next() 
+            currentQuad = (currentOperator, LeftOp, RightOp, result)
+            print('Current Quad -> : ', str(currentQuad))
+            Quads.append(currentQuad)
+            NameStack.push(result)
+            TypeStack.push(typeResult)
+        
+        else : 
+            print('Type Dismatch.')
+        
+    else: 
+        print('Operators Stack empty.')
+
+# OR 
 def p_exp(p): 
     '''
-    exp : nexp 
-        | nexp OR nexp 
+    exp : nexp generateQuadOR
+        | nexp generateQuadOR OR saveOperator nexp 
     '''
 
+def p_generateQuadOR(p): 
+    '''
+    generateQuadOR : 
+    '''
+    global OperatorsStack
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '|': 
+            generateQuad() 
+
+# AND 
 def p_nexp(p): 
     '''
-    nexp : compexp 
-        | compexp AND compexp 
+    nexp : compexp generateQuadAND
+        | compexp generateQuadAND AND saveOperator compexp 
     '''
 
+def p_generateQuadAND(p): 
+    '''
+    generateQuadAND : 
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '&&': 
+            generateQuad()
+
+
+# COMPARE 
 def p_compexp(p): 
     '''
     compexp : sumexp 
@@ -313,46 +580,98 @@ def p_compexp(p):
 
 def p_compexp1(p): 
     '''
-    compexp1 : sumexp GT saveOperator sumexp 
-             | sumexp LT saveOperator sumexp 
-             | sumexp GTE saveOperator sumexp 
-             | sumexp LTE saveOperator sumexp 
-             | sumexp NE saveOperator sumexp 
+    compexp1 : sumexp GT saveOperator sumexp generateQuadCOMPARE
+             | sumexp LT saveOperator sumexp generateQuadCOMPARE
+             | sumexp GTE saveOperator sumexp generateQuadCOMPARE
+             | sumexp LTE saveOperator sumexp generateQuadCOMPARE
+             | sumexp NE saveOperator sumexp generateQuadCOMPARE
     '''
 
+def p_generateQuadCOMPARE(p): 
+    '''
+    generateQuadCOMPARE : 
+    '''
+    global OperatorsStack
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '<' or OperatorsStack.top() == '>' or OperatorsStack.top() == '<=' or OperatorsStack.top() == '>=' or OperatorsStack.top() == '==' or OperatorsStack.top() == '!=':
+            generateQuad() 
+
+
+# SUM 
 def p_sumexp(p): 
     '''
     sumexp : mulexp 
-           | mulexp PLUS saveOperator mulexp 
-           | mulexp MINUS saveOperator mulexp 
+           | mulexp PLUS saveOperator mulexp generateQuadSUM 
+           | mulexp MINUS saveOperator mulexp generateQuadSUM
     '''
 
+def p_generateQuadSUM(p): 
+    '''
+    generateQuadSUM :
+    '''
+    global OperatorsStack
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '+' or OperatorsStack.top() == '-': 
+            generateQuad() 
+
+
+# MUL 
 def p_mulexp(p): 
     '''
     mulexp : pexp 
-           | pexp MUL saveOperator pexp 
-           | pexp DIV saveOperator pexp  
+           | pexp MUL saveOperator pexp generateQuadMUL
+           | pexp DIV saveOperator pexp generateQuadMUL
     '''
 
+def p_generateQuadMUL(p): 
+    '''
+    generateQuadMUL : 
+    '''
+    global OperatorsStack 
+    if OperatorsStack.size() > 0: 
+        if OperatorsStack.top() == '*' or OperatorsStack.top() == '/': 
+            generateQuad() 
+
+
+# Constants And ID's 
 def p_pexp(p):
     '''
-    pexp : var1 
-         | CTEI 
-         | CTEF 
+    pexp : ID add_id2
+         | CTEI saveCTE
+         | CTEF saveCTE
+         | CTEC saveCTE
+         | CTESTRING saveCTE
          | functionCall 
          | LPAREN exp RPAREN 
-    '''
+    '''   
+    print("Current Exp -> ", p[1])
+
+def p_saveCTE(p): 
+    ''' saveCTE : '''
+    global cte, t 
+    cte = p[-1]
+    t = type(cte)
+    if t == int:
+        TypeStack.push('int')
+        NameStack.push(cte)
+    elif t == float: 
+        TypeStack.push('float')
+        NameStack.push(cte)
+    else: 
+        TypeStack.push('char')
+        NameStack.push(cte)
 
 def p_saveOperator(p): 
     ''' saveOperator : '''
-    global currentOperator 
+    global OperatorsStack 
     currentOperator = p[-1]
     OperatorsStack.push(currentOperator)
-    print(OperatorsStack.top())    
+    #print("Operator saved: ", OperatorsStack.top())  
 
-# ---------------- END Expressions ------------
 
-# ----------------- Vars rules ----------------
+# =====================================================================
+# --------------------------------- VARS ---------------------------
+# =====================================================================
 
 def p_vars(p): 
     '''
@@ -381,6 +700,7 @@ def p_var1(p):
     '''
     global varID 
     varID = p[1]
+    
 
 def p_addVar(p): 
     'addVar :'
@@ -401,7 +721,7 @@ def p_saveTypeVar(p):
     '''
     global currentTypeVar 
     currentTypeVar = p[-1]
-    print("Current Type Var: ", currentTypeVar)
+    #print("Current Type Var: ", currentTypeVar)
 
 def p_type(p): 
     '''
@@ -416,8 +736,9 @@ def p_arr(p):
         | LBRACKET exp RBRACKET
     '''
 
-# -------------- Functions ------------
-
+# =====================================================================
+# ---------------------------- FUNCTIONS -----------------------------
+# =====================================================================
 
 def p_functions(p): 
     '''
@@ -430,7 +751,7 @@ def p_functions(p):
 
 def p_functions1(p): 
     '''
-    functions1 : ID saveFunction LPAREN args RPAREN vars LCURLY statements RCURLY functions1 
+    functions1 : ID saveFunction LPAREN args RPAREN vars LCURLY statements RCURLY  
                | empty
     '''
 
@@ -447,13 +768,13 @@ def p_saveFunction(p):
 
 def p_args(p): 
     '''
-    args : type TWOPOINTS args1
+    args : args type TWOPOINTS var1 addVar
          | empty 
     '''
 
 def p_args1(p): 
     '''
-    args1 : ID 
+    args1 : ID addVar
           | ID COMMA args1 
           | empty 
     '''
@@ -464,9 +785,9 @@ def p_return(p):
             | RETURN LPAREN exp RPAREN 
     '''
 
-# ------------- End Functions ---------------
-
-# Error handling 
+# =====================================================================
+# --------------------------- ERROR HANDLER --------------------------
+# =====================================================================
 
 def p_error(p):
     print("Sintax error in: ", p) 
@@ -477,14 +798,16 @@ def p_empty(p):
     empty :  
     '''
     p[0] = None 
-    
 
 parser = yacc.yacc()
 
+# =====================================================================
+# ------------------------------- MAIN ------------------------------
+# =====================================================================
 
 def main(): 
     try: 
-        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test.txt'
+        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test3.txt'
         currentFile = open(fileName, 'r')
         print("Current File is: " + fileName)
         info = currentFile.read() 
@@ -499,6 +822,8 @@ def main():
             print("CORRECT SYNTAX")
         else: 
             print("SYNTAX ERROR")
+        for i in Quads: 
+            print('Final Quad : ', str(i))
     
     except EOFError: 
         print(EOFError)
