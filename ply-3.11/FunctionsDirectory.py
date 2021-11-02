@@ -28,7 +28,7 @@ class FunctionsDirectory():
     
     def addVariable(self, funcID, type, currentId): 
         if self.funcDirectory[funcID]['localVariables'].searchVariable(currentId) or self.funcDirectory['program']['localVariables'].searchVariable(currentId): 
-            print("This variable already exists for this function.", currentId)
+            print("This variable already exists for this function: ", currentId)
         else: 
             self.funcDirectory[funcID]['localVariables'].add(currentId, type) 
             print("Variable successfully added to function's local variables: ", currentId, " -> ", funcID)

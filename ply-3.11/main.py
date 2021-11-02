@@ -236,11 +236,13 @@ def p_add_id(p):
     ''' add_id : '''
     #print('ADD ID 1')
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
+    print(varID)
     if functionsDirectory.searchVariable(FunctionID, varID): 
         varType = functionsDirectory.getVarType(FunctionID, varID)
         if varType: 
             TypeStack.push(varType)
             NameStack.push(varID)
+
 
 def p_add_id2(p): 
     ''' add_id2 : '''
@@ -264,7 +266,19 @@ def p_functionCall(p):
 
 def p_read(p):
     '''
-    read : READ operatorRead LPAREN var1 generateQuadREAD RPAREN 
+    read : READ operatorRead LPAREN paramRead RPAREN 
+    '''
+
+def p_paramRead(p): 
+    '''
+    paramRead : paramReadAux 
+              | empty 
+    '''
+
+def p_paramReadAux(p): 
+    '''
+    paramReadAux : exp generateQuadREAD 
+                 | exp generateQuadREAD COMMA operatorRead paramReadAux 
     '''
 
 def p_operatorRead(p): 
@@ -281,7 +295,19 @@ def p_media(p):
 
 def p_write(p): 
     '''
-    write : WRITE LPAREN writeOperator write1 generateQuadPRINT RPAREN
+    write : WRITE writeOperator LPAREN paramWrite RPAREN
+    '''
+
+def p_paramWrite(p): 
+    '''
+    paramWrite : paramWriteAux 
+               | empty 
+    '''
+
+def p_paramWriteAux(p): 
+    '''
+    paramWriteAux : exp generateQuadPRINT 
+                  | exp generateQuadPRINT COMMA writeOperator paramWriteAux 
     '''
 
 def p_writeOperator(p): 
@@ -291,20 +317,6 @@ def p_writeOperator(p):
     global OperatorsStack
     OperatorsStack.push('write')
 
-
-def p_write1(p): 
-    '''
-    write1 : write2 COMMA write2 
-            | write2 
-    '''
-
-def p_write2(p): 
-    '''
-    write2 : COMILLA CTESTRING COMILLA
-            | CTEI saveCTE generateQuadPRINT
-            | CTEF saveCTE generateQuadPRINT
-            | exp 
-    '''
 
 # ------------ End Statements ------------
 
@@ -605,15 +617,15 @@ def p_mulexp(p):
 
 def p_pexp(p):
     '''
-    pexp : var1 add_id
+    pexp : ID add_id2
          | CTEI saveCTE
          | CTEF saveCTE
          | CTEC saveCTE
          | CTESTRING saveCTE
          | functionCall 
          | LPAREN exp RPAREN 
-    '''
-    
+    '''   
+    print("Current Exp -> ", p[1])
 
 def p_saveOperator(p): 
     ''' saveOperator : '''
@@ -653,6 +665,7 @@ def p_var1(p):
     '''
     global varID 
     varID = p[1]
+    
 
 def p_addVar(p): 
     'addVar :'
@@ -771,6 +784,8 @@ def main():
             print("CORRECT SYNTAX")
         else: 
             print("SYNTAX ERROR")
+        for i in Quads: 
+            print('Final Quad : ', str(i))
     
     except EOFError: 
         print(EOFError)

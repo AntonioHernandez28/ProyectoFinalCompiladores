@@ -18,6 +18,8 @@ VARS int: m;
 principal()
 {
     VARS int: a, b, c, qu; 
+    read(a, b, c); 
+    write(c, qu); 
     a = 1; 
     b = 2; 
     c = 4; 

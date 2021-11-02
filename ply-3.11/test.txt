@@ -28,7 +28,6 @@ VARS int: x;
         x = x * arreglo[x];
         x = x + 1; 
     }
-    write("acumulado", x); 
 }
 
 principal() 
