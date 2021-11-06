@@ -17,7 +17,7 @@ VARS int: m;
 
 principal()
 {
-    VARS int: a, b, c, qu; 
+    VARS int: a, b, c, qu, arreglo[10]; 
     read(a, b, c); 
     write(c, qu); 
     a = 1; 
@@ -25,4 +25,15 @@ principal()
     c = 4; 
     a = b + c; 
     b = pe; 
+    if(a < ) then 
+    {
+        c = 51; 
+    }
+
+    while(b < 100) do
+    {
+        a = b + c; 
+        c = 10;
+    }
+    write(a+b, c, qu); 
 }

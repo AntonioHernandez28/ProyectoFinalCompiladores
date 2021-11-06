@@ -184,8 +184,8 @@ def p_addProgram(p):
 
 def p_program1(p): 
     '''
-    program1 : vars functions program2
-            | vars functions 
+    program1 : vars mainQuad functions mainEnd program2
+            | vars mainQuad functions 
             | program2
     '''
 
@@ -198,6 +198,22 @@ def p_principal(p):
     '''
     principal : PRINCIPAL saveFunction LPAREN RPAREN LCURLY vars statements RCURLY 
     '''
+
+def p_mainQuad(p): 
+    '''
+    mainQuad : 
+    '''
+    global ConditionalJumpsStack, Quads 
+    currentQuad = ('GOTOPRINCIPAL', 'PRINCIPAL', -1, None)
+    Quads.append(currentQuad)
+    ConditionalJumpsStack.push(len(Quads)-1)
+
+def p_mainEnd(p): 
+    '''
+    mainEnd : 
+    '''
+    End = ConditionalJumpsStack.pop() 
+    FillQuad(End, -1)
 
 # =====================================================================
 # --------------------------- STATEMENTS --------------------------
@@ -253,11 +269,14 @@ def p_add_id(p):
     #print('ADD ID 1')
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     print(varID)
-    if functionsDirectory.searchVariable(FunctionID, varID): 
-        varType = functionsDirectory.getVarType(FunctionID, varID)
-        if varType: 
-            TypeStack.push(varType)
-            NameStack.push(varID)
+    if not varID == None: 
+        if functionsDirectory.searchVariable(FunctionID, varID): 
+            varType = functionsDirectory.getVarType(FunctionID, varID)
+            if varType: 
+                TypeStack.push(varType)
+                NameStack.push(varID)
+        else: 
+            sys.exit()
 
 
 def p_add_id2(p): 
@@ -265,15 +284,33 @@ def p_add_id2(p):
     #print('ADD ID 2')
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     varID = p[-1]
-    print(varID)
-    if functionsDirectory.searchVariable(FunctionID, varID): 
-        types = functionsDirectory.getVarType(FunctionID, varID)
-        TypeStack.push(types)
-        NameStack.push(varID)
+    print("El var ID en save ID es: ", varID)
+    if not varID == None: 
+        if functionsDirectory.searchVariable(FunctionID, varID): 
+            types = functionsDirectory.getVarType(FunctionID, varID)
+            TypeStack.push(types)
+            NameStack.push(varID)
     
-    else: 
-        print('EXIT')
-        SystemExit() 
+        else: 
+            print('EXIT')
+            sys.exit()
+
+# add ID for manage arrays but need to be checked !!!!!!!!!!!!!!!!!
+def p_add_id3(p): 
+    ''' add_id3 : '''
+    #print('ADD ID 2')
+    global varID, functionsDirectory, FunctionID, NameStack, TypeStack
+    varID = p[-2]
+    print("El var ID en save ID es: ", varID)
+    if not varID == None: 
+        if functionsDirectory.searchVariable(FunctionID, varID): 
+            types = functionsDirectory.getVarType(FunctionID, varID)
+            TypeStack.push(types)
+            NameStack.push(varID)
+    
+        else: 
+            print('EXIT')
+            sys.exit()  
 
 def p_functionCall(p): 
     '''
@@ -291,7 +328,7 @@ def p_media(p):
 
 def p_read(p):
     '''
-    read : READ operatorRead LPAREN paramRead RPAREN 
+    read : READ operatorRead LPAREN paramReadAux RPAREN 
     '''
 
 def p_paramRead(p): 
@@ -520,7 +557,7 @@ def generateQuad():
         LeftOp = NameStack.pop() 
         LeftType = TypeStack.pop() 
 
-        #print("-> ", LeftType) 
+        print("-> ", RightType) 
 
         typeResult = semanticCube.getType(LeftType, RightType, currentOperator)
 
@@ -643,11 +680,13 @@ def p_pexp(p):
          | CTESTRING saveCTE
          | functionCall 
          | LPAREN exp RPAREN 
+         | ID arr add_id3
+         | empty
     '''   
-    print("Current Exp -> ", p[1])
 
 def p_saveCTE(p): 
     ''' saveCTE : '''
+    print("Entro al CTE")
     global cte, t 
     cte = p[-1]
     t = type(cte)
@@ -666,7 +705,7 @@ def p_saveOperator(p):
     global OperatorsStack 
     currentOperator = p[-1]
     OperatorsStack.push(currentOperator)
-    #print("Operator saved: ", OperatorsStack.top())  
+    print("Operator saved: ", OperatorsStack.top())      
 
 
 # =====================================================================
@@ -700,6 +739,7 @@ def p_var1(p):
     '''
     global varID 
     varID = p[1]
+    print("Current ID -> ", varID)
     
 
 def p_addVar(p): 
@@ -708,12 +748,13 @@ def p_addVar(p):
     global varID 
     global currentTypeVar
 
-    if functionsDirectory.searchFunction(FunctionID): 
-        functionsDirectory.addVariable(FunctionID, currentTypeVar, varID)
-        varDatos = Var(currentTypeVar, varID)
-        oper_name_types.push(varDatos)
-    else: 
-        SystemExit()
+    if not varID == None:
+        if functionsDirectory.searchFunction(FunctionID): 
+            functionsDirectory.addVariable(FunctionID, currentTypeVar, varID)
+            varDatos = Var(currentTypeVar, varID)
+            oper_name_types.push(varDatos)
+        else: 
+            SystemExit()
 
 def p_saveTypeVar(p): 
     '''
@@ -764,6 +805,7 @@ def p_saveFunction(p):
     global FunctionID
     FunctionID = p[-1]
     global functionsDirectory
+    print("Entra en el crash")
     functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
 
 def p_args(p): 
@@ -822,8 +864,10 @@ def main():
             print("CORRECT SYNTAX")
         else: 
             print("SYNTAX ERROR")
+        cont = 0 
         for i in Quads: 
-            print('Final Quad : ', str(i))
+            print('Final Quad #', cont, ' : ', str(i))
+            cont = cont + 1
     
     except EOFError: 
         print(EOFError)

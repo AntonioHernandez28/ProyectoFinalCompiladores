@@ -30,3 +30,10 @@ Notas extra: Para este avance se dejaron pendientes importantes debido a que se 
 
 Pendientes: 
 - Manejar las variables globales. Además en principal las variables y quads se agregan a la última función declarada y no al principal. 
+
+Avance 4: 
+Cuádruplos funcionando y todo pero sólo dan problema cuando va a tomar los arreglos como si fuera una variable. 
+
+# Bugs to fix: 
+- Write array at certain index. 
+- Fix bug in exp that allows compare something with empty :(
