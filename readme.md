@@ -35,5 +35,15 @@ Avance 4:
 Cuádruplos funcionando y todo pero sólo dan problema cuando va a tomar los arreglos como si fuera una variable. 
 
 # Bugs to fix: 
-- Write array at certain index. 
-- Fix bug in exp that allows compare something with empty :(
+- Write array at certain index. DONE *?*
+- Fix bug in exp that allows compare something with empty :( DONE
+
+Avance 5: 
+Cuádruplos de funciones funcionan bien, los gosub, ERA, y el goto a principal funcionan de manera correcta. Los parámetros funcionan de manera correcta y se guardan de manera correcta. Se corrigió el error de cuando marcaba vacío cuando eran más de un parámetro. Se corrigió el bug de ciclo infinito cuando había un error de sintáxis. 
+
+Pendientes: 
+Memoria ya está empezado pero como no ha sido probada no fue incluida en este commit. 
+- Máquina Virtual 
+
+Bugs to fix: 
+- Quad For da un error (while ya funciona perfecto)

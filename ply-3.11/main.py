@@ -151,7 +151,13 @@ avail = Avail()
 
 semanticCube = Cube()
 ConditionalJumpsStack = Stack()
-
+CountParams = 0 
+JumpEndProcess = 0 
+pending = 0 
+EndProcess = []
+Functions = []
+paramID = '' 
+firstParam = 0
 # =====================================================================
 # --------------------------- GRAMMAR RULES --------------------------
 # =====================================================================
@@ -312,15 +318,79 @@ def p_add_id3(p):
             print('EXIT')
             sys.exit()  
 
-def p_functionCall(p): 
-    '''
-    functionCall : ID LPAREN exp RPAREN
-    '''
 
 def p_media(p): 
     '''
     media : MEDIA LPAREN arr RPAREN SEMMICOLON
     '''
+
+
+# =====================================================================
+# -------------------------- FUNCTION CALLS --------------------------
+# =====================================================================
+
+def p_functionCall(p): 
+    '''
+    functionCall : ID functionERA LPAREN expAux generateQuadPARAM RPAREN generateQuadGOSUB 
+    '''
+
+def p_generateQuadPARAM(p): 
+    '''
+    generateQuadPARAM : 
+    '''
+    global Quads, CountParams, nameVar, callID, pending 
+    callID = p[-4]
+    print("Call ID: ", callID)
+    totalParams = functionsDirectory.getNumberParameters(callID)
+    print("Total Params: ", totalParams)
+    
+    if not NameStack.empty(): 
+        value = NameStack.pop() 
+        print("Value Param: ", value)
+        if not CountParams == totalParams: 
+            print("Parameter updated number: ", CountParams)
+            CurrentQuad = ('PARAM', value, None, -1)
+            Quads.append(CurrentQuad)
+            OperatorsStack.push('PARAM')
+            NameStack.pop() 
+            CountParams += 1 
+
+
+def p_expAux(p): 
+    '''
+    expAux : exp 
+           | exp COMMA expAux 
+           | empty  
+    '''
+
+
+def p_generateQuadGOSUB(p): 
+    '''
+    generateQuadGOSUB :
+    '''
+    global Quads, Functions, JumpEndProcess
+    gosubCall = p[-6] #-5? 
+    CurrentQuad = ('GOSUB', None, None, gosubCall)
+    Quads.append(CurrentQuad)
+
+def p_fillEndProc(p): 
+    '''
+    fillEndProc : 
+    '''
+    global EndProcess, JumpEndProcess 
+    End = EndProcess.pop() 
+    Temp = list(Quads[End])
+    Temp[3] = JumpEndProcess
+    Quads[End] = tuple(Temp)
+
+def p_functionERA(p):
+    '''
+    functionERA : 
+    '''
+    global Quads, CountParams, nameVar 
+    nameVar = p[-1]
+    CurrentQuad = ('ERA', None, None, nameVar)
+    Quads.append(CurrentQuad) 
 
 # =====================================================================
 # -------------------------------- READ -----------------------------
@@ -762,7 +832,7 @@ def p_saveTypeVar(p):
     '''
     global currentTypeVar 
     currentTypeVar = p[-1]
-    #print("Current Type Var: ", currentTypeVar)
+    print("Current Type Var: ", currentTypeVar)
 
 def p_type(p): 
     '''
@@ -783,18 +853,65 @@ def p_arr(p):
 
 def p_functions(p): 
     '''
-    functions : FUNCTION INT functions1 functions
-              | FUNCTION CHAR functions1 functions
-              | FUNCTION FLOAT functions1 functions
-              | FUNCTION VOID functions1 functions
+    functions : FUNCTION INT functions1 endFunc functions 
+              | FUNCTION CHAR functions1 endFunc functions 
+              | FUNCTION FLOAT functions1 endFunc functions 
+              | FUNCTION VOID functions1 endFunc functions 
               | empty
     '''
 
 def p_functions1(p): 
     '''
-    functions1 : ID saveFunction LPAREN args RPAREN vars LCURLY statements RCURLY  
+    functions1 : ID saveFunction LPAREN parameters RPAREN vars LCURLY statements RCURLY  
                | empty
     '''
+
+#Fix bug with multiple params. 
+def p_addParameter(p): 
+    '''
+    addParameter : 
+    '''
+    global functionsDirectory, paramID, firstParam, currentTypeVar
+    paramID = p[-1]
+    firstParam = 1 
+    print("paramID: ", paramID)
+    print("Function ID: ", FunctionID)
+    if not paramID == None: 
+        if functionsDirectory.searchFunction(FunctionID): 
+            print("Entro aki")
+            functionsDirectory.addParameters(FunctionID, paramID, currentTypeVar)
+            functionsDirectory.addVariable(FunctionID, currentTypeVar, paramID)
+        else:
+            sys.exit() 
+
+def p_parameters(p): 
+    '''
+    parameters : paramsAux 
+                | empty 
+    '''
+
+def p_paramsAux(p): 
+    '''
+    paramsAux : INT saveTypeVar TWOPOINTS ID addParameter nextParam 
+              | FLOAT saveTypeVar TWOPOINTS ID addParameter nextParam 
+              | CHAR saveTypeVar TWOPOINTS ID addParameter nextParam 
+    '''
+
+def p_nextParam(p): 
+    '''
+    nextParam : COMMA paramsAux 
+                | empty 
+    '''
+
+
+
+def p_endFunc(p): 
+    '''
+    endFunc : 
+    '''
+    global Quads 
+    CurrentQuad = ('ENDFUNC', None, None, -1)
+    Quads.append(CurrentQuad)
 
 def p_saveFunction(p): 
     '''
@@ -832,7 +949,8 @@ def p_return(p):
 # =====================================================================
 
 def p_error(p):
-    print("Sintax error in: ", p) 
+    print("Syntax error in: ", p) 
+    sys.exit() 
 
 
 def p_empty(p): 

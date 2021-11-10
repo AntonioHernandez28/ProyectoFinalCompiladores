@@ -1,17 +1,18 @@
 Program CheckFunctions; 
 VARS int: pe, q;  
+float: f1, f2; 
 
 function int TestFunction1(int: x)
 VARS int: z; 
 {
-    x = x + z; 
+    z = x + 10; 
     return(x); 
 }
 
-function void TestFunction2(char: c)
+function void TestFunction2(int: c, int: param1, int: param2, float: param3)
 VARS int: m; 
 {
-    m = 1; 
+    m = c + 1; 
     write(m); 
 }
 
@@ -25,7 +26,7 @@ principal()
     c = 4; 
     a = b + c; 
     b = pe; 
-    if(a < ) then 
+    if(a < 10) then 
     {
         c = 51; 
     }
@@ -36,4 +37,5 @@ principal()
         c = 10;
     }
     write(a+b, c, qu); 
+    TestFunction2(a);
 }

@@ -31,7 +31,7 @@ class FunctionsDirectory():
             print("This variable already exists for this function: ", currentId)
         else: 
             self.funcDirectory[funcID]['localVariables'].add(currentId, type) 
-            print("Variable successfully added to function's local variables: ", currentId, " -> ", funcID)
+            print("Variable successfully added to function's local variables: ", currentId, " of type: ", type, " -> ",funcID)
     
     def printFunctionVariables(self, funcID): 
         if funcID in self.funcDirectory: 
@@ -50,6 +50,14 @@ class FunctionsDirectory():
             return self.funcDirectory['program']['localVariables'].getType(varID)
         else: 
             print("Variable: ", varID, " does NOT exist in Scope: ", funcID)
+        
+    def getNumberParameters(self, funcID): 
+        return self.funcDirectory[funcID]['numberParams']
+
+    def addParameters(self, funcID, funcName, funcType): 
+        self.funcDirectory[funcID]['numberParams'] + 1 
+        self.funcDirectory[funcID]['nameParams'].append(funcName)
+        self.funcDirectory[funcID]['typeParams'].append(funcType)
     
     def printFunction(self, funcID): 
         print("ID: " + funcID)
