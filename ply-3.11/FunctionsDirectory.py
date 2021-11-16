@@ -7,7 +7,7 @@ class FunctionsDirectory():
     def __init__ (self): 
         self.funcDirectory = {} 
     
-    def addFunction(self, type, funcID, numberParams, typeParams, nameParams, numberVars): 
+    def addFunction(self, type, funcID, numberParams, typeParams, nameParams, startDirection, numberVars, totalSize): 
         if funcID not in self.funcDirectory.keys(): # Check if function do not exist in function directory yet 
             self.funcDirectory[funcID] = {
                 'type' : type, 
@@ -15,22 +15,37 @@ class FunctionsDirectory():
                 'typeParams' : typeParams, 
                 'nameParams' : nameParams, 
                 'localVariables' : VariablesTable(), 
-                'numberVars' : numberVars # VariablesTable.size()? 
+                'startDirection' : startDirection,
+                'numberVars' : numberVars,  # VariablesTable.size()? 
+                'totalSize' : totalSize 
             }
             print("Function successfuly added: ", funcID, ' ', type)
         
         else: 
             print("Error, function already exists in Directory: ", funcID)
+            sys.exit()
 
     
+    def getNumberVars(self, funcID): 
+        return self.funcDirectory[funcID]['localVariables'].getSize() 
+    
+    def setTotalSize(self, funcID, size): 
+        self.funcDirectory[funcID]['totalSize'] = size 
+
+    def setStartDir(self, funcID, direction): 
+        self.funcDirectory[funcID]['startDirection'] = direction
+    
+    def getDirection(self, funcID): 
+        return self.funcDirectory[funcID]['startDirection']
+
     def searchFunction(self, id): 
         return id in self.funcDirectory
     
-    def addVariable(self, funcID, type, currentId): 
+    def addVariable(self, funcID, type, currentId, currentAddress): 
         if self.funcDirectory[funcID]['localVariables'].searchVariable(currentId) or self.funcDirectory['program']['localVariables'].searchVariable(currentId): 
             print("This variable already exists for this function: ", currentId)
         else: 
-            self.funcDirectory[funcID]['localVariables'].add(currentId, type) 
+            self.funcDirectory[funcID]['localVariables'].add(currentId, type, currentAddress) 
             print("Variable successfully added to function's local variables: ", currentId, " of type: ", type, " -> ",funcID)
     
     def printFunctionVariables(self, funcID): 
@@ -55,18 +70,30 @@ class FunctionsDirectory():
         return self.funcDirectory[funcID]['numberParams']
 
     def addParameters(self, funcID, funcName, funcType): 
-        self.funcDirectory[funcID]['numberParams'] + 1 
+        self.funcDirectory[funcID]['numberParams'] += 1 
         self.funcDirectory[funcID]['nameParams'].append(funcName)
         self.funcDirectory[funcID]['typeParams'].append(funcType)
     
+    def getParamsTypes(self, funcID): 
+        return self.funcDirectory[funcID]['typeParams']
+    
+    def getParamsNames(self, funcID): 
+        return self.funcDirectory[funcID]['nameParams']
+    
+    def getDirectionById(self, funcID, varID): 
+        if(self.searchVariable(funcID, varID)): 
+            return self.funcDirectory[funcID]['localVariables'].getAddress(varID)
+        else: 
+            print("Variable not declared yet.")
+
     def printFunction(self, funcID): 
-        print("ID: " + funcID)
+        print("ID: ", funcID)
         print("Type: " + self.funcDirectory[funcID]['type'])
-        print("Number Of Params: " + self.funcDirectory[funcID]['numberParams'])
+        print("Number Of Params: ", self.funcDirectory[funcID]['numberParams'])
         print("Type Of Params: ")
         print(self.funcDirectory[funcID]['typeParams'])
         print("Name Of Params: ")
         print(self.funcDirectory[funcID]['nameParams'])
         print("Name Of Variables: ")
         self.printFunctionVariables(funcID)
-        print("Number Of Variables: " + self.funcDirectory[funcID]['numberVars'])
+        print("Number Of Variables: ", self.funcDirectory[funcID]['numberVars'])

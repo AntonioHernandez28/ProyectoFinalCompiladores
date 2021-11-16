@@ -16,9 +16,23 @@ VARS int: m;
     write(m); 
 }
 
+function void funTest3(int: p1)
+VARS int: brrrrr; 
+{
+    write(p1); 
+}
+
+function void funTest4()
+VARS int: burro; 
+{
+    burro = 1; 
+    write(burro); 
+}
+
 principal()
 {
     VARS int: a, b, c, qu, arreglo[10]; 
+    float: j; 
     read(a, b, c); 
     write(c, qu); 
     a = 1; 
@@ -37,5 +51,8 @@ principal()
         c = 10;
     }
     write(a+b, c, qu); 
-    TestFunction2(a);
+    TestFunction2(a, b, c + a, j);
+    funTest3(a); 
+    funTest4(); 
+
 }

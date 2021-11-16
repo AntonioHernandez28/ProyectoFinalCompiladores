@@ -2,6 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc 
 from VariablesTable import VariablesTable, Var
 from FunctionsDirectory import FunctionsDirectory
+from memory import Memory
 from SemanticCube import SemanticCube as Cube
 from avail import Avail
 from stack import Stack
@@ -158,6 +159,10 @@ EndProcess = []
 Functions = []
 paramID = '' 
 firstParam = 0
+isEmpty = False 
+callID = ''
+tempCounter = 0 
+memory = Memory()
 # =====================================================================
 # --------------------------- GRAMMAR RULES --------------------------
 # =====================================================================
@@ -182,7 +187,7 @@ def p_addProgram(p):
     if functionsDirectory.searchFunction(FunctionID): 
         print("Function already exists.")
     else: 
-        functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
+        functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], -1, 0, 0)
         print("Function added: ", FunctionID, " | Type: ", currentFunctionType)
 
         
@@ -331,35 +336,86 @@ def p_media(p):
 
 def p_functionCall(p): 
     '''
-    functionCall : ID functionERA LPAREN expAux generateQuadPARAM RPAREN generateQuadGOSUB 
+    functionCall : ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB 
     '''
+    global callID 
+    callID = p[1]
+    print("Current Call ID: ", callID)
+
+def p_validateFunctionID(p): 
+    '''
+    validateFunctionID : 
+    '''
+    global callID 
+    callID = p[-1]
+    print("Enters to validate: ", p[-1])
+    currentFuncID = p[-1]
+    if(functionsDirectory.searchFunction(currentFuncID)): 
+        print("Function Exists, go ahead :) ")
+    else: 
+        print("Function does NOT exist.")
+        sys.exit() 
+
+def p_verifyParams(p): 
+    '''
+    verifyParams :
+    '''
+    global CountParams, callID 
+    print("Get into verify params")
+    print("Current Call ID in Verify Params: ", callID)
+    totalParams = functionsDirectory.getNumberParameters(callID)
+    print("Total Params: ", totalParams)
+    print("Count Params: ", CountParams)
+    if(totalParams != CountParams): 
+        print("Parameters provided does NOT match expected ones.")
+        sys.exit() 
+    
+    CountParams = 0
+
+
+
+def p_paramsCount(p): 
+    '''
+    paramsCount : 
+    '''
+    global CountParams
+    CountParams += 1
+    print("Cont is: ", CountParams)
+    print("Updated Params: ", CountParams)
 
 def p_generateQuadPARAM(p): 
     '''
     generateQuadPARAM : 
     '''
-    global Quads, CountParams, nameVar, callID, pending 
-    callID = p[-4]
-    print("Call ID: ", callID)
-    totalParams = functionsDirectory.getNumberParameters(callID)
-    print("Total Params: ", totalParams)
+    global Quads, CountParams, callID 
+    argument = NameStack.pop() 
+    currentType = TypeStack.pop()
+    print("Argument: ", argument)
+    print("Tipo: ", currentType)
+    expectedParams = functionsDirectory.getParamsTypes(callID)
+    nameParams = functionsDirectory.getParamsNames(callID)
+    arg = functionsDirectory.getDirectionById(callID, nameParams[CountParams - 1])
+    print("I am looking for a: ", nameParams[CountParams - 1])
+
+    if CountParams >= len(expectedParams):
+        print("Params size does NOT match expected one. Compiler was expecting # ", len(expectedParams), " parameters.") 
+        sys.exit()
+
+    if currentType != expectedParams[CountParams]: 
+        print("Param Type does NOT match the expected one. Compiler was expecting type: ", expectedParams[CountParams])
+        sys.exit()
     
-    if not NameStack.empty(): 
-        value = NameStack.pop() 
-        print("Value Param: ", value)
-        if not CountParams == totalParams: 
-            print("Parameter updated number: ", CountParams)
-            CurrentQuad = ('PARAM', value, None, -1)
-            Quads.append(CurrentQuad)
-            OperatorsStack.push('PARAM')
-            NameStack.pop() 
-            CountParams += 1 
+    currentQuad = ('PARAM', argument, None, 'PARAM#' + str(CountParams + 1))
+    OperatorsStack.push('PARAM')
+    Quads.append(currentQuad)
+    
+    
 
 
 def p_expAux(p): 
     '''
-    expAux : exp 
-           | exp COMMA expAux 
+    expAux : exp generateQuadPARAM paramsCount
+           | exp generateQuadPARAM COMMA paramsCount expAux 
            | empty  
     '''
 
@@ -368,9 +424,9 @@ def p_generateQuadGOSUB(p):
     '''
     generateQuadGOSUB :
     '''
-    global Quads, Functions, JumpEndProcess
+    global Quads, Functions, callID
     gosubCall = p[-6] #-5? 
-    CurrentQuad = ('GOSUB', None, None, gosubCall)
+    CurrentQuad = ('GOSUB', callID, None, functionsDirectory.getDirection(callID))
     Quads.append(CurrentQuad)
 
 def p_fillEndProc(p): 
@@ -387,10 +443,11 @@ def p_functionERA(p):
     '''
     functionERA : 
     '''
-    global Quads, CountParams, nameVar 
-    nameVar = p[-1]
+    global Quads, CountParams, nameVar, paramsK 
+    nameVar = p[-2]
     CurrentQuad = ('ERA', None, None, nameVar)
     Quads.append(CurrentQuad) 
+    
 
 # =====================================================================
 # -------------------------------- READ -----------------------------
@@ -618,7 +675,7 @@ def p_generateQuadELSE(p):
 # =====================================================================
 
 def generateQuad(): 
-    global OperatorsStack, NameStack, TypeStack, Quads 
+    global OperatorsStack, NameStack, TypeStack, Quads, tempCounter 
 
     if OperatorsStack.size() > 0: 
         currentOperator = OperatorsStack.pop() 
@@ -633,6 +690,7 @@ def generateQuad():
 
         if typeResult != 'ERROR' : 
             result = avail.next() 
+            tempCounter += 1
             currentQuad = (currentOperator, LeftOp, RightOp, result)
             print('Current Quad -> : ', str(currentQuad))
             Quads.append(currentQuad)
@@ -802,7 +860,7 @@ def p_var2(p):
 def p_var1(p):
     '''
     var1 : ID 
-         | ID COMMA var1 addVar
+         | ID COMMA var1 addVar 
          | ID arr 
          | ID arr COMMA var1 addVar
          | empty 
@@ -810,21 +868,27 @@ def p_var1(p):
     global varID 
     varID = p[1]
     print("Current ID -> ", varID)
-    
-
+       
 def p_addVar(p): 
     'addVar :'
     global functionsDirectory 
     global varID 
     global currentTypeVar
-
+    
+    if(FunctionID == 'program'): 
+        virtualAddress = memory.assignMemory('global', currentTypeVar)
+    else: 
+        virtualAddress = memory.assignMemory('local', currentTypeVar)
     if not varID == None:
         if functionsDirectory.searchFunction(FunctionID): 
-            functionsDirectory.addVariable(FunctionID, currentTypeVar, varID)
+            functionsDirectory.addVariable(FunctionID, currentTypeVar, varID, virtualAddress)
             varDatos = Var(currentTypeVar, varID)
             oper_name_types.push(varDatos)
         else: 
             SystemExit()
+     
+
+
 
 def p_saveTypeVar(p): 
     '''
@@ -862,9 +926,17 @@ def p_functions(p):
 
 def p_functions1(p): 
     '''
-    functions1 : ID saveFunction LPAREN parameters RPAREN vars LCURLY statements RCURLY  
+    functions1 : ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements RCURLY  
                | empty
     '''
+
+def p_setStartDirection(p): 
+    '''
+    setStartDirection : 
+    '''
+    global FunctionID 
+    print("Global ID in start Direction is: ", FunctionID)
+    functionsDirectory.setStartDir(FunctionID, len(Quads)) 
 
 #Fix bug with multiple params. 
 def p_addParameter(p): 
@@ -879,8 +951,9 @@ def p_addParameter(p):
     if not paramID == None: 
         if functionsDirectory.searchFunction(FunctionID): 
             print("Entro aki")
+            virtualAddress = memory.assignMemory('local', currentTypeVar)
             functionsDirectory.addParameters(FunctionID, paramID, currentTypeVar)
-            functionsDirectory.addVariable(FunctionID, currentTypeVar, paramID)
+            functionsDirectory.addVariable(FunctionID, currentTypeVar, paramID, virtualAddress)
         else:
             sys.exit() 
 
@@ -909,9 +982,16 @@ def p_endFunc(p):
     '''
     endFunc : 
     '''
-    global Quads 
+    global Quads, tempCounter, FunctionID, functionsDirectory
     CurrentQuad = ('ENDFUNC', None, None, -1)
     Quads.append(CurrentQuad)
+    currentVars = functionsDirectory.getNumberVars(FunctionID)
+    print("Vars Number in ", FunctionID, " are: ", functionsDirectory.getNumberVars(FunctionID)) # Vars already has params and vars 
+    print("Param number are: ", functionsDirectory.getNumberParameters(FunctionID))
+    print("Temps are: ", tempCounter)
+    functionsDirectory.setTotalSize(FunctionID, currentVars + tempCounter)
+    memory.cleanLocalMemory() 
+    tempCounter = 0 
 
 def p_saveFunction(p): 
     '''
@@ -923,7 +1003,7 @@ def p_saveFunction(p):
     FunctionID = p[-1]
     global functionsDirectory
     print("Entra en el crash")
-    functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], 0)
+    functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], -1, 0, 0)
 
 def p_args(p): 
     '''
