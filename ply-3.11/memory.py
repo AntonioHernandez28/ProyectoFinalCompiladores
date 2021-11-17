@@ -1,11 +1,10 @@
 class Memory: 
     def __init__(self): 
-        self.memory = {
-            'Globals' : {},
-            'Locals' : {},
-            'Temporals' : {},
-            'Constants' : {}
-        }
+    
+        self.Globals = {}
+        self.Locals = {}
+        self.Temporals = {}
+        self.Constants = {}
 
         self.operators = {
             '+' : 1, 
@@ -24,19 +23,16 @@ class Memory:
             'for' : 14, 
             'while' : 15, 
             'read' : 16, 
-            'print' : 17
+            'write' : 17,
+            'GOTOPRINCIPAL' : 18, 
+            'ENDFUNC' : 19, 
+            'ERA' : 20, 
+            'PARAM' : 21, 
+            'GOSUB' : 22, 
+            'Goto' : 23, 
+            'GotoF' : 24, 
+            'GotoV' : 25
         }
-
-        self.globalInt = 1000
-        self.globalFloat = 3000
-        self.globalChar = 5000 
-        self.localInt = 9000
-        self.localFloat = 12000 
-        self.localChar = 15000 
-        self.temporalInt = 18000 
-        self.temporalFloat = 20000
-        self.temporalChar = 22000 
-        self.temporalBool = 25000
         
         self.COUNTERS = {
             'global' : {
@@ -85,7 +81,15 @@ class Memory:
         self.COUNTERS['local']['int'] = 9000
         self.COUNTERS['local']['float'] = 12000
         self.COUNTERS['local']['char'] = 15000
-
+        self.COUNTERS['temps']['int'] = 18000
+        self.COUNTERS['temps']['float'] = 20000
+        self.COUNTERS['temps']['char'] = 22000
+        self.COUNTERS['temps']['bool'] = 25000
+        self.Temporals = {}
+    
+    def getOperatorCode(self, operator): 
+        return self.operators[operator]
+    
 
 
             

@@ -1,1 +1,0 @@
-virtualAddress = functionsDirectory.getDirectionById(FunctionID, paramID)

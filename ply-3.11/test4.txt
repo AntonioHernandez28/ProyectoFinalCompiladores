@@ -1,0 +1,22 @@
+Program programForTesting;
+VARS 
+int: globalA, globalB, globalC; 
+float: float1, float2; 
+
+function void myFunc1(int: a, int: b){
+    write(a + b); 
+    write(b); 
+}
+
+function void myFunc2(int: a, int: b){
+    write(a); 
+    write(b + a); 
+}
+
+principal()
+{
+    VARS int: a, b; 
+    write(globalA);
+    write(a); 
+    write(b);  
+}

@@ -13,7 +13,7 @@ class VariablesTable:
         print("Se asigno memoria a: ", id, " que fue la: ", virAddress)
     
     def getAddress(self, id): 
-        print("Si esta buscando")
+        print("Si esta buscando en el ID: ", id)
         return self.variablesList[id]['address'] 
     
     def searchVariable(self, id): 

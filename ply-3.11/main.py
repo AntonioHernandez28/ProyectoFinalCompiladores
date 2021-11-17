@@ -163,6 +163,7 @@ isEmpty = False
 callID = ''
 tempCounter = 0 
 memory = Memory()
+tempDictionary = {} 
 # =====================================================================
 # --------------------------- GRAMMAR RULES --------------------------
 # =====================================================================
@@ -215,7 +216,8 @@ def p_mainQuad(p):
     mainQuad : 
     '''
     global ConditionalJumpsStack, Quads 
-    currentQuad = ('GOTOPRINCIPAL', 'PRINCIPAL', -1, None)
+    currentOp = memory.getOperatorCode('GOTOPRINCIPAL')
+    currentQuad = (currentOp, 'PRINCIPAL', -1, None)
     Quads.append(currentQuad)
     ConditionalJumpsStack.push(len(Quads)-1)
 
@@ -251,7 +253,7 @@ def p_assign(p):
 
 def p_generateAssignQuad(p): 
     '''generateAssignQuad : '''
-    global TypeStack, NameStack, OperatorsStack, Quads
+    global TypeStack, NameStack, OperatorsStack, Quads, FunctionID
 
     if OperatorsStack.size() > 0: 
         if OperatorsStack.top() == '=': 
@@ -266,7 +268,11 @@ def p_generateAssignQuad(p):
             result = semanticCube.getType(LeftType, RightType, CurrentOperator)
 
             if result != 'ERROR': 
-                currentQuad = (CurrentOperator, RightOp, None, LeftOp)
+                #RightOpAddress = functionsDirectory.getDirectionById(FunctionID, RightOp)
+                #LeftOpAddress = functionsDirectory.getDirectionById(FunctionID, LeftOp)
+                currOperator = memory.getOperatorCode(CurrentOperator)
+                print("Right Address: ", RightOp)
+                currentQuad = (currOperator, RightOp, None, LeftOp)
                 print('Current Quad: ', str(currentQuad))
                 Quads.append(currentQuad)
             
@@ -296,11 +302,12 @@ def p_add_id2(p):
     global varID, functionsDirectory, FunctionID, NameStack, TypeStack
     varID = p[-1]
     print("El var ID en save ID es: ", varID)
+    varAddress = functionsDirectory.getDirectionById(FunctionID, varID)
     if not varID == None: 
         if functionsDirectory.searchVariable(FunctionID, varID): 
             types = functionsDirectory.getVarType(FunctionID, varID)
             TypeStack.push(types)
-            NameStack.push(varID)
+            NameStack.push(varAddress)
     
         else: 
             print('EXIT')
@@ -387,15 +394,21 @@ def p_generateQuadPARAM(p):
     '''
     generateQuadPARAM : 
     '''
-    global Quads, CountParams, callID 
+    global Quads, CountParams, callID, FunctionID 
     argument = NameStack.pop() 
     currentType = TypeStack.pop()
     print("Argument: ", argument)
     print("Tipo: ", currentType)
     expectedParams = functionsDirectory.getParamsTypes(callID)
     nameParams = functionsDirectory.getParamsNames(callID)
-    arg = functionsDirectory.getDirectionById(callID, nameParams[CountParams - 1])
-    print("I am looking for a: ", nameParams[CountParams - 1])
+    print("LOS PARAMS")
+    print(nameParams)
+    print("Busko un: ", argument)
+    arg = functionsDirectory.getDirectionById(FunctionID, argument)
+    print("El ARG es: ", arg)
+    print("FUN ID ES: ", FunctionID)
+    print(nameParams[0])
+    print("I am looking for a: ", nameParams[CountParams])
 
     if CountParams >= len(expectedParams):
         print("Params size does NOT match expected one. Compiler was expecting # ", len(expectedParams), " parameters.") 
@@ -404,8 +417,9 @@ def p_generateQuadPARAM(p):
     if currentType != expectedParams[CountParams]: 
         print("Param Type does NOT match the expected one. Compiler was expecting type: ", expectedParams[CountParams])
         sys.exit()
-    
-    currentQuad = ('PARAM', argument, None, 'PARAM#' + str(CountParams + 1))
+    currOperator = memory.getOperatorCode('PARAM')
+    currentQuad = (currOperator, arg, argument, 'PARAM#' + str(CountParams + 1))
+    print(currentQuad)
     OperatorsStack.push('PARAM')
     Quads.append(currentQuad)
     
@@ -426,7 +440,8 @@ def p_generateQuadGOSUB(p):
     '''
     global Quads, Functions, callID
     gosubCall = p[-6] #-5? 
-    CurrentQuad = ('GOSUB', callID, None, functionsDirectory.getDirection(callID))
+    operator = memory.getOperatorCode('GOSUB')
+    CurrentQuad = (operator, callID, None, functionsDirectory.getDirection(callID))
     Quads.append(CurrentQuad)
 
 def p_fillEndProc(p): 
@@ -445,7 +460,8 @@ def p_functionERA(p):
     '''
     global Quads, CountParams, nameVar, paramsK 
     nameVar = p[-2]
-    CurrentQuad = ('ERA', None, None, nameVar)
+    currentOp = memory.getOperatorCode('ERA')
+    CurrentQuad = (currentOp, None, None, nameVar)
     Quads.append(CurrentQuad) 
     
 
@@ -485,9 +501,10 @@ def p_generateQuadREAD(p):
     if OperatorsStack.size() > 0: 
         if OperatorsStack.top() == 'read': 
             OperatorAux = OperatorsStack.pop() 
+            currentOp = memory.getOperatorCode(OperatorAux)
             value = NameStack.pop() 
             TypeStack.pop() 
-            currentQuad = (OperatorAux, None, None, value)
+            currentQuad = (currentOp, None, None, value)
             print('Read Quad : ', str(currentQuad))
             Quads.append(currentQuad)
 
@@ -527,9 +544,10 @@ def p_generateQuadPRINT(p):
     if OperatorsStack.size() > 0: 
         if OperatorsStack.top() == 'write': 
             OperatorAux = OperatorsStack.pop() 
+            currentOp = memory.getOperatorCode(OperatorAux)
             value = NameStack.pop() 
             TypeStack.pop() 
-            currentQuad = (OperatorAux, None, None, value)
+            currentQuad = (currentOp, None, None, value)
             print('Quad : ', str(currentQuad))
             Quads.append(currentQuad)
 
@@ -544,7 +562,8 @@ def p_LoopEnd(p):
     global NameStack, TypeStack, Quads, ConditionalJumpsStack
     End = ConditionalJumpsStack.pop() 
     Back = ConditionalJumpsStack.pop() 
-    currentQuad = ('Goto', None, None, Back)
+    currentOp = memory.getOperatorCode('Goto')
+    currentQuad = (currentOp, None, None, Back)
     print('Current Quad -> : ', str(currentQuad))
     Quads.append(currentQuad)
     FillQuad(End, -1)
@@ -579,7 +598,8 @@ def p_generateQuadFOR(p):
 
     if ResultType == 'bool': 
         value = NameStack.pop() 
-        currentQuad = ('GotoV', value, None, -1)
+        currOp = memory.getOperatorCode('GotoV')
+        currentQuad = (currOp, value, None, -1)
         print('Current Quad -> : ', str(currentQuad))
         Quads.append(currentQuad)
         ConditionalJumpsStack.push(len(Quads)-1)
@@ -610,7 +630,8 @@ def p_generateQuadWHILE(p):
 
     if ResultType == 'bool': 
         value = NameStack.pop()
-        currentQuad = ('GotoF', value, None, -1)
+        currOp = memory.getOperatorCode('GotoF')
+        currentQuad = (currOp, value, None, -1)
         Quads.append(currentQuad)
         print('Current Quad -> : ', str(currentQuad))
         ConditionalJumpsStack.push(len(Quads)-1)
@@ -642,7 +663,8 @@ def p_generateQuadIF(p):
     typeResult = TypeStack.pop() 
     if typeResult == 'bool': 
         value = NameStack.pop() 
-        currentQuad = ('GotoF', value, None, -1)
+        currOp = memory.getOperatorCode('GotoF')
+        currentQuad = (currOp, value, None, -1)
         print('Current Quad -> : ', str(currentQuad))
         Quads.append(currentQuad)
         ConditionalJumpsStack.push(len(Quads) -1)
@@ -664,7 +686,8 @@ def p_generateQuadELSE(p):
     generateQuadELSE :
     '''
     global Quads, ConditionalJumpsStack 
-    currentQuad = ('Goto', None, None, -1)
+    currOp = memory.getOperatorCode('Goto')
+    currentQuad = (currOp, None, None, -1)
     Quads.append(currentQuad)
     fAux = ConditionalJumpsStack.pop() 
     ConditionalJumpsStack.push(len(Quads)-1)
@@ -675,7 +698,7 @@ def p_generateQuadELSE(p):
 # =====================================================================
 
 def generateQuad(): 
-    global OperatorsStack, NameStack, TypeStack, Quads, tempCounter 
+    global OperatorsStack, NameStack, TypeStack, Quads, tempCounter, tempDictionary 
 
     if OperatorsStack.size() > 0: 
         currentOperator = OperatorsStack.pop() 
@@ -686,15 +709,21 @@ def generateQuad():
 
         print("-> ", RightType) 
 
+        currOperator = memory.getOperatorCode(currentOperator)
+
         typeResult = semanticCube.getType(LeftType, RightType, currentOperator)
 
         if typeResult != 'ERROR' : 
             result = avail.next() 
+            tempAddress = memory.assignMemory('temps', typeResult)
+            #memory.setAddressTemp(result, tempAddress)
             tempCounter += 1
-            currentQuad = (currentOperator, LeftOp, RightOp, result)
+            print("El temp es: ", tempAddress)
+            
+            currentQuad = (currOperator, LeftOp, RightOp, tempAddress)
             print('Current Quad -> : ', str(currentQuad))
             Quads.append(currentQuad)
-            NameStack.push(result)
+            NameStack.push(tempAddress)
             TypeStack.push(typeResult)
         
         else : 
@@ -818,6 +847,7 @@ def p_saveCTE(p):
     global cte, t 
     cte = p[-1]
     t = type(cte)
+    
     if t == int:
         TypeStack.push('int')
         NameStack.push(cte)
@@ -879,6 +909,8 @@ def p_addVar(p):
         virtualAddress = memory.assignMemory('global', currentTypeVar)
     else: 
         virtualAddress = memory.assignMemory('local', currentTypeVar)
+    
+    print("Se registró: ", varID, " con dirección en -> ", virtualAddress, " | en la funcion -> ", FunctionID)
     if not varID == None:
         if functionsDirectory.searchFunction(FunctionID): 
             functionsDirectory.addVariable(FunctionID, currentTypeVar, varID, virtualAddress)
@@ -983,7 +1015,8 @@ def p_endFunc(p):
     endFunc : 
     '''
     global Quads, tempCounter, FunctionID, functionsDirectory
-    CurrentQuad = ('ENDFUNC', None, None, -1)
+    currentOp = memory.getOperatorCode('ENDFUNC')
+    CurrentQuad = (currentOp, None, None, -1)
     Quads.append(CurrentQuad)
     currentVars = functionsDirectory.getNumberVars(FunctionID)
     print("Vars Number in ", FunctionID, " are: ", functionsDirectory.getNumberVars(FunctionID)) # Vars already has params and vars 
@@ -991,6 +1024,7 @@ def p_endFunc(p):
     print("Temps are: ", tempCounter)
     functionsDirectory.setTotalSize(FunctionID, currentVars + tempCounter)
     memory.cleanLocalMemory() 
+    avail.clear() 
     tempCounter = 0 
 
 def p_saveFunction(p): 

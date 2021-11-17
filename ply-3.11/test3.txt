@@ -31,9 +31,9 @@ VARS int: burro;
 
 principal()
 {
-    VARS int: a, b, c, qu, arreglo[10]; 
+    VARS int: a, b, c, qu, antuan; 
     float: j; 
-    read(a, b, c); 
+    read(antuan, b, c); 
     write(c, qu); 
     a = 1; 
     b = 2; 
@@ -52,7 +52,7 @@ principal()
     }
     write(a+b, c, qu); 
     TestFunction2(a, b, c + a, j);
-    funTest3(a); 
+    funTest3(antuan); 
     funTest4(); 
 
 }

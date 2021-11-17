@@ -81,14 +81,17 @@ class FunctionsDirectory():
         return self.funcDirectory[funcID]['nameParams']
     
     def getDirectionById(self, funcID, varID): 
-        if(self.searchVariable(funcID, varID)): 
+        if self.searchVariable('program', varID): 
+            return self.funcDirectory['program']['localVariables'].getAddress(varID)
+        elif(self.searchVariable(funcID, varID)): 
             return self.funcDirectory[funcID]['localVariables'].getAddress(varID)
         else: 
             print("Variable not declared yet.")
+    
 
     def printFunction(self, funcID): 
         print("ID: ", funcID)
-        print("Type: " + self.funcDirectory[funcID]['type'])
+        print("Type: ", self.funcDirectory[funcID]['type'])
         print("Number Of Params: ", self.funcDirectory[funcID]['numberParams'])
         print("Type Of Params: ")
         print(self.funcDirectory[funcID]['typeParams'])
