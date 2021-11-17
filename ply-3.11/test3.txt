@@ -1,28 +1,58 @@
 Program CheckFunctions; 
 VARS int: pe, q;  
+float: f1, f2; 
 
 function int TestFunction1(int: x)
 VARS int: z; 
 {
-    x = x + z; 
+    z = x + 10; 
     return(x); 
 }
 
-function void TestFunction2(char: c)
+function void TestFunction2(int: c, int: param1, int: param2, float: param3)
 VARS int: m; 
 {
-    m = 1; 
+    m = c + 1; 
     write(m); 
+}
+
+function void funTest3(int: p1)
+VARS int: brrrrr; 
+{
+    write(p1); 
+}
+
+function void funTest4()
+VARS int: burro; 
+{
+    burro = 1; 
+    write(burro); 
 }
 
 principal()
 {
-    VARS int: a, b, c, qu; 
-    read(a, b, c); 
+    VARS int: a, b, c, qu, antuan; 
+    float: j; 
+    read(antuan, b, c); 
     write(c, qu); 
     a = 1; 
     b = 2; 
     c = 4; 
     a = b + c; 
     b = pe; 
+    if(a < 10) then 
+    {
+        c = 51; 
+    }
+
+    while(b < 100) do
+    {
+        a = b + c; 
+        c = 10;
+    }
+    write(a+b, c, qu); 
+    TestFunction2(a, b, c + a, j);
+    funTest3(antuan); 
+    funTest4(); 
+
 }
