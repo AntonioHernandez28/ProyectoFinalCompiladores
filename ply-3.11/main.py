@@ -7,6 +7,7 @@ from SemanticCube import SemanticCube as Cube
 from avail import Avail
 from stack import Stack
 import sys 
+from Quadruples import Quadruples
 import os
 
 
@@ -146,9 +147,12 @@ oper_name_types = Stack()
 NameStack = Stack()
 TypeStack = Stack() 
 OperatorsStack = Stack() 
-Quads = []
+Quads = Quadruples()
+FinalQuads = None 
+ConstTable = []  
 
 avail = Avail()
+Quads2 = []
 
 semanticCube = Cube()
 ConditionalJumpsStack = Stack()
@@ -164,7 +168,7 @@ callID = ''
 tempCounter = 0 
 memory = Memory()
 tempDictionary = {} 
-constantTable = {}
+constantTable = []
 # =====================================================================
 # --------------------------- GRAMMAR RULES --------------------------
 # =====================================================================
@@ -219,8 +223,9 @@ def p_mainQuad(p):
     global ConditionalJumpsStack, Quads 
     currentOp = memory.getOperatorCode('GOTOPRINCIPAL')
     currentQuad = (currentOp, 'PRINCIPAL', -1, None)
-    Quads.append(currentQuad)
-    ConditionalJumpsStack.push(len(Quads)-1)
+    Quads.addQuad(currentOp, 'PRINCIPAL', -1, None)
+    Quads2.append(currentQuad)
+    ConditionalJumpsStack.push(len(Quads.quadruples)-1)
 
 def p_mainEnd(p): 
     '''
@@ -275,7 +280,8 @@ def p_generateAssignQuad(p):
                 print("Right Address: ", RightOp)
                 currentQuad = (currOperator, RightOp, None, LeftOp)
                 print('Current Quad: ', str(currentQuad))
-                Quads.append(currentQuad)
+                Quads.addQuad(currOperator, RightOp, None, LeftOp)
+                Quads2.append(currentQuad)
             
             else: 
                 print('Type Dissmatch.')
@@ -403,7 +409,7 @@ def p_generateQuadPARAM(p):
     expectedParams = functionsDirectory.getParamsTypes(callID)
     nameParams = functionsDirectory.getParamsNames(callID)
     print("LOS PARAMS")
-    print(nameParams)
+    print(nameParams[CountParams])
     print("Busko un: ", argument)
     arg = functionsDirectory.getDirectionById(FunctionID, argument)
     print("El ARG es: ", arg)
@@ -422,7 +428,8 @@ def p_generateQuadPARAM(p):
     currentQuad = (currOperator, arg, argument, 'PARAM#' + str(CountParams + 1))
     print(currentQuad)
     OperatorsStack.push('PARAM')
-    Quads.append(currentQuad)
+    Quads.addQuad(currOperator, arg, argument, 'PARAM#' + str(CountParams+1))
+    Quads2.append(currentQuad)
     
     
 
@@ -443,7 +450,8 @@ def p_generateQuadGOSUB(p):
     gosubCall = p[-6] #-5? 
     operator = memory.getOperatorCode('GOSUB')
     CurrentQuad = (operator, callID, None, functionsDirectory.getDirection(callID))
-    Quads.append(CurrentQuad)
+    Quads.addQuad(operator, callID, None, functionsDirectory.getDirection(callID))
+    Quads2.append(CurrentQuad)
 
 def p_fillEndProc(p): 
     '''
@@ -463,7 +471,8 @@ def p_functionERA(p):
     nameVar = p[-2]
     currentOp = memory.getOperatorCode('ERA')
     CurrentQuad = (currentOp, None, None, nameVar)
-    Quads.append(CurrentQuad) 
+    Quads.addQuad(currentOp, None, None, nameVar)
+    Quads2.append(CurrentQuad) 
     
 
 # =====================================================================
@@ -507,7 +516,8 @@ def p_generateQuadREAD(p):
             TypeStack.pop() 
             currentQuad = (currentOp, None, None, value)
             print('Read Quad : ', str(currentQuad))
-            Quads.append(currentQuad)
+            Quads.addQuad(currentOp, None, None, value)
+            Quads2.append(currentQuad)
 
 # =====================================================================
 # -------------------------------- WRITE -----------------------------
@@ -550,7 +560,8 @@ def p_generateQuadPRINT(p):
             TypeStack.pop() 
             currentQuad = (currentOp, None, None, value)
             print('Quad : ', str(currentQuad))
-            Quads.append(currentQuad)
+            Quads.addQuad(currentOp, None, None, value)
+            Quads2.append(currentQuad)
 
 # =====================================================================
 # -------------------------------- LOOPS -----------------------------
@@ -566,15 +577,16 @@ def p_LoopEnd(p):
     currentOp = memory.getOperatorCode('Goto')
     currentQuad = (currentOp, None, None, Back)
     print('Current Quad -> : ', str(currentQuad))
-    Quads.append(currentQuad)
+    Quads.addQuad(currentOp, None, None, Back)
+    Quads2.append(currentQuad)
     FillQuad(End, -1)
 
 def FillQuad(end, cont): #Used in IF section too. 
     global Quads
-    temp = list(Quads[end])
-    temp[3] = len(Quads)
-    Quads[end] = tuple(temp)
-    print('Fill -> Quad', Quads[end])
+    tempQuad = Quads.getQuadByAddress(end)
+    Quads.updateQuad(tempQuad['operator'], tempQuad['leftOp'], tempQuad['rightOp'], len(Quads.quadruples), end)
+    print('Fill -> Quad', Quads.quadruples[end])
+
 
 # FOR LOOP 
 def p_for(p): 
@@ -588,7 +600,7 @@ def p_forOP(p):
     '''
     global OperatorsStack, Quads, ConditionalJumpsStack
     OperatorsStack.push('for')
-    ConditionalJumpsStack.push(len(Quads))
+    ConditionalJumpsStack.push(len(Quads.quadruples))
 
 def p_generateQuadFOR(p): 
     '''
@@ -602,8 +614,9 @@ def p_generateQuadFOR(p):
         currOp = memory.getOperatorCode('GotoV')
         currentQuad = (currOp, value, None, -1)
         print('Current Quad -> : ', str(currentQuad))
-        Quads.append(currentQuad)
-        ConditionalJumpsStack.push(len(Quads)-1)
+        Quads.addQuad(currOp, value, None, -1)
+        Quads2.append(currentQuad)
+        ConditionalJumpsStack.push(len(Quads.quadruples)-1)
     else: 
         print('Error in For Quad.')
         sys.exit() 
@@ -620,7 +633,7 @@ def p_whileOP(p):
     '''
     global OperatorsStack, Quads, ConditionalJumpsStack
     OperatorsStack.push('while')
-    ConditionalJumpsStack.push(len(Quads))
+    ConditionalJumpsStack.push(len(Quads.quadruples))
 
 def p_generateQuadWHILE(p): 
     '''
@@ -633,9 +646,10 @@ def p_generateQuadWHILE(p):
         value = NameStack.pop()
         currOp = memory.getOperatorCode('GotoF')
         currentQuad = (currOp, value, None, -1)
-        Quads.append(currentQuad)
+        Quads.addQuad(currOp, value, None, -1)
+        Quads2.append(currentQuad)
         print('Current Quad -> : ', str(currentQuad))
-        ConditionalJumpsStack.push(len(Quads)-1)
+        ConditionalJumpsStack.push(len(Quads.quadruples)-1)
     else: 
         print('Error in While Quad.')
         sys.exit() 
@@ -667,8 +681,9 @@ def p_generateQuadIF(p):
         currOp = memory.getOperatorCode('GotoF')
         currentQuad = (currOp, value, None, -1)
         print('Current Quad -> : ', str(currentQuad))
-        Quads.append(currentQuad)
-        ConditionalJumpsStack.push(len(Quads) -1)
+        Quads.addQuad(currOp, value, None, -1)
+        Quads2.append(currentQuad)
+        ConditionalJumpsStack.push(len(Quads.quadruples) -1)
     
     else: 
         print('Type Dismatch.') 
@@ -689,9 +704,10 @@ def p_generateQuadELSE(p):
     global Quads, ConditionalJumpsStack 
     currOp = memory.getOperatorCode('Goto')
     currentQuad = (currOp, None, None, -1)
-    Quads.append(currentQuad)
+    Quads.addQuad(currOp, None, None, -1)
+    Quads2.append(currentQuad)
     fAux = ConditionalJumpsStack.pop() 
-    ConditionalJumpsStack.push(len(Quads)-1)
+    ConditionalJumpsStack.push(len(Quads.quadruples)-1)
     FillQuad(fAux, -1)
 
 # =====================================================================
@@ -723,7 +739,8 @@ def generateQuad():
             
             currentQuad = (currOperator, LeftOp, RightOp, tempAddress)
             print('Current Quad -> : ', str(currentQuad))
-            Quads.append(currentQuad)
+            Quads.addQuad(currOperator, LeftOp, RightOp, tempAddress)
+            Quads2.append(currentQuad)
             NameStack.push(tempAddress)
             TypeStack.push(typeResult)
         
@@ -842,6 +859,18 @@ def p_pexp(p):
          | empty
     '''   
 
+def searchConstant(constant): 
+    for const in constantTable: 
+        if const['constant'] == constant: 
+            return True 
+    return False
+
+def getConstantAddress(constant): 
+    for const in constantTable: 
+        if const['constant'] == constant: 
+            return const['address']
+    print("Constant not found.")
+
 def p_saveCTE(p): # Dont forget check string fixes in memory !!!!!!!!!!!!!!!!!!
     ''' saveCTE : '''
     print("Entro al CTE")
@@ -851,33 +880,43 @@ def p_saveCTE(p): # Dont forget check string fixes in memory !!!!!!!!!!!!!!!!!!
 
     if t == int:
         TypeStack.push('int')
-        if not cte in constantTable: 
+        if not searchConstant(cte): 
             virtualAddress = memory.assignMemory('constants', 'int')
-            constantTable[cte] = {
-                'address' : virtualAddress
-            }
+            constantTable.append(
+                {
+                    'constant' : cte, 
+                    'address' : virtualAddress
+                }
+            )
+            print("Constant added.")
         else: 
-            virtualAddress = constantTable[cte]
+            virtualAddress = getConstantAddress(cte)
         NameStack.push(virtualAddress)
     elif t == float: 
         TypeStack.push('float')
-        if not cte in constantTable: 
+        if not searchConstant(cte): 
             virtualAddress = memory.assignMemory('constants', 'int')
-            constantTable[cte] = {
-                'address' : virtualAddress
-            }
+            constantTable.append(
+                {
+                    'constant' : cte, 
+                    'address' : virtualAddress
+                }
+            )
         else: 
-            virtualAddress = constantTable[cte]
+            virtualAddress = getConstantAddress(cte)
         NameStack.push(virtualAddress)
     else: 
         TypeStack.push('char')
-        if not cte in constantTable: 
+        if not searchConstant(cte): 
             virtualAddress = memory.assignMemory('constants', 'int')
-            constantTable[cte] = {
-                'address' : virtualAddress
-            }
+            constantTable.append(
+                {
+                    'constant' : cte, 
+                    'address' : virtualAddress
+                }
+            )
         else: 
-            virtualAddress = constantTable[cte]
+            virtualAddress = getConstantAddress(cte)
         NameStack.push(virtualAddress)
     
     
@@ -992,7 +1031,7 @@ def p_setStartDirection(p):
     '''
     global FunctionID 
     print("Global ID in start Direction is: ", FunctionID)
-    functionsDirectory.setStartDir(FunctionID, len(Quads)) 
+    functionsDirectory.setStartDir(FunctionID, len(Quads.quadruples)) 
 
 #Fix bug with multiple params. 
 def p_addParameter(p): 
@@ -1041,7 +1080,8 @@ def p_endFunc(p):
     global Quads, tempCounter, FunctionID, functionsDirectory
     currentOp = memory.getOperatorCode('ENDFUNC')
     CurrentQuad = (currentOp, None, None, -1)
-    Quads.append(CurrentQuad)
+    Quads.addQuad(currentOp, None, None, -1)
+    Quads2.append(CurrentQuad)
     currentVars = functionsDirectory.getNumberVars(FunctionID)
     print("Vars Number in ", FunctionID, " are: ", functionsDirectory.getNumberVars(FunctionID)) # Vars already has params and vars 
     print("Param number are: ", functionsDirectory.getNumberParameters(FunctionID))
@@ -1104,8 +1144,9 @@ parser = yacc.yacc()
 # =====================================================================
 
 def main(): 
+    
     try: 
-        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test3.txt'
+        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test4.txt'
         currentFile = open(fileName, 'r')
         print("Current File is: " + fileName)
         info = currentFile.read() 
@@ -1121,16 +1162,15 @@ def main():
         else: 
             print("SYNTAX ERROR")
         cont = 0 
-        for i in Quads: 
+        for i in Quads2: 
             print('Final Quad #', cont, ' : ', str(i))
             cont = cont + 1
         
-        print("Constant Table:")
-        for key in constantTable: 
-            print(key, " <-> ", constantTable[key])
     
     except EOFError: 
         print(EOFError)
-
-main()
+    
+FinalQuads = Quads 
+ConstTable = constantTable
+#main()
 

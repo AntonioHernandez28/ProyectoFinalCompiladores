@@ -61,5 +61,41 @@ hashMapHandler = {
     26 : operations.ver
 }
 
+quadruples = []
+quadCounter = 0 
+
+def main(): 
+    global quadCounter
+
+    file2open = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\quads.txt'
+    file2open2 = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\consts.txt'
+    file = open(file2open, 'r')
+    fileConst = open(file2open2, 'r')
+    lines = file.readlines() 
+    consts = fileConst.readlines()
+    file.close()
+    fileConst.close()
+
+    for line in lines: 
+        line = json.loads(line)
+        quadruples.append(line)
+    
+    operations.loadConstantTable(consts)
+
+    while quadCounter < len(quadruples): 
+        #print("Entro a los quad we")
+        print(quadruples[quadCounter]['operator'])
+        newQuadNumber = hashMapHandler[quadruples[quadCounter]['operator']](quadruples[quadCounter])
+        if newQuadNumber: 
+            quadCounter = newQuadNumber
+        else: 
+            quadCounter += 1
+
+main()
+
+
+
+
+
 
 

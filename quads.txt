@@ -1,0 +1,16 @@
+{"QuadNo": 0, "operator": 18, "leftOp": "PRINCIPAL", "rightOp": -1, "result": 8}
+{"QuadNo": 1, "operator": 17, "leftOp": null, "rightOp": null, "result": 9001}
+{"QuadNo": 2, "operator": 19, "leftOp": null, "rightOp": null, "result": -1}
+{"QuadNo": 3, "operator": 17, "leftOp": null, "rightOp": null, "result": 9002}
+{"QuadNo": 4, "operator": 20, "leftOp": null, "rightOp": null, "result": "myFunc2"}
+{"QuadNo": 5, "operator": 21, "leftOp": null, "rightOp": 9001, "result": "PARAM#1"}
+{"QuadNo": 6, "operator": 22, "leftOp": "myFunc2", "rightOp": null, "result": 1}
+{"QuadNo": 7, "operator": 19, "leftOp": null, "rightOp": null, "result": -1}
+{"QuadNo": 8, "operator": 13, "leftOp": 28001, "rightOp": null, "result": 9003}
+{"QuadNo": 9, "operator": 13, "leftOp": 28002, "rightOp": null, "result": 9002}
+{"QuadNo": 10, "operator": 20, "leftOp": null, "rightOp": null, "result": "myFunc1"}
+{"QuadNo": 11, "operator": 21, "leftOp": null, "rightOp": 9003, "result": "PARAM#1"}
+{"QuadNo": 12, "operator": 21, "leftOp": null, "rightOp": 9002, "result": "PARAM#2"}
+{"QuadNo": 13, "operator": 22, "leftOp": "myFunc1", "rightOp": null, "result": 3}
+{"QuadNo": 14, "operator": 13, "leftOp": 28003, "rightOp": null, "result": 9001}
+{"QuadNo": 15, "operator": 17, "leftOp": null, "rightOp": null, "result": 9001}

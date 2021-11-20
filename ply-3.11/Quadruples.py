@@ -20,6 +20,12 @@ class Quadruples:
             'result' : result
         }
     
+    def getQuadByAddress(self, address): 
+        if address >= 0 and address < len(self.quadruples): 
+            return self.quadruples[address]
+        else:
+            print("Requested Quad was not found.") 
+    
     def displayQuads(self): 
        for quadruple in self.quadruples:
             print(str(quadruple["QuadNo"]) 

@@ -5,31 +5,36 @@ import json
 import sys 
 
 class OperationHandler: 
-    def __int__(self): 
+    def __init__(self): 
         self.virtualMemory = VirtualMemory()
         self.jumpStack = Stack() 
     
     def loadConstantTable(self, constants): 
         for i in constants: 
             currentConstant = json.loads(i)
+            print(str(currentConstant['constant']))
+            print(str(currentConstant['address']))
             self.virtualMemory.updateMemory(
-                currentConstant['constant'],
-                currentConstant['virtualAddress']
+                currentConstant['address'],
+                currentConstant['constant']
             )
         
     def assign(self, quad): 
         leftOp = quad['leftOp']
         result = quad['result']
+        print(str(quad))
+        print("a br -> ", self.virtualMemory.getValue(leftOp))
         self.virtualMemory.updateMemory(
             result, 
             self.virtualMemory.getValue(leftOp)
         )
     
     def write(self, quad): 
+        print("WRITE QUAD -> ", quad)
         value = self.virtualMemory.getValue(
             quad['result']
         )
-        print(value)
+        print("Compiler writes: ", value)
     
     def read(self, quad): 
         value = input()
@@ -60,12 +65,14 @@ class OperationHandler:
         return None 
     
     def plusOperator(self, quad): 
+        print("PLUS QUAD: ", str(quad))
         leftOp = self.virtualMemory.getValue(quad['leftOp'])
         rightOp = self.virtualMemory.getValue(quad['rightOp'])
         self.virtualMemory.updateMemory(
             quad['result'], 
             leftOp + rightOp
         )
+        print("Se guardo: ", leftOp + rightOp, " en la dir: ", quad['result'], ", funciono? ", self.virtualMemory.getValue(quad['result']))
         return None 
     
     def minusOperator(self, quad): 
@@ -174,9 +181,10 @@ class OperationHandler:
         self.virtualMemory.newLocalMemory() 
         return None 
     
-    def param(self, quad): 
+    def param(self, quad):
+        print("Param Quad: ", str(quad))
         self.virtualMemory.insertParameter(
-            self.virtualMemory.getValue(quad['leftOp'])
+            self.virtualMemory.getValue(quad['rightOp'])
         )
         return None 
     

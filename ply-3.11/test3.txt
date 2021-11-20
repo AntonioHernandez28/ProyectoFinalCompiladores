@@ -9,9 +9,10 @@ VARS int: z;
     return(x); 
 }
 
-function void TestFunction2(int: c, int: param1, int: param2, float: param3)
+function void TestFunction2(int: c, int: param1, int: param2, int: param3)
 VARS int: m; 
 {
+    write(param1); 
     m = c + 1; 
     write(m); 
 }
@@ -33,13 +34,17 @@ principal()
 {
     VARS int: a, b, c, qu, antuan; 
     float: j; 
-    read(antuan, b, c); 
-    write(c, qu); 
+    char: ch1; 
+    ch1 = 'a'; 
     a = 1; 
     b = 2; 
     c = 4; 
+    q = 1062012;
     a = b + c; 
-    b = pe; 
+    pe = 12345;
+    b = pe;
+    qu = 10000000;  
+    write(c, qu); 
     if(a < 10) then 
     {
         c = 51; 
@@ -51,7 +56,8 @@ principal()
         c = 10;
     }
     write(a+b, c, qu); 
-    TestFunction2(a, b, c + a, j);
+    TestFunction2(a, b, c + a, qu);
+    antuan = 28; 
     funTest3(antuan); 
     funTest4(); 
     a = q + pe * 14; 
