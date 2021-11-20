@@ -164,6 +164,7 @@ callID = ''
 tempCounter = 0 
 memory = Memory()
 tempDictionary = {} 
+constantTable = {}
 # =====================================================================
 # --------------------------- GRAMMAR RULES --------------------------
 # =====================================================================
@@ -841,22 +842,45 @@ def p_pexp(p):
          | empty
     '''   
 
-def p_saveCTE(p): 
+def p_saveCTE(p): # Dont forget check string fixes in memory !!!!!!!!!!!!!!!!!!
     ''' saveCTE : '''
     print("Entro al CTE")
     global cte, t 
     cte = p[-1]
     t = type(cte)
-    
+
     if t == int:
         TypeStack.push('int')
-        NameStack.push(cte)
+        if not cte in constantTable: 
+            virtualAddress = memory.assignMemory('constants', 'int')
+            constantTable[cte] = {
+                'address' : virtualAddress
+            }
+        else: 
+            virtualAddress = constantTable[cte]
+        NameStack.push(virtualAddress)
     elif t == float: 
         TypeStack.push('float')
-        NameStack.push(cte)
+        if not cte in constantTable: 
+            virtualAddress = memory.assignMemory('constants', 'int')
+            constantTable[cte] = {
+                'address' : virtualAddress
+            }
+        else: 
+            virtualAddress = constantTable[cte]
+        NameStack.push(virtualAddress)
     else: 
         TypeStack.push('char')
-        NameStack.push(cte)
+        if not cte in constantTable: 
+            virtualAddress = memory.assignMemory('constants', 'int')
+            constantTable[cte] = {
+                'address' : virtualAddress
+            }
+        else: 
+            virtualAddress = constantTable[cte]
+        NameStack.push(virtualAddress)
+    
+    
 
 def p_saveOperator(p): 
     ''' saveOperator : '''
@@ -1100,6 +1124,10 @@ def main():
         for i in Quads: 
             print('Final Quad #', cont, ' : ', str(i))
             cont = cont + 1
+        
+        print("Constant Table:")
+        for key in constantTable: 
+            print(key, " <-> ", constantTable[key])
     
     except EOFError: 
         print(EOFError)

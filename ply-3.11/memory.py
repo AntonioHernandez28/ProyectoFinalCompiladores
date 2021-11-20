@@ -1,11 +1,6 @@
+import sys
 class Memory: 
     def __init__(self): 
-    
-        self.Globals = {}
-        self.Locals = {}
-        self.Temporals = {}
-        self.Constants = {}
-
         self.operators = {
             '+' : 1, 
             '-' : 2, 
@@ -31,7 +26,8 @@ class Memory:
             'GOSUB' : 22, 
             'Goto' : 23, 
             'GotoF' : 24, 
-            'GotoV' : 25
+            'GotoV' : 25, 
+            'VER' : 26
         }
         
         self.COUNTERS = {
@@ -49,7 +45,12 @@ class Memory:
                 'int' : 18000, 
                 'float' : 20000, 
                 'char' : 22000, 
-                'bool' : 25000
+                'bool' : 25000,
+            }, 
+            'constants' : {
+                'int' : 28000, 
+                'float' : 30000, 
+                'char' : 32000
             }
         }
 
@@ -69,6 +70,11 @@ class Memory:
                 'float' : 22000, 
                 'char' : 25000, 
                 'bool' : 27000
+            }, 
+            'constants' : {
+                'int' : 30000, 
+                'float' : 32000, 
+                'char' : 34000
             }
         }
 
@@ -76,6 +82,9 @@ class Memory:
         if self.COUNTERS[context][type] < self.LIMITS[context][type]: 
             self.COUNTERS[context][type] += 1 
             return self.COUNTERS[context][type]
+        else: 
+            print("No more space in memory :( ")
+            sys.exit()
     
     def cleanLocalMemory(self): 
         self.COUNTERS['local']['int'] = 9000

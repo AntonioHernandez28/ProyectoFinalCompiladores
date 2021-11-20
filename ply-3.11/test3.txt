@@ -54,5 +54,5 @@ principal()
     TestFunction2(a, b, c + a, j);
     funTest3(antuan); 
     funTest4(); 
-
+    a = q + pe * 14; 
 }
