@@ -2,12 +2,10 @@ Program programForTesting;
 VARS 
 int: globalA; 
 
-function int funTierra(int: a)
+function int funTierra(int: a, int: b, int: c)
 VARS int: b; 
 {
-    a = 11; 
-    b = 1; 
-    return(b + a); 
+    return(a + b); 
 }
 
 function void fun2(int: a)
@@ -19,8 +17,10 @@ VARS int: b;
 
 principal()
 {
-    VARS int: a, b;
+    VARS int: a, b, c;
     a = 1;  
-    b = funTierra(a); 
-    write(a); 
+    b = 10; 
+    c = 2;
+    b = funTierra(a, b, c);
+    write(b); 
 }

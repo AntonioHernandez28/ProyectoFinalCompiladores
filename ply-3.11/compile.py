@@ -20,7 +20,7 @@ def exportConstants(file):
         OutputFile.write(str(const) + '\n')
 
 def main(): 
-    file2open = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test4.txt'
+    file2open = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test5.txt'
     file = open(file2open, 'r')
     code = file.read() 
     parser.parse(code, tracking=True)

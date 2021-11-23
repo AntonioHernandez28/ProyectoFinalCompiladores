@@ -33,7 +33,7 @@ Rule 16    statements -> if statements
 Rule 17    statements -> empty
 Rule 18    assign -> ID add_id2 EQUALS saveOperator exp generateAssignQuad
 Rule 19    assign -> ID arrStatement EQUALS saveOperator exp generateAssignQuad
-Rule 20    assign -> ID add_id2 EQUALS functionCall generateAssignQuad
+Rule 20    assign -> ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
 Rule 21    generateAssignQuad -> <empty>
 Rule 22    add_id -> <empty>
 Rule 23    add_id2 -> <empty>
@@ -159,9 +159,10 @@ Rule 142   args -> empty
 Rule 143   args1 -> ID addVar
 Rule 144   args1 -> ID COMMA args1
 Rule 145   args1 -> empty
-Rule 146   return -> RETURN LPAREN exp RPAREN SEMMICOLON
-Rule 147   return -> RETURN LPAREN exp RPAREN
-Rule 148   empty -> <empty>
+Rule 146   return -> RETURN LPAREN exp generateQuadRETURN RPAREN SEMMICOLON
+Rule 147   return -> RETURN LPAREN exp generateQuadRETURN RPAREN
+Rule 148   generateQuadRETURN -> <empty>
+Rule 149   empty -> <empty>
 
 Terminals, with rules where they appear
 
@@ -264,6 +265,7 @@ generateQuadOR       : 64 65
 generateQuadPARAM    : 31 32
 generateQuadPRINT    : 47 48
 generateQuadREAD     : 40 41
+generateQuadRETURN   : 146 147
 generateQuadSUM      : 79 80
 generateQuadVER      : 95
 generateQuadWHILE    : 55
@@ -293,7 +295,7 @@ return               : 128
 saveCTE              : 87 88 89 90
 saveFunType          : 120 121 122 123
 saveFunction         : 7 126 128
-saveOperator         : 18 19 65 68 72 73 74 75 76 79 80 83 84
+saveOperator         : 18 19 20 65 68 72 73 74 75 76 79 80 83 84
 saveTypeVar          : 115 116 117 134 135 136
 setArraySize         : 118
 setStartDirection    : 126 128
@@ -364,16 +366,16 @@ state 5
     (103) vars -> . empty
     (6) program2 -> . principal
     (104) var -> . VARS var2
-    (148) empty -> .
+    (149) empty -> .
     (7) principal -> . PRINCIPAL saveFunction LPAREN RPAREN LCURLY vars statements RCURLY
 
   ! shift/reduce conflict for PRINCIPAL resolved as shift
     VARS            shift and go to state 12
-    FUNCTION        reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    FUNCTION        reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
     PRINCIPAL       shift and go to state 13
 
-  ! PRINCIPAL       [ reduce using rule 148 (empty -> .) ]
+  ! PRINCIPAL       [ reduce using rule 149 (empty -> .) ]
 
     program1                       shift and go to state 6
     vars                           shift and go to state 7
@@ -454,22 +456,22 @@ state 12
     (104) var -> VARS . var2
     (105) var2 -> . var2 type TWOPOINTS var1 SEMMICOLON addVar
     (106) var2 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
-    INT             reduce using rule 148 (empty -> .)
-    CHAR            reduce using rule 148 (empty -> .)
-    FLOAT           reduce using rule 148 (empty -> .)
-    FUNCTION        reduce using rule 148 (empty -> .)
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
-    ID              reduce using rule 148 (empty -> .)
-    READ            reduce using rule 148 (empty -> .)
-    WRITE           reduce using rule 148 (empty -> .)
-    FOR             reduce using rule 148 (empty -> .)
-    WHILE           reduce using rule 148 (empty -> .)
-    IF              reduce using rule 148 (empty -> .)
-    RCURLY          reduce using rule 148 (empty -> .)
-    LCURLY          reduce using rule 148 (empty -> .)
+    INT             reduce using rule 149 (empty -> .)
+    CHAR            reduce using rule 149 (empty -> .)
+    FLOAT           reduce using rule 149 (empty -> .)
+    FUNCTION        reduce using rule 149 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
+    ID              reduce using rule 149 (empty -> .)
+    READ            reduce using rule 149 (empty -> .)
+    WRITE           reduce using rule 149 (empty -> .)
+    FOR             reduce using rule 149 (empty -> .)
+    WHILE           reduce using rule 149 (empty -> .)
+    IF              reduce using rule 149 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    LCURLY          reduce using rule 149 (empty -> .)
 
     var2                           shift and go to state 15
     empty                          shift and go to state 16
@@ -492,11 +494,11 @@ state 14
     (122) functions -> . FUNCTION FLOAT saveFunType functions2 endFunc functions
     (123) functions -> . FUNCTION VOID saveFunType functions1 endFunc functions
     (124) functions -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     FUNCTION        shift and go to state 19
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions                      shift and go to state 18
     empty                          shift and go to state 20
@@ -693,10 +695,10 @@ state 31
     (109) var1 -> . ID createArr arr
     (110) var1 -> . ID createArr arr COMMA var1 addVar
     (111) var1 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 42
-    SEMMICOLON      reduce using rule 148 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
 
     var1                           shift and go to state 41
     empty                          shift and go to state 43
@@ -741,12 +743,12 @@ state 37
     (120) functions -> FUNCTION INT saveFunType . functions2 endFunc functions
     (128) functions2 -> . ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements return RCURLY
     (129) functions2 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 46
-    FUNCTION        reduce using rule 148 (empty -> .)
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    FUNCTION        reduce using rule 149 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions2                     shift and go to state 45
     empty                          shift and go to state 47
@@ -756,12 +758,12 @@ state 38
     (121) functions -> FUNCTION CHAR saveFunType . functions2 endFunc functions
     (128) functions2 -> . ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements return RCURLY
     (129) functions2 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 46
-    FUNCTION        reduce using rule 148 (empty -> .)
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    FUNCTION        reduce using rule 149 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions2                     shift and go to state 48
     empty                          shift and go to state 47
@@ -771,12 +773,12 @@ state 39
     (122) functions -> FUNCTION FLOAT saveFunType . functions2 endFunc functions
     (128) functions2 -> . ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements return RCURLY
     (129) functions2 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 46
-    FUNCTION        reduce using rule 148 (empty -> .)
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    FUNCTION        reduce using rule 149 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions2                     shift and go to state 49
     empty                          shift and go to state 47
@@ -786,12 +788,12 @@ state 40
     (123) functions -> FUNCTION VOID saveFunType . functions1 endFunc functions
     (126) functions1 -> . ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements RCURLY
     (127) functions1 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 51
-    FUNCTION        reduce using rule 148 (empty -> .)
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    FUNCTION        reduce using rule 149 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions1                     shift and go to state 50
     empty                          shift and go to state 52
@@ -830,16 +832,16 @@ state 44
     (102) vars -> . var
     (103) vars -> . empty
     (104) var -> . VARS var2
-    (148) empty -> .
+    (149) empty -> .
 
     VARS            shift and go to state 12
-    ID              reduce using rule 148 (empty -> .)
-    READ            reduce using rule 148 (empty -> .)
-    WRITE           reduce using rule 148 (empty -> .)
-    FOR             reduce using rule 148 (empty -> .)
-    WHILE           reduce using rule 148 (empty -> .)
-    IF              reduce using rule 148 (empty -> .)
-    RCURLY          reduce using rule 148 (empty -> .)
+    ID              reduce using rule 149 (empty -> .)
+    READ            reduce using rule 149 (empty -> .)
+    WRITE           reduce using rule 149 (empty -> .)
+    FOR             reduce using rule 149 (empty -> .)
+    WHILE           reduce using rule 149 (empty -> .)
+    IF              reduce using rule 149 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
 
     vars                           shift and go to state 56
     var                            shift and go to state 9
@@ -955,10 +957,10 @@ state 54
     (109) var1 -> . ID createArr arr
     (110) var1 -> . ID createArr arr COMMA var1 addVar
     (111) var1 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 42
-    SEMMICOLON      reduce using rule 148 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
 
     var1                           shift and go to state 64
     empty                          shift and go to state 43
@@ -986,14 +988,14 @@ state 56
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1001,7 +1003,7 @@ state 56
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
 
     statements                     shift and go to state 67
     assign                         shift and go to state 68
@@ -1021,11 +1023,11 @@ state 57
     (122) functions -> . FUNCTION FLOAT saveFunType functions2 endFunc functions
     (123) functions -> . FUNCTION VOID saveFunType functions1 endFunc functions
     (124) functions -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     FUNCTION        shift and go to state 19
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions                      shift and go to state 82
     empty                          shift and go to state 20
@@ -1045,11 +1047,11 @@ state 59
     (122) functions -> . FUNCTION FLOAT saveFunType functions2 endFunc functions
     (123) functions -> . FUNCTION VOID saveFunType functions1 endFunc functions
     (124) functions -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     FUNCTION        shift and go to state 19
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions                      shift and go to state 84
     empty                          shift and go to state 20
@@ -1062,11 +1064,11 @@ state 60
     (122) functions -> . FUNCTION FLOAT saveFunType functions2 endFunc functions
     (123) functions -> . FUNCTION VOID saveFunType functions1 endFunc functions
     (124) functions -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     FUNCTION        shift and go to state 19
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions                      shift and go to state 85
     empty                          shift and go to state 20
@@ -1079,11 +1081,11 @@ state 61
     (122) functions -> . FUNCTION FLOAT saveFunType functions2 endFunc functions
     (123) functions -> . FUNCTION VOID saveFunType functions1 endFunc functions
     (124) functions -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     FUNCTION        shift and go to state 19
-    PRINCIPAL       reduce using rule 148 (empty -> .)
-    $end            reduce using rule 148 (empty -> .)
+    PRINCIPAL       reduce using rule 149 (empty -> .)
+    $end            reduce using rule 149 (empty -> .)
 
     functions                      shift and go to state 86
     empty                          shift and go to state 20
@@ -1174,14 +1176,14 @@ state 70
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1189,7 +1191,7 @@ state 70
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    SEMMICOLON      reduce using rule 148 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
 
     read                           shift and go to state 70
     statements                     shift and go to state 94
@@ -1214,14 +1216,14 @@ state 71
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1229,7 +1231,7 @@ state 71
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    SEMMICOLON      reduce using rule 148 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
 
     write                          shift and go to state 71
     statements                     shift and go to state 95
@@ -1254,14 +1256,14 @@ state 72
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1269,9 +1271,9 @@ state 72
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     for                            shift and go to state 72
     statements                     shift and go to state 96
@@ -1296,14 +1298,14 @@ state 73
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1311,9 +1313,9 @@ state 73
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     while                          shift and go to state 73
     statements                     shift and go to state 97
@@ -1338,14 +1340,14 @@ state 74
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1353,9 +1355,9 @@ state 74
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     if                             shift and go to state 74
     statements                     shift and go to state 98
@@ -1380,20 +1382,20 @@ state 76
 
     (18) assign -> ID . add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> ID . arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> ID . add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> ID . add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> ID . validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (23) add_id2 -> .
     (95) arrStatement -> . LBRACKET checkArray exp generateQuadVER RBRACKET getArrFinalAddress
     (96) arrStatement -> . empty
     (27) validateFunctionID -> .
-    (148) empty -> .
+    (149) empty -> .
 
   ! reduce/reduce conflict for EQUALS resolved using rule 23 (add_id2 -> .)
     EQUALS          reduce using rule 23 (add_id2 -> .)
     LBRACKET        shift and go to state 102
     LPAREN          reduce using rule 27 (validateFunctionID -> .)
 
-  ! EQUALS          [ reduce using rule 148 (empty -> .) ]
+  ! EQUALS          [ reduce using rule 149 (empty -> .) ]
 
     add_id2                        shift and go to state 99
     arrStatement                   shift and go to state 100
@@ -1459,12 +1461,12 @@ state 83
     (134) paramsAux -> . INT saveTypeVar TWOPOINTS ID addParameter nextParam
     (135) paramsAux -> . FLOAT saveTypeVar TWOPOINTS ID addParameter nextParam
     (136) paramsAux -> . CHAR saveTypeVar TWOPOINTS ID addParameter nextParam
-    (148) empty -> .
+    (149) empty -> .
 
     INT             shift and go to state 112
     FLOAT           shift and go to state 113
     CHAR            shift and go to state 114
-    RPAREN          reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
     parameters                     shift and go to state 109
     paramsAux                      shift and go to state 110
@@ -1502,12 +1504,12 @@ state 87
     (134) paramsAux -> . INT saveTypeVar TWOPOINTS ID addParameter nextParam
     (135) paramsAux -> . FLOAT saveTypeVar TWOPOINTS ID addParameter nextParam
     (136) paramsAux -> . CHAR saveTypeVar TWOPOINTS ID addParameter nextParam
-    (148) empty -> .
+    (149) empty -> .
 
     INT             shift and go to state 112
     FLOAT           shift and go to state 113
     CHAR            shift and go to state 114
-    RPAREN          reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
     parameters                     shift and go to state 115
     paramsAux                      shift and go to state 110
@@ -1528,10 +1530,10 @@ state 89
     (109) var1 -> . ID createArr arr
     (110) var1 -> . ID createArr arr COMMA var1 addVar
     (111) var1 -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 42
-    SEMMICOLON      reduce using rule 148 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
 
     var1                           shift and go to state 116
     empty                          shift and go to state 43
@@ -1565,14 +1567,14 @@ state 92
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1580,9 +1582,9 @@ state 92
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     assign                         shift and go to state 68
     statements                     shift and go to state 118
@@ -1607,14 +1609,14 @@ state 93
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1622,9 +1624,9 @@ state 93
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     functionCall                   shift and go to state 69
     statements                     shift and go to state 119
@@ -1680,7 +1682,7 @@ state 98
 state 99
 
     (18) assign -> ID add_id2 . EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> ID add_id2 . EQUALS functionCall generateAssignQuad
+    (20) assign -> ID add_id2 . EQUALS saveOperator functionCall generateAssignQuad
 
     EQUALS          shift and go to state 122
 
@@ -1775,7 +1777,7 @@ state 106
     (52) for -> FOR forOP . assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
 
     ID              shift and go to state 129
 
@@ -1818,7 +1820,7 @@ state 108
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -1826,18 +1828,18 @@ state 108
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
     exp                            shift and go to state 132
     nexp                           shift and go to state 133
@@ -1951,14 +1953,14 @@ state 120
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -1966,9 +1968,9 @@ state 120
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     read                           shift and go to state 70
     statements                     shift and go to state 153
@@ -1993,14 +1995,14 @@ state 121
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -2008,9 +2010,9 @@ state 121
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     write                          shift and go to state 71
     statements                     shift and go to state 154
@@ -2025,11 +2027,10 @@ state 121
 state 122
 
     (18) assign -> ID add_id2 EQUALS . saveOperator exp generateAssignQuad
-    (20) assign -> ID add_id2 EQUALS . functionCall generateAssignQuad
+    (20) assign -> ID add_id2 EQUALS . saveOperator functionCall generateAssignQuad
     (101) saveOperator -> .
-    (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
 
-  ! shift/reduce conflict for ID resolved as shift
+    ID              reduce using rule 101 (saveOperator -> .)
     CTEI            reduce using rule 101 (saveOperator -> .)
     CTEF            reduce using rule 101 (saveOperator -> .)
     CTEC            reduce using rule 101 (saveOperator -> .)
@@ -2048,12 +2049,8 @@ state 122
     DIV             reduce using rule 101 (saveOperator -> .)
     SEMMICOLON      reduce using rule 101 (saveOperator -> .)
     TO              reduce using rule 101 (saveOperator -> .)
-    ID              shift and go to state 155
 
-  ! ID              [ reduce using rule 101 (saveOperator -> .) ]
-
-    saveOperator                   shift and go to state 156
-    functionCall                   shift and go to state 157
+    saveOperator                   shift and go to state 155
 
 state 123
 
@@ -2080,13 +2077,13 @@ state 123
     SEMMICOLON      reduce using rule 101 (saveOperator -> .)
     TO              reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 158
+    saveOperator                   shift and go to state 156
 
 state 124
 
     (26) functionCall -> ID validateFunctionID functionERA . LPAREN expAux verifyParams RPAREN generateQuadGOSUB
 
-    LPAREN          shift and go to state 159
+    LPAREN          shift and go to state 157
 
 
 state 125
@@ -2119,7 +2116,7 @@ state 125
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -2127,20 +2124,20 @@ state 125
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
 
-    exp                            shift and go to state 160
+    exp                            shift and go to state 158
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -2182,7 +2179,7 @@ state 126
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -2190,22 +2187,22 @@ state 126
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
-    paramReadAux                   shift and go to state 161
-    exp                            shift and go to state 162
+    paramReadAux                   shift and go to state 159
+    exp                            shift and go to state 160
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -2222,7 +2219,7 @@ state 127
     (46) paramWrite -> . empty
     (47) paramWriteAux -> . exp generateQuadPRINT
     (48) paramWriteAux -> . exp generateQuadPRINT COMMA writeOperator paramWriteAux
-    (148) empty -> .
+    (149) empty -> .
     (64) exp -> . nexp generateQuadOR
     (65) exp -> . nexp generateQuadOR OR saveOperator nexp
     (67) nexp -> . compexp generateQuadAND
@@ -2251,19 +2248,19 @@ state 127
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
 
-    RPAREN          reduce using rule 148 (empty -> .)
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
     ID              shift and go to state 139
     CTEI            shift and go to state 140
     CTEF            shift and go to state 141
@@ -2271,10 +2268,10 @@ state 127
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
 
-    paramWrite                     shift and go to state 163
-    paramWriteAux                  shift and go to state 164
-    empty                          shift and go to state 165
-    exp                            shift and go to state 166
+    paramWrite                     shift and go to state 161
+    paramWriteAux                  shift and go to state 162
+    empty                          shift and go to state 163
+    exp                            shift and go to state 164
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -2287,24 +2284,24 @@ state 128
 
     (52) for -> FOR forOP assign . TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
 
-    TO              shift and go to state 167
+    TO              shift and go to state 165
 
 
 state 129
 
     (18) assign -> ID . add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> ID . arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> ID . add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> ID . add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (23) add_id2 -> .
     (95) arrStatement -> . LBRACKET checkArray exp generateQuadVER RBRACKET getArrFinalAddress
     (96) arrStatement -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
   ! reduce/reduce conflict for EQUALS resolved using rule 23 (add_id2 -> .)
     EQUALS          reduce using rule 23 (add_id2 -> .)
     LBRACKET        shift and go to state 102
 
-  ! EQUALS          [ reduce using rule 148 (empty -> .) ]
+  ! EQUALS          [ reduce using rule 149 (empty -> .) ]
 
     add_id2                        shift and go to state 99
     arrStatement                   shift and go to state 100
@@ -2340,7 +2337,7 @@ state 130
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -2348,20 +2345,20 @@ state 130
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
-    exp                            shift and go to state 168
+    exp                            shift and go to state 166
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -2401,7 +2398,7 @@ state 131
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -2409,20 +2406,20 @@ state 131
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
-    exp                            shift and go to state 169
+    exp                            shift and go to state 167
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -2436,7 +2433,7 @@ state 132
 
     (58) if -> IF LPAREN exp . RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
 
-    RPAREN          shift and go to state 170
+    RPAREN          shift and go to state 168
 
 
 state 133
@@ -2452,7 +2449,7 @@ state 133
     SEMMICOLON      reduce using rule 66 (generateQuadOR -> .)
     TO              reduce using rule 66 (generateQuadOR -> .)
 
-    generateQuadOR                 shift and go to state 171
+    generateQuadOR                 shift and go to state 169
 
 state 134
 
@@ -2468,7 +2465,7 @@ state 134
     SEMMICOLON      reduce using rule 69 (generateQuadAND -> .)
     TO              reduce using rule 69 (generateQuadAND -> .)
 
-    generateQuadAND                shift and go to state 172
+    generateQuadAND                shift and go to state 170
 
 state 135
 
@@ -2486,11 +2483,11 @@ state 135
     COMMA           reduce using rule 70 (compexp -> sumexp .)
     SEMMICOLON      reduce using rule 70 (compexp -> sumexp .)
     TO              reduce using rule 70 (compexp -> sumexp .)
-    GT              shift and go to state 173
-    LT              shift and go to state 174
-    GTE             shift and go to state 175
-    LTE             shift and go to state 176
-    NE              shift and go to state 177
+    GT              shift and go to state 171
+    LT              shift and go to state 172
+    GTE             shift and go to state 173
+    LTE             shift and go to state 174
+    NE              shift and go to state 175
 
 
 state 136
@@ -2512,7 +2509,7 @@ state 136
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -2520,19 +2517,19 @@ state 136
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-    sumexp                         shift and go to state 178
+    sumexp                         shift and go to state 176
     mulexp                         shift and go to state 137
     pexp                           shift and go to state 138
     functionCall                   shift and go to state 144
@@ -2566,8 +2563,8 @@ state 137
     LPAREN          reduce using rule 78 (sumexp -> mulexp .)
     MUL             reduce using rule 78 (sumexp -> mulexp .)
     DIV             reduce using rule 78 (sumexp -> mulexp .)
-    PLUS            shift and go to state 179
-    MINUS           shift and go to state 180
+    PLUS            shift and go to state 177
+    MINUS           shift and go to state 178
 
   ! PLUS            [ reduce using rule 78 (sumexp -> mulexp .) ]
   ! MINUS           [ reduce using rule 78 (sumexp -> mulexp .) ]
@@ -2601,8 +2598,8 @@ state 138
     CTEC            reduce using rule 82 (mulexp -> pexp .)
     CTESTRING       reduce using rule 82 (mulexp -> pexp .)
     LPAREN          reduce using rule 82 (mulexp -> pexp .)
-    MUL             shift and go to state 181
-    DIV             shift and go to state 182
+    MUL             shift and go to state 179
+    DIV             shift and go to state 180
 
   ! MUL             [ reduce using rule 82 (mulexp -> pexp .) ]
   ! DIV             [ reduce using rule 82 (mulexp -> pexp .) ]
@@ -2617,7 +2614,7 @@ state 139
     (95) arrStatement -> . LBRACKET checkArray exp generateQuadVER RBRACKET getArrFinalAddress
     (96) arrStatement -> . empty
     (27) validateFunctionID -> .
-    (148) empty -> .
+    (149) empty -> .
 
   ! reduce/reduce conflict for LPAREN resolved using rule 23 (add_id2 -> .)
   ! reduce/reduce conflict for MUL resolved using rule 23 (add_id2 -> .)
@@ -2667,31 +2664,31 @@ state 139
     LBRACKET        shift and go to state 102
 
   ! LPAREN          [ reduce using rule 27 (validateFunctionID -> .) ]
-  ! MUL             [ reduce using rule 148 (empty -> .) ]
-  ! DIV             [ reduce using rule 148 (empty -> .) ]
-  ! PLUS            [ reduce using rule 148 (empty -> .) ]
-  ! MINUS           [ reduce using rule 148 (empty -> .) ]
-  ! GT              [ reduce using rule 148 (empty -> .) ]
-  ! LT              [ reduce using rule 148 (empty -> .) ]
-  ! GTE             [ reduce using rule 148 (empty -> .) ]
-  ! LTE             [ reduce using rule 148 (empty -> .) ]
-  ! NE              [ reduce using rule 148 (empty -> .) ]
-  ! AND             [ reduce using rule 148 (empty -> .) ]
-  ! OR              [ reduce using rule 148 (empty -> .) ]
-  ! RPAREN          [ reduce using rule 148 (empty -> .) ]
-  ! RBRACKET        [ reduce using rule 148 (empty -> .) ]
-  ! COMMA           [ reduce using rule 148 (empty -> .) ]
-  ! SEMMICOLON      [ reduce using rule 148 (empty -> .) ]
-  ! TO              [ reduce using rule 148 (empty -> .) ]
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! MUL             [ reduce using rule 149 (empty -> .) ]
+  ! DIV             [ reduce using rule 149 (empty -> .) ]
+  ! PLUS            [ reduce using rule 149 (empty -> .) ]
+  ! MINUS           [ reduce using rule 149 (empty -> .) ]
+  ! GT              [ reduce using rule 149 (empty -> .) ]
+  ! LT              [ reduce using rule 149 (empty -> .) ]
+  ! GTE             [ reduce using rule 149 (empty -> .) ]
+  ! LTE             [ reduce using rule 149 (empty -> .) ]
+  ! NE              [ reduce using rule 149 (empty -> .) ]
+  ! AND             [ reduce using rule 149 (empty -> .) ]
+  ! OR              [ reduce using rule 149 (empty -> .) ]
+  ! RPAREN          [ reduce using rule 149 (empty -> .) ]
+  ! RBRACKET        [ reduce using rule 149 (empty -> .) ]
+  ! COMMA           [ reduce using rule 149 (empty -> .) ]
+  ! SEMMICOLON      [ reduce using rule 149 (empty -> .) ]
+  ! TO              [ reduce using rule 149 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
-    add_id2                        shift and go to state 183
-    arrStatement                   shift and go to state 184
+    add_id2                        shift and go to state 181
+    arrStatement                   shift and go to state 182
     validateFunctionID             shift and go to state 101
     empty                          shift and go to state 103
 
@@ -2723,7 +2720,7 @@ state 140
     CTESTRING       reduce using rule 100 (saveCTE -> .)
     LPAREN          reduce using rule 100 (saveCTE -> .)
 
-    saveCTE                        shift and go to state 185
+    saveCTE                        shift and go to state 183
 
 state 141
 
@@ -2753,7 +2750,7 @@ state 141
     CTESTRING       reduce using rule 100 (saveCTE -> .)
     LPAREN          reduce using rule 100 (saveCTE -> .)
 
-    saveCTE                        shift and go to state 186
+    saveCTE                        shift and go to state 184
 
 state 142
 
@@ -2783,7 +2780,7 @@ state 142
     CTESTRING       reduce using rule 100 (saveCTE -> .)
     LPAREN          reduce using rule 100 (saveCTE -> .)
 
-    saveCTE                        shift and go to state 187
+    saveCTE                        shift and go to state 185
 
 state 143
 
@@ -2813,7 +2810,7 @@ state 143
     CTESTRING       reduce using rule 100 (saveCTE -> .)
     LPAREN          reduce using rule 100 (saveCTE -> .)
 
-    saveCTE                        shift and go to state 188
+    saveCTE                        shift and go to state 186
 
 state 144
 
@@ -2877,12 +2874,12 @@ state 146
     (102) vars -> . var
     (103) vars -> . empty
     (104) var -> . VARS var2
-    (148) empty -> .
+    (149) empty -> .
 
     VARS            shift and go to state 12
-    LCURLY          reduce using rule 148 (empty -> .)
+    LCURLY          reduce using rule 149 (empty -> .)
 
-    vars                           shift and go to state 189
+    vars                           shift and go to state 187
     var                            shift and go to state 9
     empty                          shift and go to state 10
 
@@ -2890,21 +2887,21 @@ state 147
 
     (134) paramsAux -> INT saveTypeVar . TWOPOINTS ID addParameter nextParam
 
-    TWOPOINTS       shift and go to state 190
+    TWOPOINTS       shift and go to state 188
 
 
 state 148
 
     (135) paramsAux -> FLOAT saveTypeVar . TWOPOINTS ID addParameter nextParam
 
-    TWOPOINTS       shift and go to state 191
+    TWOPOINTS       shift and go to state 189
 
 
 state 149
 
     (136) paramsAux -> CHAR saveTypeVar . TWOPOINTS ID addParameter nextParam
 
-    TWOPOINTS       shift and go to state 192
+    TWOPOINTS       shift and go to state 190
 
 
 state 150
@@ -2913,12 +2910,12 @@ state 150
     (102) vars -> . var
     (103) vars -> . empty
     (104) var -> . VARS var2
-    (148) empty -> .
+    (149) empty -> .
 
     VARS            shift and go to state 12
-    LCURLY          reduce using rule 148 (empty -> .)
+    LCURLY          reduce using rule 149 (empty -> .)
 
-    vars                           shift and go to state 193
+    vars                           shift and go to state 191
     var                            shift and go to state 9
     empty                          shift and go to state 10
 
@@ -2957,18 +2954,11 @@ state 154
 
 state 155
 
-    (26) functionCall -> ID . validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (27) validateFunctionID -> .
-
-    LPAREN          reduce using rule 27 (validateFunctionID -> .)
-
-    validateFunctionID             shift and go to state 101
-
-state 156
-
     (18) assign -> ID add_id2 EQUALS saveOperator . exp generateAssignQuad
+    (20) assign -> ID add_id2 EQUALS saveOperator . functionCall generateAssignQuad
     (64) exp -> . nexp generateQuadOR
     (65) exp -> . nexp generateQuadOR OR saveOperator nexp
+    (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (67) nexp -> . compexp generateQuadAND
     (68) nexp -> . compexp generateQuadAND AND saveOperator compexp
     (70) compexp -> . sumexp
@@ -2993,50 +2983,39 @@ state 156
     (92) pexp -> . LPAREN exp RPAREN
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
-    (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
-    ID              shift and go to state 139
+    ID              shift and go to state 192
     CTEI            shift and go to state 140
     CTEF            shift and go to state 141
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-    exp                            shift and go to state 194
+    exp                            shift and go to state 193
+    functionCall                   shift and go to state 194
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
     compexp1                       shift and go to state 136
     mulexp                         shift and go to state 137
     pexp                           shift and go to state 138
-    functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 157
-
-    (20) assign -> ID add_id2 EQUALS functionCall . generateAssignQuad
-    (21) generateAssignQuad -> .
-
-    SEMMICOLON      reduce using rule 21 (generateAssignQuad -> .)
-    TO              reduce using rule 21 (generateAssignQuad -> .)
-
-    generateAssignQuad             shift and go to state 195
-
-state 158
+state 156
 
     (19) assign -> ID arrStatement EQUALS saveOperator . exp generateAssignQuad
     (64) exp -> . nexp generateQuadOR
@@ -3066,7 +3045,7 @@ state 158
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -3074,21 +3053,21 @@ state 158
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-    exp                            shift and go to state 196
+    exp                            shift and go to state 195
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -3098,7 +3077,7 @@ state 158
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 159
+state 157
 
     (26) functionCall -> ID validateFunctionID functionERA LPAREN . expAux verifyParams RPAREN generateQuadGOSUB
     (31) expAux -> . exp generateQuadPARAM paramsCount
@@ -3106,7 +3085,7 @@ state 159
     (33) expAux -> . empty
     (64) exp -> . nexp generateQuadOR
     (65) exp -> . nexp generateQuadOR OR saveOperator nexp
-    (148) empty -> .
+    (149) empty -> .
     (67) nexp -> . compexp generateQuadAND
     (68) nexp -> . compexp generateQuadAND AND saveOperator compexp
     (70) compexp -> . sumexp
@@ -3133,19 +3112,19 @@ state 159
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
 
-    RPAREN          reduce using rule 148 (empty -> .)
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
     ID              shift and go to state 139
     CTEI            shift and go to state 140
     CTEF            shift and go to state 141
@@ -3153,9 +3132,9 @@ state 159
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
 
-    expAux                         shift and go to state 197
-    exp                            shift and go to state 198
-    empty                          shift and go to state 199
+    expAux                         shift and go to state 196
+    exp                            shift and go to state 197
+    empty                          shift and go to state 198
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -3164,23 +3143,23 @@ state 159
     pexp                           shift and go to state 138
     functionCall                   shift and go to state 144
 
-state 160
+state 158
 
     (95) arrStatement -> LBRACKET checkArray exp . generateQuadVER RBRACKET getArrFinalAddress
     (99) generateQuadVER -> .
 
     RBRACKET        reduce using rule 99 (generateQuadVER -> .)
 
-    generateQuadVER                shift and go to state 200
+    generateQuadVER                shift and go to state 199
 
-state 161
+state 159
 
     (37) read -> READ operatorRead LPAREN paramReadAux . RPAREN
 
-    RPAREN          shift and go to state 201
+    RPAREN          shift and go to state 200
 
 
-state 162
+state 160
 
     (40) paramReadAux -> exp . generateQuadREAD
     (41) paramReadAux -> exp . generateQuadREAD COMMA operatorRead paramReadAux
@@ -3189,23 +3168,23 @@ state 162
     COMMA           reduce using rule 43 (generateQuadREAD -> .)
     RPAREN          reduce using rule 43 (generateQuadREAD -> .)
 
-    generateQuadREAD               shift and go to state 202
+    generateQuadREAD               shift and go to state 201
 
-state 163
+state 161
 
     (44) write -> WRITE writeOperator LPAREN paramWrite . RPAREN
 
-    RPAREN          shift and go to state 203
+    RPAREN          shift and go to state 202
 
 
-state 164
+state 162
 
     (45) paramWrite -> paramWriteAux .
 
     RPAREN          reduce using rule 45 (paramWrite -> paramWriteAux .)
 
 
-state 165
+state 163
 
     (46) paramWrite -> empty .
     (94) pexp -> empty .
@@ -3228,7 +3207,7 @@ state 165
   ! RPAREN          [ reduce using rule 94 (pexp -> empty .) ]
 
 
-state 166
+state 164
 
     (47) paramWriteAux -> exp . generateQuadPRINT
     (48) paramWriteAux -> exp . generateQuadPRINT COMMA writeOperator paramWriteAux
@@ -3237,39 +3216,39 @@ state 166
     COMMA           reduce using rule 50 (generateQuadPRINT -> .)
     RPAREN          reduce using rule 50 (generateQuadPRINT -> .)
 
-    generateQuadPRINT              shift and go to state 204
+    generateQuadPRINT              shift and go to state 203
 
-state 167
+state 165
 
     (52) for -> FOR forOP assign TO . CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
 
-    CTEI            shift and go to state 205
+    CTEI            shift and go to state 204
 
 
-state 168
+state 166
 
     (55) while -> WHILE whileOP LPAREN exp . RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
+
+    RPAREN          shift and go to state 205
+
+
+state 167
+
+    (92) pexp -> LPAREN exp . RPAREN
 
     RPAREN          shift and go to state 206
 
 
-state 169
-
-    (92) pexp -> LPAREN exp . RPAREN
-
-    RPAREN          shift and go to state 207
-
-
-state 170
+state 168
 
     (58) if -> IF LPAREN exp RPAREN . generateQuadIF THEN LCURLY statements RCURLY else endIF
     (61) generateQuadIF -> .
 
     THEN            reduce using rule 61 (generateQuadIF -> .)
 
-    generateQuadIF                 shift and go to state 208
+    generateQuadIF                 shift and go to state 207
 
-state 171
+state 169
 
     (64) exp -> nexp generateQuadOR .
     (65) exp -> nexp generateQuadOR . OR saveOperator nexp
@@ -3279,10 +3258,10 @@ state 171
     COMMA           reduce using rule 64 (exp -> nexp generateQuadOR .)
     SEMMICOLON      reduce using rule 64 (exp -> nexp generateQuadOR .)
     TO              reduce using rule 64 (exp -> nexp generateQuadOR .)
-    OR              shift and go to state 209
+    OR              shift and go to state 208
 
 
-state 172
+state 170
 
     (67) nexp -> compexp generateQuadAND .
     (68) nexp -> compexp generateQuadAND . AND saveOperator compexp
@@ -3293,10 +3272,10 @@ state 172
     COMMA           reduce using rule 67 (nexp -> compexp generateQuadAND .)
     SEMMICOLON      reduce using rule 67 (nexp -> compexp generateQuadAND .)
     TO              reduce using rule 67 (nexp -> compexp generateQuadAND .)
-    AND             shift and go to state 210
+    AND             shift and go to state 209
 
 
-state 173
+state 171
 
     (72) compexp1 -> sumexp GT . saveOperator sumexp generateQuadCOMPARE
     (101) saveOperator -> .
@@ -3319,9 +3298,9 @@ state 173
     SEMMICOLON      reduce using rule 101 (saveOperator -> .)
     TO              reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 211
+    saveOperator                   shift and go to state 210
 
-state 174
+state 172
 
     (73) compexp1 -> sumexp LT . saveOperator sumexp generateQuadCOMPARE
     (101) saveOperator -> .
@@ -3344,9 +3323,9 @@ state 174
     SEMMICOLON      reduce using rule 101 (saveOperator -> .)
     TO              reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 212
+    saveOperator                   shift and go to state 211
 
-state 175
+state 173
 
     (74) compexp1 -> sumexp GTE . saveOperator sumexp generateQuadCOMPARE
     (101) saveOperator -> .
@@ -3369,9 +3348,9 @@ state 175
     SEMMICOLON      reduce using rule 101 (saveOperator -> .)
     TO              reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 213
+    saveOperator                   shift and go to state 212
 
-state 176
+state 174
 
     (75) compexp1 -> sumexp LTE . saveOperator sumexp generateQuadCOMPARE
     (101) saveOperator -> .
@@ -3394,9 +3373,9 @@ state 176
     SEMMICOLON      reduce using rule 101 (saveOperator -> .)
     TO              reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 214
+    saveOperator                   shift and go to state 213
 
-state 177
+state 175
 
     (76) compexp1 -> sumexp NE . saveOperator sumexp generateQuadCOMPARE
     (101) saveOperator -> .
@@ -3419,9 +3398,9 @@ state 177
     SEMMICOLON      reduce using rule 101 (saveOperator -> .)
     TO              reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 215
+    saveOperator                   shift and go to state 214
 
-state 178
+state 176
 
     (71) compexp -> compexp1 sumexp .
 
@@ -3434,7 +3413,7 @@ state 178
     TO              reduce using rule 71 (compexp -> compexp1 sumexp .)
 
 
-state 179
+state 177
 
     (79) sumexp -> mulexp PLUS . saveOperator mulexp generateQuadSUM
     (101) saveOperator -> .
@@ -3462,9 +3441,9 @@ state 179
     PLUS            reduce using rule 101 (saveOperator -> .)
     MINUS           reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 216
+    saveOperator                   shift and go to state 215
 
-state 180
+state 178
 
     (80) sumexp -> mulexp MINUS . saveOperator mulexp generateQuadSUM
     (101) saveOperator -> .
@@ -3492,9 +3471,9 @@ state 180
     PLUS            reduce using rule 101 (saveOperator -> .)
     MINUS           reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 217
+    saveOperator                   shift and go to state 216
 
-state 181
+state 179
 
     (83) mulexp -> pexp MUL . saveOperator pexp generateQuadMUL
     (101) saveOperator -> .
@@ -3522,9 +3501,9 @@ state 181
     MUL             reduce using rule 101 (saveOperator -> .)
     DIV             reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 218
+    saveOperator                   shift and go to state 217
 
-state 182
+state 180
 
     (84) mulexp -> pexp DIV . saveOperator pexp generateQuadMUL
     (101) saveOperator -> .
@@ -3552,9 +3531,9 @@ state 182
     MUL             reduce using rule 101 (saveOperator -> .)
     DIV             reduce using rule 101 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 219
+    saveOperator                   shift and go to state 218
 
-state 183
+state 181
 
     (86) pexp -> ID add_id2 .
 
@@ -3582,7 +3561,7 @@ state 183
     LPAREN          reduce using rule 86 (pexp -> ID add_id2 .)
 
 
-state 184
+state 182
 
     (93) pexp -> ID arrStatement .
 
@@ -3610,7 +3589,7 @@ state 184
     LPAREN          reduce using rule 93 (pexp -> ID arrStatement .)
 
 
-state 185
+state 183
 
     (87) pexp -> CTEI saveCTE .
 
@@ -3638,7 +3617,7 @@ state 185
     LPAREN          reduce using rule 87 (pexp -> CTEI saveCTE .)
 
 
-state 186
+state 184
 
     (88) pexp -> CTEF saveCTE .
 
@@ -3666,7 +3645,7 @@ state 186
     LPAREN          reduce using rule 88 (pexp -> CTEF saveCTE .)
 
 
-state 187
+state 185
 
     (89) pexp -> CTEC saveCTE .
 
@@ -3694,7 +3673,7 @@ state 187
     LPAREN          reduce using rule 89 (pexp -> CTEC saveCTE .)
 
 
-state 188
+state 186
 
     (90) pexp -> CTESTRING saveCTE .
 
@@ -3722,42 +3701,101 @@ state 188
     LPAREN          reduce using rule 90 (pexp -> CTESTRING saveCTE .)
 
 
-state 189
+state 187
 
     (128) functions2 -> ID saveFunction LPAREN parameters RPAREN vars . LCURLY setStartDirection statements return RCURLY
 
-    LCURLY          shift and go to state 220
+    LCURLY          shift and go to state 219
 
 
-state 190
+state 188
 
     (134) paramsAux -> INT saveTypeVar TWOPOINTS . ID addParameter nextParam
+
+    ID              shift and go to state 220
+
+
+state 189
+
+    (135) paramsAux -> FLOAT saveTypeVar TWOPOINTS . ID addParameter nextParam
 
     ID              shift and go to state 221
 
 
-state 191
+state 190
 
-    (135) paramsAux -> FLOAT saveTypeVar TWOPOINTS . ID addParameter nextParam
+    (136) paramsAux -> CHAR saveTypeVar TWOPOINTS . ID addParameter nextParam
 
     ID              shift and go to state 222
 
 
-state 192
-
-    (136) paramsAux -> CHAR saveTypeVar TWOPOINTS . ID addParameter nextParam
-
-    ID              shift and go to state 223
-
-
-state 193
+state 191
 
     (126) functions1 -> ID saveFunction LPAREN parameters RPAREN vars . LCURLY setStartDirection statements RCURLY
 
-    LCURLY          shift and go to state 224
+    LCURLY          shift and go to state 223
 
 
-state 194
+state 192
+
+    (26) functionCall -> ID . validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
+    (86) pexp -> ID . add_id2
+    (93) pexp -> ID . arrStatement
+    (27) validateFunctionID -> .
+    (23) add_id2 -> .
+    (95) arrStatement -> . LBRACKET checkArray exp generateQuadVER RBRACKET getArrFinalAddress
+    (96) arrStatement -> . empty
+    (149) empty -> .
+
+  ! reduce/reduce conflict for MUL resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for DIV resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for PLUS resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for MINUS resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for GT resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for LT resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for GTE resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for LTE resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for NE resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for AND resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for OR resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for SEMMICOLON resolved using rule 23 (add_id2 -> .)
+  ! reduce/reduce conflict for TO resolved using rule 23 (add_id2 -> .)
+    LPAREN          reduce using rule 27 (validateFunctionID -> .)
+    MUL             reduce using rule 23 (add_id2 -> .)
+    DIV             reduce using rule 23 (add_id2 -> .)
+    PLUS            reduce using rule 23 (add_id2 -> .)
+    MINUS           reduce using rule 23 (add_id2 -> .)
+    GT              reduce using rule 23 (add_id2 -> .)
+    LT              reduce using rule 23 (add_id2 -> .)
+    GTE             reduce using rule 23 (add_id2 -> .)
+    LTE             reduce using rule 23 (add_id2 -> .)
+    NE              reduce using rule 23 (add_id2 -> .)
+    AND             reduce using rule 23 (add_id2 -> .)
+    OR              reduce using rule 23 (add_id2 -> .)
+    SEMMICOLON      reduce using rule 23 (add_id2 -> .)
+    TO              reduce using rule 23 (add_id2 -> .)
+    LBRACKET        shift and go to state 102
+
+  ! MUL             [ reduce using rule 149 (empty -> .) ]
+  ! DIV             [ reduce using rule 149 (empty -> .) ]
+  ! PLUS            [ reduce using rule 149 (empty -> .) ]
+  ! MINUS           [ reduce using rule 149 (empty -> .) ]
+  ! GT              [ reduce using rule 149 (empty -> .) ]
+  ! LT              [ reduce using rule 149 (empty -> .) ]
+  ! GTE             [ reduce using rule 149 (empty -> .) ]
+  ! LTE             [ reduce using rule 149 (empty -> .) ]
+  ! NE              [ reduce using rule 149 (empty -> .) ]
+  ! AND             [ reduce using rule 149 (empty -> .) ]
+  ! OR              [ reduce using rule 149 (empty -> .) ]
+  ! SEMMICOLON      [ reduce using rule 149 (empty -> .) ]
+  ! TO              [ reduce using rule 149 (empty -> .) ]
+
+    validateFunctionID             shift and go to state 101
+    add_id2                        shift and go to state 181
+    arrStatement                   shift and go to state 182
+    empty                          shift and go to state 103
+
+state 193
 
     (18) assign -> ID add_id2 EQUALS saveOperator exp . generateAssignQuad
     (21) generateAssignQuad -> .
@@ -3765,17 +3803,36 @@ state 194
     SEMMICOLON      reduce using rule 21 (generateAssignQuad -> .)
     TO              reduce using rule 21 (generateAssignQuad -> .)
 
+    generateAssignQuad             shift and go to state 224
+
+state 194
+
+    (20) assign -> ID add_id2 EQUALS saveOperator functionCall . generateAssignQuad
+    (91) pexp -> functionCall .
+    (21) generateAssignQuad -> .
+
+  ! reduce/reduce conflict for SEMMICOLON resolved using rule 21 (generateAssignQuad -> .)
+  ! reduce/reduce conflict for TO resolved using rule 21 (generateAssignQuad -> .)
+    MUL             reduce using rule 91 (pexp -> functionCall .)
+    DIV             reduce using rule 91 (pexp -> functionCall .)
+    PLUS            reduce using rule 91 (pexp -> functionCall .)
+    MINUS           reduce using rule 91 (pexp -> functionCall .)
+    GT              reduce using rule 91 (pexp -> functionCall .)
+    LT              reduce using rule 91 (pexp -> functionCall .)
+    GTE             reduce using rule 91 (pexp -> functionCall .)
+    LTE             reduce using rule 91 (pexp -> functionCall .)
+    NE              reduce using rule 91 (pexp -> functionCall .)
+    AND             reduce using rule 91 (pexp -> functionCall .)
+    OR              reduce using rule 91 (pexp -> functionCall .)
+    SEMMICOLON      reduce using rule 21 (generateAssignQuad -> .)
+    TO              reduce using rule 21 (generateAssignQuad -> .)
+
+  ! SEMMICOLON      [ reduce using rule 91 (pexp -> functionCall .) ]
+  ! TO              [ reduce using rule 91 (pexp -> functionCall .) ]
+
     generateAssignQuad             shift and go to state 225
 
 state 195
-
-    (20) assign -> ID add_id2 EQUALS functionCall generateAssignQuad .
-
-    SEMMICOLON      reduce using rule 20 (assign -> ID add_id2 EQUALS functionCall generateAssignQuad .)
-    TO              reduce using rule 20 (assign -> ID add_id2 EQUALS functionCall generateAssignQuad .)
-
-
-state 196
 
     (19) assign -> ID arrStatement EQUALS saveOperator exp . generateAssignQuad
     (21) generateAssignQuad -> .
@@ -3785,7 +3842,7 @@ state 196
 
     generateAssignQuad             shift and go to state 226
 
-state 197
+state 196
 
     (26) functionCall -> ID validateFunctionID functionERA LPAREN expAux . verifyParams RPAREN generateQuadGOSUB
     (28) verifyParams -> .
@@ -3794,7 +3851,7 @@ state 197
 
     verifyParams                   shift and go to state 227
 
-state 198
+state 197
 
     (31) expAux -> exp . generateQuadPARAM paramsCount
     (32) expAux -> exp . generateQuadPARAM COMMA paramsCount expAux
@@ -3805,7 +3862,7 @@ state 198
 
     generateQuadPARAM              shift and go to state 228
 
-state 199
+state 198
 
     (33) expAux -> empty .
     (94) pexp -> empty .
@@ -3828,14 +3885,14 @@ state 199
   ! RPAREN          [ reduce using rule 94 (pexp -> empty .) ]
 
 
-state 200
+state 199
 
     (95) arrStatement -> LBRACKET checkArray exp generateQuadVER . RBRACKET getArrFinalAddress
 
     RBRACKET        shift and go to state 229
 
 
-state 201
+state 200
 
     (37) read -> READ operatorRead LPAREN paramReadAux RPAREN .
 
@@ -3848,7 +3905,7 @@ state 201
     SEMMICOLON      reduce using rule 37 (read -> READ operatorRead LPAREN paramReadAux RPAREN .)
 
 
-state 202
+state 201
 
     (40) paramReadAux -> exp generateQuadREAD .
     (41) paramReadAux -> exp generateQuadREAD . COMMA operatorRead paramReadAux
@@ -3857,7 +3914,7 @@ state 202
     COMMA           shift and go to state 230
 
 
-state 203
+state 202
 
     (44) write -> WRITE writeOperator LPAREN paramWrite RPAREN .
 
@@ -3870,7 +3927,7 @@ state 203
     SEMMICOLON      reduce using rule 44 (write -> WRITE writeOperator LPAREN paramWrite RPAREN .)
 
 
-state 204
+state 203
 
     (47) paramWriteAux -> exp generateQuadPRINT .
     (48) paramWriteAux -> exp generateQuadPRINT . COMMA writeOperator paramWriteAux
@@ -3879,21 +3936,21 @@ state 204
     COMMA           shift and go to state 231
 
 
-state 205
+state 204
 
     (52) for -> FOR forOP assign TO CTEI . DO generateQuadFOR LCURLY statements RCURLY LoopEnd
 
     DO              shift and go to state 232
 
 
-state 206
+state 205
 
     (55) while -> WHILE whileOP LPAREN exp RPAREN . DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
 
     DO              shift and go to state 233
 
 
-state 207
+state 206
 
     (92) pexp -> LPAREN exp RPAREN .
 
@@ -3921,14 +3978,14 @@ state 207
     LPAREN          reduce using rule 92 (pexp -> LPAREN exp RPAREN .)
 
 
-state 208
+state 207
 
     (58) if -> IF LPAREN exp RPAREN generateQuadIF . THEN LCURLY statements RCURLY else endIF
 
     THEN            shift and go to state 234
 
 
-state 209
+state 208
 
     (65) exp -> nexp generateQuadOR OR . saveOperator nexp
     (101) saveOperator -> .
@@ -3957,7 +4014,7 @@ state 209
 
     saveOperator                   shift and go to state 235
 
-state 210
+state 209
 
     (68) nexp -> compexp generateQuadAND AND . saveOperator compexp
     (101) saveOperator -> .
@@ -3986,7 +4043,7 @@ state 210
 
     saveOperator                   shift and go to state 236
 
-state 211
+state 210
 
     (72) compexp1 -> sumexp GT saveOperator . sumexp generateQuadCOMPARE
     (78) sumexp -> . mulexp
@@ -4005,7 +4062,7 @@ state 211
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4019,24 +4076,24 @@ state 211
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     sumexp                         shift and go to state 237
     mulexp                         shift and go to state 137
@@ -4044,7 +4101,7 @@ state 211
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 212
+state 211
 
     (73) compexp1 -> sumexp LT saveOperator . sumexp generateQuadCOMPARE
     (78) sumexp -> . mulexp
@@ -4063,7 +4120,7 @@ state 212
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4077,24 +4134,24 @@ state 212
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     sumexp                         shift and go to state 238
     mulexp                         shift and go to state 137
@@ -4102,7 +4159,7 @@ state 212
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 213
+state 212
 
     (74) compexp1 -> sumexp GTE saveOperator . sumexp generateQuadCOMPARE
     (78) sumexp -> . mulexp
@@ -4121,7 +4178,7 @@ state 213
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4135,24 +4192,24 @@ state 213
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     sumexp                         shift and go to state 239
     mulexp                         shift and go to state 137
@@ -4160,7 +4217,7 @@ state 213
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 214
+state 213
 
     (75) compexp1 -> sumexp LTE saveOperator . sumexp generateQuadCOMPARE
     (78) sumexp -> . mulexp
@@ -4179,7 +4236,7 @@ state 214
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4193,24 +4250,24 @@ state 214
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     sumexp                         shift and go to state 240
     mulexp                         shift and go to state 137
@@ -4218,7 +4275,7 @@ state 214
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 215
+state 214
 
     (76) compexp1 -> sumexp NE saveOperator . sumexp generateQuadCOMPARE
     (78) sumexp -> . mulexp
@@ -4237,7 +4294,7 @@ state 215
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4251,24 +4308,24 @@ state 215
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     sumexp                         shift and go to state 241
     mulexp                         shift and go to state 137
@@ -4276,7 +4333,7 @@ state 215
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 216
+state 215
 
     (79) sumexp -> mulexp PLUS saveOperator . mulexp generateQuadSUM
     (82) mulexp -> . pexp
@@ -4292,7 +4349,7 @@ state 216
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4306,36 +4363,36 @@ state 216
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     mulexp                         shift and go to state 242
     pexp                           shift and go to state 138
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 217
+state 216
 
     (80) sumexp -> mulexp MINUS saveOperator . mulexp generateQuadSUM
     (82) mulexp -> . pexp
@@ -4351,7 +4408,7 @@ state 217
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4365,36 +4422,36 @@ state 217
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     mulexp                         shift and go to state 243
     pexp                           shift and go to state 138
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 218
+state 217
 
     (83) mulexp -> pexp MUL saveOperator . pexp generateQuadMUL
     (86) pexp -> . ID add_id2
@@ -4407,7 +4464,7 @@ state 218
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4421,35 +4478,35 @@ state 218
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     pexp                           shift and go to state 244
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 219
+state 218
 
     (84) mulexp -> pexp DIV saveOperator . pexp generateQuadMUL
     (86) pexp -> . ID add_id2
@@ -4462,7 +4519,7 @@ state 219
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
   ! shift/reduce conflict for ID resolved as shift
   ! shift/reduce conflict for CTEI resolved as shift
@@ -4476,35 +4533,35 @@ state 219
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
 
-  ! ID              [ reduce using rule 148 (empty -> .) ]
-  ! CTEI            [ reduce using rule 148 (empty -> .) ]
-  ! CTEF            [ reduce using rule 148 (empty -> .) ]
-  ! CTEC            [ reduce using rule 148 (empty -> .) ]
-  ! CTESTRING       [ reduce using rule 148 (empty -> .) ]
-  ! LPAREN          [ reduce using rule 148 (empty -> .) ]
+  ! ID              [ reduce using rule 149 (empty -> .) ]
+  ! CTEI            [ reduce using rule 149 (empty -> .) ]
+  ! CTEF            [ reduce using rule 149 (empty -> .) ]
+  ! CTEC            [ reduce using rule 149 (empty -> .) ]
+  ! CTESTRING       [ reduce using rule 149 (empty -> .) ]
+  ! LPAREN          [ reduce using rule 149 (empty -> .) ]
 
     pexp                           shift and go to state 245
     functionCall                   shift and go to state 144
     empty                          shift and go to state 145
 
-state 220
+state 219
 
     (128) functions2 -> ID saveFunction LPAREN parameters RPAREN vars LCURLY . setStartDirection statements return RCURLY
     (130) setStartDirection -> .
@@ -4519,7 +4576,7 @@ state 220
 
     setStartDirection              shift and go to state 246
 
-state 221
+state 220
 
     (134) paramsAux -> INT saveTypeVar TWOPOINTS ID . addParameter nextParam
     (131) addParameter -> .
@@ -4529,7 +4586,7 @@ state 221
 
     addParameter                   shift and go to state 247
 
-state 222
+state 221
 
     (135) paramsAux -> FLOAT saveTypeVar TWOPOINTS ID . addParameter nextParam
     (131) addParameter -> .
@@ -4539,7 +4596,7 @@ state 222
 
     addParameter                   shift and go to state 248
 
-state 223
+state 222
 
     (136) paramsAux -> CHAR saveTypeVar TWOPOINTS ID . addParameter nextParam
     (131) addParameter -> .
@@ -4549,7 +4606,7 @@ state 223
 
     addParameter                   shift and go to state 249
 
-state 224
+state 223
 
     (126) functions1 -> ID saveFunction LPAREN parameters RPAREN vars LCURLY . setStartDirection statements RCURLY
     (130) setStartDirection -> .
@@ -4564,12 +4621,20 @@ state 224
 
     setStartDirection              shift and go to state 250
 
-state 225
+state 224
 
     (18) assign -> ID add_id2 EQUALS saveOperator exp generateAssignQuad .
 
     SEMMICOLON      reduce using rule 18 (assign -> ID add_id2 EQUALS saveOperator exp generateAssignQuad .)
     TO              reduce using rule 18 (assign -> ID add_id2 EQUALS saveOperator exp generateAssignQuad .)
+
+
+state 225
+
+    (20) assign -> ID add_id2 EQUALS saveOperator functionCall generateAssignQuad .
+
+    SEMMICOLON      reduce using rule 20 (assign -> ID add_id2 EQUALS saveOperator functionCall generateAssignQuad .)
+    TO              reduce using rule 20 (assign -> ID add_id2 EQUALS saveOperator functionCall generateAssignQuad .)
 
 
 state 226
@@ -4736,7 +4801,7 @@ state 235
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -4744,21 +4809,21 @@ state 235
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
     nexp                           shift and go to state 260
     compexp                        shift and go to state 134
@@ -4795,7 +4860,7 @@ state 236
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -4803,21 +4868,21 @@ state 236
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
-    RBRACKET        reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    TO              reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    RBRACKET        reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    TO              reduce using rule 149 (empty -> .)
 
     compexp                        shift and go to state 261
     sumexp                         shift and go to state 135
@@ -5085,14 +5150,14 @@ state 246
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -5100,7 +5165,7 @@ state 246
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RETURN          reduce using rule 148 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     statements                     shift and go to state 271
     assign                         shift and go to state 68
@@ -5117,10 +5182,10 @@ state 247
     (134) paramsAux -> INT saveTypeVar TWOPOINTS ID addParameter . nextParam
     (137) nextParam -> . COMMA paramsAux
     (138) nextParam -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     COMMA           shift and go to state 273
-    RPAREN          reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
     nextParam                      shift and go to state 272
     empty                          shift and go to state 274
@@ -5130,10 +5195,10 @@ state 248
     (135) paramsAux -> FLOAT saveTypeVar TWOPOINTS ID addParameter . nextParam
     (137) nextParam -> . COMMA paramsAux
     (138) nextParam -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     COMMA           shift and go to state 273
-    RPAREN          reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
     nextParam                      shift and go to state 275
     empty                          shift and go to state 274
@@ -5143,10 +5208,10 @@ state 249
     (136) paramsAux -> CHAR saveTypeVar TWOPOINTS ID addParameter . nextParam
     (137) nextParam -> . COMMA paramsAux
     (138) nextParam -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     COMMA           shift and go to state 273
-    RPAREN          reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
     nextParam                      shift and go to state 276
     empty                          shift and go to state 274
@@ -5164,14 +5229,14 @@ state 250
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -5179,7 +5244,7 @@ state 250
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
 
     statements                     shift and go to state 277
     assign                         shift and go to state 68
@@ -5209,9 +5274,9 @@ state 251
     AND             reduce using rule 34 (generateQuadGOSUB -> .)
     OR              reduce using rule 34 (generateQuadGOSUB -> .)
     RPAREN          reduce using rule 34 (generateQuadGOSUB -> .)
-    TO              reduce using rule 34 (generateQuadGOSUB -> .)
     RBRACKET        reduce using rule 34 (generateQuadGOSUB -> .)
     COMMA           reduce using rule 34 (generateQuadGOSUB -> .)
+    TO              reduce using rule 34 (generateQuadGOSUB -> .)
     ID              reduce using rule 34 (generateQuadGOSUB -> .)
     CTEI            reduce using rule 34 (generateQuadGOSUB -> .)
     CTEF            reduce using rule 34 (generateQuadGOSUB -> .)
@@ -5316,7 +5381,7 @@ state 255
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -5324,21 +5389,21 @@ state 255
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
-    exp                            shift and go to state 162
+    exp                            shift and go to state 160
     paramReadAux                   shift and go to state 280
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
@@ -5381,7 +5446,7 @@ state 256
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -5389,21 +5454,21 @@ state 256
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
-    exp                            shift and go to state 166
+    exp                            shift and go to state 164
     paramWriteAux                  shift and go to state 281
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
@@ -5441,14 +5506,14 @@ state 259
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -5456,7 +5521,7 @@ state 259
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
 
     statements                     shift and go to state 284
     assign                         shift and go to state 68
@@ -5721,8 +5786,8 @@ state 270
 state 271
 
     (128) functions2 -> ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements . return RCURLY
-    (146) return -> . RETURN LPAREN exp RPAREN SEMMICOLON
-    (147) return -> . RETURN LPAREN exp RPAREN
+    (146) return -> . RETURN LPAREN exp generateQuadRETURN RPAREN SEMMICOLON
+    (147) return -> . RETURN LPAREN exp generateQuadRETURN RPAREN
 
     RETURN          shift and go to state 286
 
@@ -5793,9 +5858,9 @@ state 278
     AND             reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
     OR              reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
     RPAREN          reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
-    TO              reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
     RBRACKET        reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
     COMMA           reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
+    TO              reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
     ID              reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
     CTEI            reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
     CTEF            reduce using rule 26 (functionCall -> ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB .)
@@ -5812,7 +5877,7 @@ state 279
     (33) expAux -> . empty
     (64) exp -> . nexp generateQuadOR
     (65) exp -> . nexp generateQuadOR OR saveOperator nexp
-    (148) empty -> .
+    (149) empty -> .
     (67) nexp -> . compexp generateQuadAND
     (68) nexp -> . compexp generateQuadAND AND saveOperator compexp
     (70) compexp -> . sumexp
@@ -5839,19 +5904,19 @@ state 279
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
 
-    RPAREN          reduce using rule 148 (empty -> .)
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    COMMA           reduce using rule 148 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    COMMA           reduce using rule 149 (empty -> .)
     ID              shift and go to state 139
     CTEI            shift and go to state 140
     CTEF            shift and go to state 141
@@ -5859,9 +5924,9 @@ state 279
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
 
-    exp                            shift and go to state 198
+    exp                            shift and go to state 197
     expAux                         shift and go to state 289
-    empty                          shift and go to state 199
+    empty                          shift and go to state 198
     nexp                           shift and go to state 133
     compexp                        shift and go to state 134
     sumexp                         shift and go to state 135
@@ -5897,14 +5962,14 @@ state 282
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -5912,7 +5977,7 @@ state 282
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
 
     assign                         shift and go to state 68
     statements                     shift and go to state 290
@@ -5937,14 +6002,14 @@ state 283
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -5952,7 +6017,7 @@ state 283
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
 
     statements                     shift and go to state 291
     assign                         shift and go to state 68
@@ -5980,8 +6045,8 @@ state 285
 
 state 286
 
-    (146) return -> RETURN . LPAREN exp RPAREN SEMMICOLON
-    (147) return -> RETURN . LPAREN exp RPAREN
+    (146) return -> RETURN . LPAREN exp generateQuadRETURN RPAREN SEMMICOLON
+    (147) return -> RETURN . LPAREN exp generateQuadRETURN RPAREN
 
     LPAREN          shift and go to state 294
 
@@ -6028,18 +6093,18 @@ state 292
     (58) if -> IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY . else endIF
     (59) else -> . ELSE generateQuadELSE LCURLY statements RCURLY
     (60) else -> . empty
-    (148) empty -> .
+    (149) empty -> .
 
     ELSE            shift and go to state 298
-    ID              reduce using rule 148 (empty -> .)
-    READ            reduce using rule 148 (empty -> .)
-    WRITE           reduce using rule 148 (empty -> .)
-    FOR             reduce using rule 148 (empty -> .)
-    WHILE           reduce using rule 148 (empty -> .)
-    IF              reduce using rule 148 (empty -> .)
-    RCURLY          reduce using rule 148 (empty -> .)
-    SEMMICOLON      reduce using rule 148 (empty -> .)
-    RETURN          reduce using rule 148 (empty -> .)
+    ID              reduce using rule 149 (empty -> .)
+    READ            reduce using rule 149 (empty -> .)
+    WRITE           reduce using rule 149 (empty -> .)
+    FOR             reduce using rule 149 (empty -> .)
+    WHILE           reduce using rule 149 (empty -> .)
+    IF              reduce using rule 149 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
+    SEMMICOLON      reduce using rule 149 (empty -> .)
+    RETURN          reduce using rule 149 (empty -> .)
 
     else                           shift and go to state 297
     empty                          shift and go to state 299
@@ -6055,8 +6120,8 @@ state 293
 
 state 294
 
-    (146) return -> RETURN LPAREN . exp RPAREN SEMMICOLON
-    (147) return -> RETURN LPAREN . exp RPAREN
+    (146) return -> RETURN LPAREN . exp generateQuadRETURN RPAREN SEMMICOLON
+    (147) return -> RETURN LPAREN . exp generateQuadRETURN RPAREN
     (64) exp -> . nexp generateQuadOR
     (65) exp -> . nexp generateQuadOR OR saveOperator nexp
     (67) nexp -> . compexp generateQuadAND
@@ -6084,7 +6149,7 @@ state 294
     (93) pexp -> . ID arrStatement
     (94) pexp -> . empty
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 139
     CTEI            shift and go to state 140
@@ -6092,18 +6157,18 @@ state 294
     CTEC            shift and go to state 142
     CTESTRING       shift and go to state 143
     LPAREN          shift and go to state 131
-    MUL             reduce using rule 148 (empty -> .)
-    DIV             reduce using rule 148 (empty -> .)
-    PLUS            reduce using rule 148 (empty -> .)
-    MINUS           reduce using rule 148 (empty -> .)
-    GT              reduce using rule 148 (empty -> .)
-    LT              reduce using rule 148 (empty -> .)
-    GTE             reduce using rule 148 (empty -> .)
-    LTE             reduce using rule 148 (empty -> .)
-    NE              reduce using rule 148 (empty -> .)
-    AND             reduce using rule 148 (empty -> .)
-    OR              reduce using rule 148 (empty -> .)
-    RPAREN          reduce using rule 148 (empty -> .)
+    MUL             reduce using rule 149 (empty -> .)
+    DIV             reduce using rule 149 (empty -> .)
+    PLUS            reduce using rule 149 (empty -> .)
+    MINUS           reduce using rule 149 (empty -> .)
+    GT              reduce using rule 149 (empty -> .)
+    LT              reduce using rule 149 (empty -> .)
+    GTE             reduce using rule 149 (empty -> .)
+    LTE             reduce using rule 149 (empty -> .)
+    NE              reduce using rule 149 (empty -> .)
+    AND             reduce using rule 149 (empty -> .)
+    OR              reduce using rule 149 (empty -> .)
+    RPAREN          reduce using rule 149 (empty -> .)
 
     exp                            shift and go to state 300
     nexp                           shift and go to state 133
@@ -6192,11 +6257,13 @@ state 299
 
 state 300
 
-    (146) return -> RETURN LPAREN exp . RPAREN SEMMICOLON
-    (147) return -> RETURN LPAREN exp . RPAREN
+    (146) return -> RETURN LPAREN exp . generateQuadRETURN RPAREN SEMMICOLON
+    (147) return -> RETURN LPAREN exp . generateQuadRETURN RPAREN
+    (148) generateQuadRETURN -> .
 
-    RPAREN          shift and go to state 305
+    RPAREN          reduce using rule 148 (generateQuadRETURN -> .)
 
+    generateQuadRETURN             shift and go to state 305
 
 state 301
 
@@ -6252,11 +6319,10 @@ state 304
 
 state 305
 
-    (146) return -> RETURN LPAREN exp RPAREN . SEMMICOLON
-    (147) return -> RETURN LPAREN exp RPAREN .
+    (146) return -> RETURN LPAREN exp generateQuadRETURN . RPAREN SEMMICOLON
+    (147) return -> RETURN LPAREN exp generateQuadRETURN . RPAREN
 
-    SEMMICOLON      shift and go to state 307
-    RCURLY          reduce using rule 147 (return -> RETURN LPAREN exp RPAREN .)
+    RPAREN          shift and go to state 307
 
 
 state 306
@@ -6272,14 +6338,14 @@ state 306
     (17) statements -> . empty
     (18) assign -> . ID add_id2 EQUALS saveOperator exp generateAssignQuad
     (19) assign -> . ID arrStatement EQUALS saveOperator exp generateAssignQuad
-    (20) assign -> . ID add_id2 EQUALS functionCall generateAssignQuad
+    (20) assign -> . ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     (26) functionCall -> . ID validateFunctionID functionERA LPAREN expAux verifyParams RPAREN generateQuadGOSUB
     (37) read -> . READ operatorRead LPAREN paramReadAux RPAREN
     (44) write -> . WRITE writeOperator LPAREN paramWrite RPAREN
     (52) for -> . FOR forOP assign TO CTEI DO generateQuadFOR LCURLY statements RCURLY LoopEnd
     (55) while -> . WHILE whileOP LPAREN exp RPAREN DO generateQuadWHILE LCURLY statements RCURLY LoopEnd
     (58) if -> . IF LPAREN exp RPAREN generateQuadIF THEN LCURLY statements RCURLY else endIF
-    (148) empty -> .
+    (149) empty -> .
 
     ID              shift and go to state 76
     READ            shift and go to state 77
@@ -6287,7 +6353,7 @@ state 306
     FOR             shift and go to state 79
     WHILE           shift and go to state 80
     IF              shift and go to state 81
-    RCURLY          reduce using rule 148 (empty -> .)
+    RCURLY          reduce using rule 149 (empty -> .)
 
     statements                     shift and go to state 308
     assign                         shift and go to state 68
@@ -6301,19 +6367,28 @@ state 306
 
 state 307
 
-    (146) return -> RETURN LPAREN exp RPAREN SEMMICOLON .
+    (146) return -> RETURN LPAREN exp generateQuadRETURN RPAREN . SEMMICOLON
+    (147) return -> RETURN LPAREN exp generateQuadRETURN RPAREN .
 
-    RCURLY          reduce using rule 146 (return -> RETURN LPAREN exp RPAREN SEMMICOLON .)
+    SEMMICOLON      shift and go to state 309
+    RCURLY          reduce using rule 147 (return -> RETURN LPAREN exp generateQuadRETURN RPAREN .)
 
 
 state 308
 
     (59) else -> ELSE generateQuadELSE LCURLY statements . RCURLY
 
-    RCURLY          shift and go to state 309
+    RCURLY          shift and go to state 310
 
 
 state 309
+
+    (146) return -> RETURN LPAREN exp generateQuadRETURN RPAREN SEMMICOLON .
+
+    RCURLY          reduce using rule 146 (return -> RETURN LPAREN exp generateQuadRETURN RPAREN SEMMICOLON .)
+
+
+state 310
 
     (59) else -> ELSE generateQuadELSE LCURLY statements RCURLY .
 
@@ -6331,11 +6406,16 @@ WARNING:
 WARNING: Conflicts:
 WARNING: 
 WARNING: shift/reduce conflict for PRINCIPAL in state 5 resolved as shift
-WARNING: shift/reduce conflict for ID in state 122 resolved as shift
 WARNING: shift/reduce conflict for PLUS in state 137 resolved as shift
 WARNING: shift/reduce conflict for MINUS in state 137 resolved as shift
 WARNING: shift/reduce conflict for MUL in state 138 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 138 resolved as shift
+WARNING: shift/reduce conflict for ID in state 210 resolved as shift
+WARNING: shift/reduce conflict for CTEI in state 210 resolved as shift
+WARNING: shift/reduce conflict for CTEF in state 210 resolved as shift
+WARNING: shift/reduce conflict for CTEC in state 210 resolved as shift
+WARNING: shift/reduce conflict for CTESTRING in state 210 resolved as shift
+WARNING: shift/reduce conflict for LPAREN in state 210 resolved as shift
 WARNING: shift/reduce conflict for ID in state 211 resolved as shift
 WARNING: shift/reduce conflict for CTEI in state 211 resolved as shift
 WARNING: shift/reduce conflict for CTEF in state 211 resolved as shift
@@ -6384,12 +6464,6 @@ WARNING: shift/reduce conflict for CTEF in state 218 resolved as shift
 WARNING: shift/reduce conflict for CTEC in state 218 resolved as shift
 WARNING: shift/reduce conflict for CTESTRING in state 218 resolved as shift
 WARNING: shift/reduce conflict for LPAREN in state 218 resolved as shift
-WARNING: shift/reduce conflict for ID in state 219 resolved as shift
-WARNING: shift/reduce conflict for CTEI in state 219 resolved as shift
-WARNING: shift/reduce conflict for CTEF in state 219 resolved as shift
-WARNING: shift/reduce conflict for CTEC in state 219 resolved as shift
-WARNING: shift/reduce conflict for CTESTRING in state 219 resolved as shift
-WARNING: shift/reduce conflict for LPAREN in state 219 resolved as shift
 WARNING: reduce/reduce conflict in state 76 resolved using rule (add_id2 -> <empty>)
 WARNING: rejected rule (empty -> <empty>) in state 76
 WARNING: reduce/reduce conflict in state 129 resolved using rule (add_id2 -> <empty>)
@@ -6398,7 +6472,11 @@ WARNING: reduce/reduce conflict in state 139 resolved using rule (add_id2 -> <em
 WARNING: rejected rule (validateFunctionID -> <empty>) in state 139
 WARNING: reduce/reduce conflict in state 139 resolved using rule (add_id2 -> <empty>)
 WARNING: rejected rule (empty -> <empty>) in state 139
-WARNING: reduce/reduce conflict in state 165 resolved using rule (paramWrite -> empty)
-WARNING: rejected rule (pexp -> empty) in state 165
-WARNING: reduce/reduce conflict in state 199 resolved using rule (expAux -> empty)
-WARNING: rejected rule (pexp -> empty) in state 199
+WARNING: reduce/reduce conflict in state 163 resolved using rule (paramWrite -> empty)
+WARNING: rejected rule (pexp -> empty) in state 163
+WARNING: reduce/reduce conflict in state 192 resolved using rule (add_id2 -> <empty>)
+WARNING: rejected rule (empty -> <empty>) in state 192
+WARNING: reduce/reduce conflict in state 194 resolved using rule (generateAssignQuad -> <empty>)
+WARNING: rejected rule (pexp -> functionCall) in state 194
+WARNING: reduce/reduce conflict in state 198 resolved using rule (expAux -> empty)
+WARNING: rejected rule (pexp -> empty) in state 198

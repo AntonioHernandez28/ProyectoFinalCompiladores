@@ -1,3 +1,4 @@
+from typing import Type
 import ply.lex as lex 
 import ply.yacc as yacc 
 from VariablesTable import VariablesTable, Var
@@ -190,9 +191,11 @@ def p_addProgram(p):
     global FunctionID 
     global currentFunctionType 
     global functionsDirectory
+    global funType
 
     currentFunctionType = 'program'
     FunctionID = 'program'
+    funType = currentFunctionType
 
     if functionsDirectory.searchFunction(FunctionID): 
         print("Function already exists.")
@@ -258,23 +261,24 @@ def p_assign(p):
     '''
     assign : ID add_id2 EQUALS saveOperator exp generateAssignQuad
             | ID arrStatement EQUALS saveOperator exp generateAssignQuad
-            | ID add_id2 EQUALS functionCall generateAssignQuad
+            | ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
     '''
 
 def p_generateAssignQuad(p): 
     '''generateAssignQuad : '''
     global TypeStack, NameStack, OperatorsStack, Quads, FunctionID
-
+    OperatorsStack.print()
     if OperatorsStack.size() > 0: 
         if OperatorsStack.top() == '=': 
+            print("Entro al yamerito ")
             CurrentOperator = OperatorsStack.pop() 
             RightOp = NameStack.pop() 
             RightType = TypeStack.pop() 
             LeftOp = NameStack.pop() 
             LeftType = TypeStack.pop() 
 
-            #print('Left Type -> ', LeftType)
-            #print('Right Type -> ', RightType)
+            print('Left Type -> ', LeftType)
+            print('Right Type -> ', RightType)
             result = semanticCube.getType(LeftType, RightType, CurrentOperator)
 
             if result != 'ERROR': 
@@ -372,6 +376,7 @@ def p_validateFunctionID(p):
     currentFuncID = p[-1]
     if(functionsDirectory.searchFunction(currentFuncID)): 
         print("Function Exists, go ahead :) ")
+        TypeStack.print()
     else: 
         print("Function does NOT exist.")
         sys.exit() 
@@ -391,6 +396,8 @@ def p_verifyParams(p):
         sys.exit() 
     
     CountParams = 0
+    print("PERRU")
+    TypeStack.print() 
 
 
 
@@ -433,10 +440,9 @@ def p_generateQuadPARAM(p):
     currOperator = memory.getOperatorCode('PARAM')
     currentQuad = (currOperator, arg, argument, 'PARAM#' + str(CountParams + 1))
     print(currentQuad)
-    OperatorsStack.push('PARAM')
     Quads.addQuad(currOperator, arg, argument, 'PARAM#' + str(CountParams+1))
     Quads2.append(currentQuad)
-    
+
     
 
 
@@ -458,6 +464,19 @@ def p_generateQuadGOSUB(p):
     CurrentQuad = (operator, callID, None, functionsDirectory.getDirection(callID))
     Quads.addQuad(operator, callID, None, functionsDirectory.getDirection(callID))
     Quads2.append(CurrentQuad)
+    currentFuncType = functionsDirectory.getFunctionType(callID)
+    print("CURRENT TAIP: ", currentFuncType)
+    if currentFuncType != 'void': 
+        TypeStack.push(currentFuncType)
+        temporalAddress = memory.assignMemory('temps', currentFuncType)
+        NameStack.push(temporalAddress)
+        TypeStack.push(currentFuncType)
+        NameStack.push(functionsDirectory.getGlobalVar(callID))
+        TypeStack.push(currentFuncType)
+        OperatorsStack.push('=')
+        p_generateAssignQuad(p)
+        NameStack.push(temporalAddress)
+        TypeStack.push(currentFuncType)
 
 def p_fillEndProc(p): 
     '''
@@ -479,6 +498,8 @@ def p_functionERA(p):
     CurrentQuad = (currentOp, None, None, nameVar)
     Quads.addQuad(currentOp, None, None, nameVar)
     Quads2.append(CurrentQuad) 
+    print("PERRIO")
+    TypeStack.print() 
     
 
 # =====================================================================
@@ -1245,17 +1266,16 @@ def p_saveFunction(p):
     '''
     saveFunction : 
     '''
-    global currentFunctionType, functionsDirectory, funType, FunctionID
-    currentFunctionType = funType
+    global currentFunctionType, functionsDirectory, FunctionID, funType
     FunctionID = p[-1]
-    print("FUn type: ", funType)
-    if not currentFunctionType == 'void':
+    print("FUN TAIP: ", currentFunctionType)
+    if funType != 'void' and funType != 'program':
         print("AL menos llego a criko")
-        tempAddress = memory.assignMemory('global', currentFunctionType)
+        tempAddress = memory.assignMemory('global', funType)
         print("Sere menso: ", FunctionID)
         functionsDirectory.addVariable('program', currentTypeVar, FunctionID, tempAddress)
     print("Entra en el crash")
-    functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], -1, 0, 0)
+    functionsDirectory.addFunction(funType, FunctionID, 0, [], [], -1, 0, 0)
     global arrID 
     arrID = None
     
@@ -1275,9 +1295,29 @@ def p_args1(p):
 
 def p_return(p): 
     '''
-    return : RETURN LPAREN exp RPAREN SEMMICOLON
-            | RETURN LPAREN exp RPAREN 
+    return : RETURN LPAREN exp generateQuadRETURN RPAREN SEMMICOLON
+            | RETURN LPAREN exp generateQuadRETURN RPAREN 
     '''
+
+def p_generateQuadRETURN(p): 
+    '''
+    generateQuadRETURN : 
+    '''
+    print("CHICOOS")
+    global funType
+    operand = NameStack.pop()
+    operandType = TypeStack.pop()
+    returnAddress = functionsDirectory.getGlobalVar(FunctionID)
+    if funType != operandType: 
+        print("Type dismatch, return of this function must be: ", funType)
+        sys.exit()
+    else: 
+        currQuad = ('RETURN', returnAddress, None, operand)
+        Quads2.append(currQuad)
+        opCode = memory.getOperatorCode('RETURN')
+        Quads.addQuad(opCode, returnAddress, None, operand)
+
+    
 
 # =====================================================================
 # --------------------------- ERROR HANDLER --------------------------
@@ -1329,6 +1369,6 @@ def main():
     
 FinalQuads = Quads 
 ConstTable = constantTable
-finalFuncDirectory = functionsDirectory
-main()
+#finalFuncDirectory = functionsDirectory
+#main()
 

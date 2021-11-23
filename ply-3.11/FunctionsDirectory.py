@@ -99,6 +99,14 @@ class FunctionsDirectory():
             return self.funcDirectory[funcID]['localVariables'].getAddress(varID)
         else: 
             print("Variable not declared yet.")
+        
+    def getFunctionType(self, funcID): 
+        if funcID in self.funcDirectory: 
+            return self.funcDirectory[funcID]['type']
+    
+    def getGlobalVar(self, varID): 
+        if self.funcDirectory['program']['localVariables'].searchVariable(varID):
+            return self.funcDirectory['program']['localVariables'].getAddress(varID)
     
 
     def printFunction(self, funcID): 
