@@ -1,23 +1,17 @@
 Program programForTesting;
 VARS 
-int: globalA, globalB, globalC; 
-float: float1, float2; 
-
-function void myFunc2(int: a){
-    write(a); 
-}
-
-function void myFunc1(int: a, int: b){ 
-    write(b); 
-    myFunc2(a); 
-}
+int: globalA, globalB, globalArray[15]; 
 
 principal()
 {
-    VARS int: a, b, c; 
+    VARS int: a, b, c, d, arreglo[10]; 
     a = 1; 
-    b = 10; 
-    myFunc1(a, b);
-    c = 1000; 
-    write(c);  
+    b = 2; 
+    c = 3; 
+    arreglo[0] = 1; 
+    arreglo[1] = 2; 
+    arreglo[2] = 3; 
+    arreglo[6] = 11; 
+    d = arreglo[0]*2; 
+    write(d); 
 }

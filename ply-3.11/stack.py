@@ -24,3 +24,7 @@ class Stack:
 
     def top(self): 
         return self.stack[len(self.stack) - 1]
+
+    def print(self): 
+        for i in self.stack:
+            print(i) 

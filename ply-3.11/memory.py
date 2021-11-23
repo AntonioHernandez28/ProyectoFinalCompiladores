@@ -51,6 +51,11 @@ class Memory:
                 'int' : 28000, 
                 'float' : 30000, 
                 'char' : 32000
+            },
+            'pointers' : {
+                'int' : 37000, 
+                'float': 39000, 
+                'char' : 42000
             }
         }
 
@@ -75,6 +80,11 @@ class Memory:
                 'int' : 30000, 
                 'float' : 32000, 
                 'char' : 34000
+            }, 
+            'pointers' : {
+                'int' : 39000,
+                'float' : 42000, 
+                'char' : 45000
             }
         }
 
@@ -85,6 +95,15 @@ class Memory:
         else: 
             print("No more space in memory :( ")
             sys.exit()
+
+    
+    def assignMemoryToArray(self, context, type, size): 
+        print("Entro a asignart memoria a arreglo")
+        if self.COUNTERS[context][type] < self.LIMITS[context][type]: 
+            self.COUNTERS[context][type] += size 
+        else: 
+            print("No more space for array in memory.")
+
     
     def cleanLocalMemory(self): 
         self.COUNTERS['local']['int'] = 9000
@@ -94,7 +113,6 @@ class Memory:
         self.COUNTERS['temps']['float'] = 20000
         self.COUNTERS['temps']['char'] = 22000
         self.COUNTERS['temps']['bool'] = 25000
-        self.Temporals = {}
     
     def getOperatorCode(self, operator): 
         return self.operators[operator]

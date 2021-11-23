@@ -20,10 +20,11 @@ class OperationHandler:
             )
         
     def assign(self, quad): 
+        print("Entro al assign")
         leftOp = quad['leftOp']
         result = quad['result']
-        print(str(quad))
-        print("a br -> ", self.virtualMemory.getValue(leftOp))
+        if self.virtualMemory.checkIfPointer(result):
+            result = self.virtualMemory.getPointerValue(result)
         self.virtualMemory.updateMemory(
             result, 
             self.virtualMemory.getValue(leftOp)
@@ -46,6 +47,8 @@ class OperationHandler:
             except: 
                 val = value 
         result = quad['result']
+        if self.virtualMemory.checkIfPointer(result): 
+            result = self.virtualMemory.getPointerValue(result)
         self.virtualMemory.updateMemory(
             result, 
             val
@@ -68,11 +71,13 @@ class OperationHandler:
         print("PLUS QUAD: ", str(quad))
         leftOp = self.virtualMemory.getValue(quad['leftOp'])
         rightOp = self.virtualMemory.getValue(quad['rightOp'])
+        print("Se trajo de get value el lefrOP: ", leftOp)
+        print("Se trajo de get value el rightOp que DEBE de ser la const con la base dir: ", rightOp)
         self.virtualMemory.updateMemory(
             quad['result'], 
             leftOp + rightOp
         )
-        print("Se guardo: ", leftOp + rightOp, " en la dir: ", quad['result'], ", funciono? ", self.virtualMemory.getValue(quad['result']))
+        #print("Se guardo: ", leftOp + rightOp, " en la dir: ", quad['result'], ", funciono? ", self.virtualMemory.getValue(quad['result']))
         return None 
     
     def minusOperator(self, quad): 
@@ -200,5 +205,16 @@ class OperationHandler:
             self.virtualMemory.getValue(quad['result'])
         )
         return None 
+    
+    def ver(self, quad): 
+        leftOp = self.virtualMemory.getValue(quad['leftOp'])
+        rightOp = self.virtualMemory.getValue(quad['rightOp'])
+        result = self.virtualMemory.getValue(quad['result'])
+        if not (leftOp >= rightOp and leftOp < result): 
+            print("Index Array out of bounds.")
+            sys.exit()
+        return None 
+    
+
     
 

@@ -76,7 +76,8 @@ tokens = [
     'RCURLY', 
     'TWOPOINTS', 
     'EQUALS', 
-    'COMILLA'
+    'COMILLA',
+    #'DOT'
 ] + list(reserved.values())
 
 t_PLUS =  r'\+' 
@@ -94,6 +95,7 @@ t_RPAREN = r'\)'
 t_COMMA = r'\,'
 t_SEMMICOLON = r'\;'
 t_NE = r'\<>'
+#t_DOT = r'\.'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_LCURLY = r'\{'
@@ -106,21 +108,22 @@ t_COMPARE = r'\=='
 
 # Identify ID's 
 def t_ID(t): 
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    r'[A-Za-z]+[A-Za-z0-9]*'
     t.type = reserved.get(t.value, 'ID')
-    return t 
-
-# Identify Integer Constants 
-def t_CTEI(t): 
-    r'0|[-+]?[1-9][0-9]*'
-    t.value = int(t.value) 
     return t 
 
 # Identify Float Constants 
 def t_CTEF(t): 
-    r'[-+]?\d*\.\d+'
+    r'\d+(\.)\d+'
     t.value = float(t.value)
+    return t
+
+# Identify Integer Constants 
+def t_CTEI(t): 
+    r'\d+'
+    t.value = int(t.value) 
     return t 
+
 
 # Identify String Constants 
 def t_CTESTRING(t): 
@@ -130,7 +133,7 @@ def t_CTESTRING(t):
 
 # Handle Errors
 def t_error(t): 
-    print("ERROR at '%s'" % t.value)
+    print("ERROR at '%s'" % t.value[0])
     t.lexer.skip(1) 
 
 lexer = lex.lex()
@@ -150,9 +153,10 @@ OperatorsStack = Stack()
 Quads = Quadruples()
 FinalQuads = None 
 ConstTable = []  
-
+arraySize = []
 avail = Avail()
 Quads2 = []
+stackArrays = []
 
 semanticCube = Cube()
 ConditionalJumpsStack = Stack()
@@ -247,14 +251,14 @@ def p_statements(p):
         | for statements 
         | while statements 
         | if statements 
-        | return statements
         | empty
     '''
 
 def p_assign(p): 
     '''
     assign : ID add_id2 EQUALS saveOperator exp generateAssignQuad
-            | ID add_id2 arr EQUALS saveOperator exp generateAssignQuad
+            | ID arrStatement EQUALS saveOperator exp generateAssignQuad
+            | ID add_id2 EQUALS functionCall generateAssignQuad
     '''
 
 def p_generateAssignQuad(p): 
@@ -332,6 +336,8 @@ def p_add_id3(p):
             types = functionsDirectory.getVarType(FunctionID, varID)
             TypeStack.push(types)
             NameStack.push(varID)
+            print("NAMESTACK")
+            NameStack.print()
     
         else: 
             print('EXIT')
@@ -585,6 +591,9 @@ def FillQuad(end, cont): #Used in IF section too.
     global Quads
     tempQuad = Quads.getQuadByAddress(end)
     Quads.updateQuad(tempQuad['operator'], tempQuad['leftOp'], tempQuad['rightOp'], len(Quads.quadruples), end)
+    temp = list(Quads2[end])
+    temp[3] = len(Quads2)
+    Quads2[end] = tuple(temp)
     print('Fill -> Quad', Quads.quadruples[end])
 
 
@@ -724,7 +733,7 @@ def generateQuad():
         LeftOp = NameStack.pop() 
         LeftType = TypeStack.pop() 
 
-        print("-> ", RightType) 
+        print("los que llegan son: ", LeftOp, " y el: ", RightOp)
 
         currOperator = memory.getOperatorCode(currentOperator)
 
@@ -855,9 +864,85 @@ def p_pexp(p):
          | CTESTRING saveCTE
          | functionCall 
          | LPAREN exp RPAREN 
-         | ID arr add_id3
+         | ID arrStatement 
          | empty
     '''   
+
+def p_arrStatement(p): 
+    '''
+    arrStatement : LBRACKET checkArray exp generateQuadVER RBRACKET getArrFinalAddress
+                | empty
+    '''
+
+def p_getArrFinalAddress(p): 
+    '''
+    getArrFinalAddress :
+    '''
+    print("Acaba con array")
+    global FunctionID, varID, currArray
+    arg = NameStack.pop() 
+    print("EL VAR ID ES EN FINAL ADDRESS: ", currArray)
+    baseDirection = functionsDirectory.getDirectionById(FunctionID, currArray)
+    currOperator = memory.getOperatorCode('+')
+    arrType = functionsDirectory.getVarType(FunctionID, varID)
+    tempAddress = memory.assignMemory('pointers', arrType)
+    if not searchConstant(baseDirection): 
+        virtualAddress = memory.assignMemory('constants', 'int')
+        constantTable.append(
+        {
+            'constant' : baseDirection, 
+            'address' : virtualAddress
+        }
+        )
+    else: 
+        virtualAddress = getConstantAddress(baseDirection)
+
+    Quads.addQuad(currOperator, arg, virtualAddress, tempAddress)
+    CurrentQuad = ('+', arg, baseDirection, tempAddress)
+    Quads2.append(CurrentQuad)
+    NameStack.print()
+    NameStack.push(tempAddress)
+    TypeStack.push(arrType)
+    print("Temp address es: ", tempAddress)
+    NameStack.print()
+    currArray = ''
+
+def p_checkArray(p): 
+    '''
+    checkArray : 
+    '''
+    global FunctionID, varID, currArray 
+    currID = p[-2]
+    currArray = currID
+    print("El ID es: ", currID)
+    print("Lo que kiero comparar antes del crash: ", functionsDirectory.getSizeForArray(FunctionID, currID))
+    if functionsDirectory.getSizeForArray(FunctionID, currID) <= 0: 
+        print("The variable: ", currID, " is NOT an array, so it can not be indexed.")
+        sys.exit() 
+    else: 
+        varID = currID
+
+def p_generateQuadVER(p): 
+    '''
+    generateQuadVER : 
+    '''
+    global FunctionID, varID, currArray
+    print("El varID que le llega es: ", varID)
+    arg = NameStack.top()
+    print("IN VER el arg es: ", arg)
+    bound = functionsDirectory.getSizeForArray(FunctionID, currArray)
+    if not searchConstant(0): 
+        address = memory.assignMemory('constants', 'int')
+        constantTable.append({
+            'constant': 0, 
+            'address' : address
+        })
+    opCode = memory.getOperatorCode('VER')
+    currentQuad = (opCode, arg, getConstantAddress(0), getConstantAddress(bound))
+    Quads2.append(currentQuad)
+    Quads.addQuad(opCode, arg, getConstantAddress(0), getConstantAddress(bound))
+    print("QUAD VER ADDED WITH: ", arg, " and 0 y: ", bound)
+
 
 def searchConstant(constant): 
     for const in constantTable: 
@@ -954,24 +1039,45 @@ def p_var1(p):
     '''
     var1 : ID 
          | ID COMMA var1 addVar 
-         | ID arr 
-         | ID arr COMMA var1 addVar
+         | ID createArr arr 
+         | ID createArr arr COMMA var1 addVar
          | empty 
     '''
     global varID 
     varID = p[1]
     print("Current ID -> ", varID)
+
+
+def p_createArr(p): 
+    '''
+    createArr : 
+    '''
+    global arrID, stackArrays
+    arrID = p[-1]
+    print("DETECTO EL ARRAY: ", arrID)
+    stackArrays.append(arrID)
+    #stackArrays.print()
+    
+    
+
        
 def p_addVar(p): 
     'addVar :'
     global functionsDirectory 
     global varID 
     global currentTypeVar
+    global arraySize
+    global arrID
+    global stackArrays
+    global isArray
+    context = ''
     
     if(FunctionID == 'program'): 
         virtualAddress = memory.assignMemory('global', currentTypeVar)
+        context = 'global'
     else: 
         virtualAddress = memory.assignMemory('local', currentTypeVar)
+        context = 'local'
     
     print("Se registró: ", varID, " con dirección en -> ", virtualAddress, " | en la funcion -> ", FunctionID)
     if not varID == None:
@@ -981,9 +1087,19 @@ def p_addVar(p):
             oper_name_types.push(varDatos)
         else: 
             SystemExit()
-     
 
+    if len(stackArrays) > 0: 
+        if stackArrays[len(stackArrays)-1] == varID:
+            print("DATA ARREI")
+            print(stackArrays)
+            print(arraySize)
+            currSize = arraySize.pop()
+            memory.assignMemoryToArray(context, currentTypeVar, currSize)
+            functionsDirectory.printFunctionVariables(FunctionID)
+            functionsDirectory.setSizeForArray(FunctionID, varID, currSize)
+            stackArrays.pop()
 
+    
 
 def p_saveTypeVar(p): 
     '''
@@ -1002,9 +1118,30 @@ def p_type(p):
 
 def p_arr(p): 
     '''
-    arr : LBRACKET CTEI RBRACKET 
-        | LBRACKET exp RBRACKET
+    arr : LBRACKET CTEI setArraySize RBRACKET 
     '''
+
+def p_setArraySize(p):
+    '''
+    setArraySize : 
+    '''
+    print("Aqui entro el pendejo")
+    global arrID, arraySize
+    cte = p[-1]
+    if cte <= 0: 
+        print("Array size must be greater than zero.")
+        sys.exit()
+    if not searchConstant(cte): 
+        virtualAddress = memory.assignMemory('constants', 'int')
+        constantTable.append(
+        {
+            'constant' : cte, 
+            'address' : virtualAddress
+        }
+        )
+    arraySize.append(cte)
+        
+
 
 # =====================================================================
 # ---------------------------- FUNCTIONS -----------------------------
@@ -1012,16 +1149,29 @@ def p_arr(p):
 
 def p_functions(p): 
     '''
-    functions : FUNCTION INT functions1 endFunc functions 
-              | FUNCTION CHAR functions1 endFunc functions 
-              | FUNCTION FLOAT functions1 endFunc functions 
-              | FUNCTION VOID functions1 endFunc functions 
+    functions : FUNCTION INT saveFunType functions2 endFunc functions 
+              | FUNCTION CHAR saveFunType functions2 endFunc functions 
+              | FUNCTION FLOAT saveFunType functions2 endFunc functions 
+              | FUNCTION VOID saveFunType functions1 endFunc functions 
               | empty
     '''
+
+def p_saveFunType(p): 
+    '''
+    saveFunType :
+    '''
+    global funType 
+    funType = p[-1]
 
 def p_functions1(p): 
     '''
     functions1 : ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements RCURLY  
+               | empty
+    '''
+
+def p_functions2(p): 
+    '''
+    functions2 : ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements return RCURLY  
                | empty
     '''
 
@@ -1095,13 +1245,20 @@ def p_saveFunction(p):
     '''
     saveFunction : 
     '''
-    global currentFunctionType
-    currentFunctionType = p[-2]
-    global FunctionID
+    global currentFunctionType, functionsDirectory, funType, FunctionID
+    currentFunctionType = funType
     FunctionID = p[-1]
-    global functionsDirectory
+    print("FUn type: ", funType)
+    if not currentFunctionType == 'void':
+        print("AL menos llego a criko")
+        tempAddress = memory.assignMemory('global', currentFunctionType)
+        print("Sere menso: ", FunctionID)
+        functionsDirectory.addVariable('program', currentTypeVar, FunctionID, tempAddress)
     print("Entra en el crash")
     functionsDirectory.addFunction(currentFunctionType, FunctionID, 0, [], [], -1, 0, 0)
+    global arrID 
+    arrID = None
+    
 
 def p_args(p): 
     '''
@@ -1144,9 +1301,9 @@ parser = yacc.yacc()
 # =====================================================================
 
 def main(): 
-    
+    global functionsDirectory
     try: 
-        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test4.txt'
+        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test5.txt'
         currentFile = open(fileName, 'r')
         print("Current File is: " + fileName)
         info = currentFile.read() 
@@ -1165,12 +1322,13 @@ def main():
         for i in Quads2: 
             print('Final Quad #', cont, ' : ', str(i))
             cont = cont + 1
-        
+        functionsDirectory.printFunction('program')
     
     except EOFError: 
         print(EOFError)
     
 FinalQuads = Quads 
 ConstTable = constantTable
-#main()
+finalFuncDirectory = functionsDirectory
+main()
 

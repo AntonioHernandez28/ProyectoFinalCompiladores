@@ -1,0 +1,26 @@
+Program programForTesting;
+VARS 
+int: globalA; 
+
+function int funTierra(int: a)
+VARS int: b; 
+{
+    a = 11; 
+    b = 1; 
+    return(b + a); 
+}
+
+function void fun2(int: a)
+VARS int: b; 
+{
+    a = 11; 
+    b = 1; 
+}
+
+principal()
+{
+    VARS int: a, b;
+    a = 1;  
+    b = funTierra(a); 
+    write(a); 
+}
