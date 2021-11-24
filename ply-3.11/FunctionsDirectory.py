@@ -17,13 +17,29 @@ class FunctionsDirectory():
                 'localVariables' : VariablesTable(), 
                 'startDirection' : startDirection,
                 'numberVars' : numberVars,  # VariablesTable.size()? 
-                'totalSize' : totalSize 
+                'totalSize' : totalSize
             }
             print("Function successfuly added: ", funcID, ' ', type)
         
         else: 
             print("Error, function already exists in Directory: ", funcID)
             sys.exit()
+        
+    
+    def getSizeForArray(self, funcID, varID): 
+        if self.funcDirectory['program']['localVariables'].searchVariable(varID):
+            return self.funcDirectory['program']['localVariables'].getSizeArray(varID)
+        elif self.funcDirectory[funcID]['localVariables'].searchVariable(varID):
+            return self.funcDirectory[funcID]['localVariables'].getSizeArray(varID)
+        else:
+            print("Variable has not been declared.")
+            sys.exit()
+
+    def setSizeForArray(self, funcID, varID, size): 
+        if self.funcDirectory['program']['localVariables'].searchVariable(varID):
+            return self.funcDirectory['program']['localVariables'].setSizeArray(varID, size)
+        elif self.funcDirectory[funcID]['localVariables'].searchVariable(varID):
+            return self.funcDirectory[funcID]['localVariables'].setSizeArray(varID, size)
 
     
     def getNumberVars(self, funcID): 
@@ -87,6 +103,14 @@ class FunctionsDirectory():
             return self.funcDirectory[funcID]['localVariables'].getAddress(varID)
         else: 
             print("Variable not declared yet.")
+        
+    def getFunctionType(self, funcID): 
+        if funcID in self.funcDirectory: 
+            return self.funcDirectory[funcID]['type']
+    
+    def getGlobalVar(self, varID): 
+        if self.funcDirectory['program']['localVariables'].searchVariable(varID):
+            return self.funcDirectory['program']['localVariables'].getAddress(varID)
     
 
     def printFunction(self, funcID): 

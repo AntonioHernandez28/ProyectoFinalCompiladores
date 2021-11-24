@@ -8,7 +8,8 @@ class VariablesTable:
     def add(self, id, type, virAddress): 
         self.variablesList[id] = { # Nested dictionary to add more attributes if needed in future. 
             'type' : type, 
-            'address': virAddress
+            'address': virAddress, 
+            'dim' : 0
         }
         print("Se asigno memoria a: ", id, " que fue la: ", virAddress)
     
@@ -24,10 +25,26 @@ class VariablesTable:
     
     def printVariable(self): 
         for i in self.variablesList: 
-            print(i, ' Variable in List ')
+            print("Variable: ", i, " with address: ", self.variablesList[i]['address'])
     
     def getSize(self): 
         return len(self.variablesList)
+    
+    def setSizeArray(self, id, size):
+        self.variablesList[id]['dim'] = size
+
+    
+    def getSizeArray(self, id): 
+        print("ID en getSizeArray es: ", id)
+        if not id in self.variablesList: 
+            print("Var has not been declared in this scope") 
+            return None 
+        if self.variablesList[id]['dim'] == 0: 
+            print("This variable is NOT an array.")
+            sys.exit()
+            return None 
+        else: 
+            return self.variablesList[id]['dim']
 
 class Var(): 
     def __init__(self, type, id): 

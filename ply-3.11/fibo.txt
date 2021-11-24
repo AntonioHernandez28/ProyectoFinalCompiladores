@@ -1,0 +1,19 @@
+Program programForTesting;
+VARS 
+int: globalA; 
+
+function int fibo(int: n)
+{
+    if(n <= 1) then{
+        return(n);  
+    }
+    return(fibo(n - 1) + fibo(n - 2)); 
+}
+
+principal()
+{
+    VARS int: a, b; 
+    a = 9; 
+    b = fibo(a); 
+    write(b);     
+}

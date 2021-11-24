@@ -47,3 +47,4 @@ Memoria ya está empezado pero como no ha sido probada no fue incluida en este c
 
 Bugs to fix: 
 - Quad For da un error (while ya funciona perfecto) - Pendiente junto con las funciones especiales. 
+- Fix con los floats HOTFIX NEEDED!!!! 

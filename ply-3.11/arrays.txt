@@ -1,0 +1,22 @@
+Program programForTesting;
+VARS int: g1, arregloGlobal[4]; 
+
+principal()
+{
+    VARS int: a, b, c, d, arreglo[4]; 
+    a = 1; 
+    b = 2; 
+    c = 401; 
+    d = 0; 
+    while(d < 4) do {
+        read(a); 
+        arreglo[d] = a; 
+        d = d + 1; 
+    } 
+    sort(arreglo); 
+    write(arreglo[0]);
+    write(arreglo[1]);
+    write(arreglo[2]);
+    write(arreglo[3]);
+
+}
