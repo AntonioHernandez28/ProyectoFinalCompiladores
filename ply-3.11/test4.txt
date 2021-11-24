@@ -2,6 +2,13 @@ Program programForTesting;
 VARS 
 int: globalA, globalB, globalArray[15]; 
 
+function void fun1(int: a)
+VARS int: j; 
+{
+    a = a + 1; 
+    write(a); 
+}
+
 principal()
 {
     VARS int: a, b, c, d, arreglo[10]; 
@@ -12,6 +19,6 @@ principal()
     arreglo[1] = 2; 
     arreglo[2] = 3; 
     arreglo[6] = 11; 
-    d = arreglo[0]*2; 
-    write(d); 
+    write(arreglo[2]); 
+    fun1(arreglo[6]); 
 }

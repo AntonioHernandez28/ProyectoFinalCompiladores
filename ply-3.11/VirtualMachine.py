@@ -59,7 +59,8 @@ hashMapHandler = {
     24 : operations.gotoFalse, 
     25 : operations.gotoTrue, 
     26 : operations.ver, 
-    27 : operations.returnVal
+    27 : operations.returnVal, 
+    28 : operations.sort
 }
 
 quadruples = []

@@ -42,7 +42,8 @@ reserved = {
     'varianza' : 'VARIANZA',
     'simpleregression' : 'SIMPLEREGRESSION', 
     'plotxy' : 'PLOTXY', 
-    'do' : 'DO'
+    'do' : 'DO',
+    'sort' : 'SORT'
 }
 
 # =====================================================================
@@ -85,27 +86,26 @@ t_PLUS =  r'\+'
 t_MINUS = r'\-'
 t_DIV = r'\/'
 t_MUL = r'\*'
-t_LT = r'\<'
-t_GT = r'\>'
-t_LTE = r'\<='
-t_GTE = r'\>='
-t_AND = r'\&&'
-t_OR = r'\|'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
-t_COMMA = r'\,'
-t_SEMMICOLON = r'\;'
-t_NE = r'\<>'
-#t_DOT = r'\.'
-t_LBRACKET = r'\['
-t_RBRACKET = r'\]'
+t_COMPARE = r'=='
+t_EQUALS = r'\='
 t_LCURLY = r'\{'
 t_RCURLY = r'\}'
+t_AND = r'\&&'
+t_OR = r'\|'
 t_TWOPOINTS = r'\:'
-t_EQUALS = r'\='
-t_ignore = ' \t\n'
+t_SEMMICOLON = r'\;'
+t_COMMA = r'\,'
+t_LTE = r'\<='
+t_GTE = r'\>='
+t_LT = r'\<'
+t_GT = r'\>'
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]'
 t_COMILLA = r'\"'
-t_COMPARE = r'\=='
+t_NE = r'\<>'
+t_ignore = ' \t\n'
 
 # Identify ID's 
 def t_ID(t): 
@@ -161,6 +161,7 @@ stackArrays = []
 
 semanticCube = Cube()
 ConditionalJumpsStack = Stack()
+ReturnJumpStack = Stack() 
 CountParams = 0 
 JumpEndProcess = 0 
 pending = 0 
@@ -254,6 +255,8 @@ def p_statements(p):
         | for statements 
         | while statements 
         | if statements 
+        | return SEMMICOLON statements 
+        | sort statements SEMMICOLON statements 
         | empty
     '''
 
@@ -590,6 +593,53 @@ def p_generateQuadPRINT(p):
             Quads.addQuad(currentOp, None, None, value)
             Quads2.append(currentQuad)
 
+
+# =====================================================================
+# -------------------------------- SORT -----------------------------
+# =====================================================================
+
+def p_sort(p): 
+    '''
+    sort : SORT sortOperator LPAREN ID add_id2 verifyArray  RPAREN generateQuadSORT 
+    '''
+    print("BRRRR")
+
+def p_sortOperator(p): 
+    '''
+    sortOperator : 
+    '''
+    global OperatorsStack
+    OperatorsStack.push('sort')
+
+def p_verifyArray(p): 
+    '''verifyArray : '''
+    global FunctionID, varID, currArray 
+    currID = p[-2]
+    currArray = currID
+    print("El ID es en verifai arrei: ", currID)
+    print("Lo que kiero comparar antes del crash: ", functionsDirectory.getSizeForArray(FunctionID, currID))
+    if functionsDirectory.getSizeForArray(FunctionID, currID) <= 0: 
+        print("The variable: ", currID, " is NOT an array, so it can not be sorted.")
+        sys.exit() 
+    else: 
+        varID = currID
+    
+def p_generateQuadSORT(p): 
+    '''
+    generateQuadSORT : 
+    '''
+    global OperatorsStack, varID, FunctionID 
+    if OperatorsStack.size() > 0: 
+        OperatorAux = OperatorsStack.pop()
+        currOperator = 'SORT' 
+        value = NameStack.pop()
+        sizeArray = functionsDirectory.getSizeForArray(FunctionID, varID)
+        currQuad = ('SORT', value, None, sizeArray)
+        currOp = memory.getOperatorCode('sort')
+        Quads2.append(currQuad)
+        Quads.addQuad(currOp, value, None, sizeArray)
+
+
 # =====================================================================
 # -------------------------------- LOOPS -----------------------------
 # =====================================================================
@@ -610,6 +660,7 @@ def p_LoopEnd(p):
 
 def FillQuad(end, cont): #Used in IF section too. 
     global Quads
+    print("ENTRO AL FILL BOY: ", end)
     tempQuad = Quads.getQuadByAddress(end)
     Quads.updateQuad(tempQuad['operator'], tempQuad['leftOp'], tempQuad['rightOp'], len(Quads.quadruples), end)
     temp = list(Quads2[end])
@@ -827,6 +878,7 @@ def p_compexp1(p):
              | sumexp GTE saveOperator sumexp generateQuadCOMPARE
              | sumexp LTE saveOperator sumexp generateQuadCOMPARE
              | sumexp NE saveOperator sumexp generateQuadCOMPARE
+             | sumexp COMPARE saveOperator sumexp generateQuadCOMPARE
     '''
 
 def p_generateQuadCOMPARE(p): 
@@ -883,11 +935,34 @@ def p_pexp(p):
          | CTEF saveCTE
          | CTEC saveCTE
          | CTESTRING saveCTE
-         | functionCall 
+         | functionCallExp 
          | LPAREN exp RPAREN 
          | ID arrStatement 
          | empty
     '''   
+
+def p_functionCallExp(p): 
+    '''
+    functionCallExp : ID LPAREN validateFunctionIDexp functionERA expAux verifyParams RPAREN generateQuadGOSUB 
+    '''
+    global callID 
+    callID = p[-2]
+    print("Current Call ID: ", callID)
+
+def p_validateFunctionIDexp(p): 
+    '''
+    validateFunctionIDexp : 
+    '''
+    global callID 
+    callID = p[-2]
+    print("Enters to validate: ", p[-1])
+    currentFuncID = p[-2]
+    if(functionsDirectory.searchFunction(currentFuncID)): 
+        print("Function Exists, go ahead :) ")
+        TypeStack.print()
+    else: 
+        print("Function does NOT exist.")
+        sys.exit() 
 
 def p_arrStatement(p): 
     '''
@@ -1192,7 +1267,7 @@ def p_functions1(p):
 
 def p_functions2(p): 
     '''
-    functions2 : ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements return RCURLY  
+    functions2 : ID saveFunction LPAREN parameters RPAREN vars LCURLY setStartDirection statements RCURLY  
                | empty
     '''
 
@@ -1249,6 +1324,9 @@ def p_endFunc(p):
     endFunc : 
     '''
     global Quads, tempCounter, FunctionID, functionsDirectory
+    while ReturnJumpStack.size() > 0: 
+        End = ReturnJumpStack.pop()
+        FillQuad(End, -1)
     currentOp = memory.getOperatorCode('ENDFUNC')
     CurrentQuad = (currentOp, None, None, -1)
     Quads.addQuad(currentOp, None, None, -1)
@@ -1260,7 +1338,8 @@ def p_endFunc(p):
     functionsDirectory.setTotalSize(FunctionID, currentVars + tempCounter)
     memory.cleanLocalMemory() 
     avail.clear() 
-    tempCounter = 0 
+    tempCounter = 0
+
 
 def p_saveFunction(p): 
     '''
@@ -1295,8 +1374,7 @@ def p_args1(p):
 
 def p_return(p): 
     '''
-    return : RETURN LPAREN exp generateQuadRETURN RPAREN SEMMICOLON
-            | RETURN LPAREN exp generateQuadRETURN RPAREN 
+    return : RETURN LPAREN exp generateQuadRETURN RPAREN 
     '''
 
 def p_generateQuadRETURN(p): 
@@ -1316,6 +1394,13 @@ def p_generateQuadRETURN(p):
         Quads2.append(currQuad)
         opCode = memory.getOperatorCode('RETURN')
         Quads.addQuad(opCode, returnAddress, None, operand)
+        opCodeGoto = memory.getOperatorCode('Goto')
+        currQuad = ('GOTO', None, None, -1)
+        Quads2.append(currQuad)
+        Quads.addQuad(opCodeGoto, None, None, -1)
+        ReturnJumpStack.push(len(Quads.quadruples)-1)
+        print("SE METIO ALGO AL RETURN JUMP")
+        ReturnJumpStack.print()
 
     
 
@@ -1343,7 +1428,7 @@ parser = yacc.yacc()
 def main(): 
     global functionsDirectory
     try: 
-        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\test5.txt'
+        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\arrays.txt'
         currentFile = open(fileName, 'r')
         print("Current File is: " + fileName)
         info = currentFile.read() 

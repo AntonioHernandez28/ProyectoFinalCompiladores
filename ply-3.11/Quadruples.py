@@ -21,6 +21,7 @@ class Quadruples:
         }
     
     def getQuadByAddress(self, address): 
+        print("El address k llego es: ", address)
         if address >= 0 and address < len(self.quadruples): 
             return self.quadruples[address]
         else:

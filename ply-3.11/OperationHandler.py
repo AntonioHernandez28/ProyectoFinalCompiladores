@@ -215,6 +215,30 @@ class OperationHandler:
             sys.exit()
         return None 
     
+    def sort(self, quad): 
+        startValue = quad['leftOp']
+        length = quad['result']
+        currArray = []
+        startDirection = startValue
+        endDirection = startValue + length
+
+        while(startDirection < endDirection): 
+            currArray.append(
+                self.virtualMemory.getValue(startDirection)
+            )
+            startDirection += 1
+        
+        startDirection = startValue
+        currArray.sort() 
+        while (startDirection < endDirection): 
+            self.virtualMemory.updateMemory(
+                startDirection, 
+                currArray.pop(0)
+            )
+            startDirection += 1 
+            
+        return None 
+    
 
     
 

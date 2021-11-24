@@ -36,7 +36,11 @@ class FunctionsDirectory():
             sys.exit()
 
     def setSizeForArray(self, funcID, varID, size): 
-        self.funcDirectory[funcID]['localVariables'].setSizeArray(varID, size)
+        if self.funcDirectory['program']['localVariables'].searchVariable(varID):
+            return self.funcDirectory['program']['localVariables'].setSizeArray(varID, size)
+        elif self.funcDirectory[funcID]['localVariables'].searchVariable(varID):
+            return self.funcDirectory[funcID]['localVariables'].setSizeArray(varID, size)
+
     
     def getNumberVars(self, funcID): 
         return self.funcDirectory[funcID]['localVariables'].getSize() 

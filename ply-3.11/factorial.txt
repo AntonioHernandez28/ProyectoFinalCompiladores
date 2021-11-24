@@ -1,0 +1,19 @@
+Program programForTesting;
+VARS 
+int: globalA; 
+
+function int factorial(int: n)
+{
+    if(n == 0) then {
+        return(1); 
+    }
+    return(n * factorial(n - 1)); 
+}
+
+principal()
+{
+    VARS int: a, b; 
+    a = 5; 
+    b = factorial(a); 
+    write(b);     
+}
