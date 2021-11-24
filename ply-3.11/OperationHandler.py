@@ -1,6 +1,8 @@
 from VirtualMemory import VirtualMemory
 from stack import Stack
 import numpy as np 
+import matplotlib.pyplot as plt
+from statistics import mode, variance
 import json 
 import sys 
 
@@ -238,6 +240,127 @@ class OperationHandler:
             startDirection += 1 
             
         return None 
+
+    def mean(self, quad): 
+        startValue = quad['leftOp']
+        direction = quad['rightOp']
+        length = quad['result']
+        currArray = []
+        startDirection = startValue
+        endDirection = startValue + length
+
+        while(startDirection < endDirection): 
+            currArray.append(
+                self.virtualMemory.getValue(startDirection)
+            )
+            startDirection += 1
+        value = np.mean(currArray)
+        self.virtualMemory.updateMemory(
+            direction, 
+            value
+        )
+    
+    def find(self, quad): 
+        startValue = quad['leftOp']['startDirection']
+        valueToFind = self.virtualMemory.getValue(quad['leftOp']['valueToFind'])
+        direction = quad['rightOp']
+        length = quad['result']
+        currArray = []
+        startDirection = startValue 
+        endDirection = startValue + length
+
+        while(startDirection < endDirection): 
+            currArray.append(
+                self.virtualMemory.getValue(startDirection)
+            )
+            startDirection += 1
+        
+        indexResult = -1 
+        counter = 0 
+        print("EN VM el valor a buscar es: ", valueToFind)
+        for i in currArray: 
+            if i == valueToFind: 
+                indexResult = counter 
+                break
+            counter += 1 
+        
+        self.virtualMemory.updateMemory(
+            direction, 
+            indexResult
+        )
+    
+    def mode(self, quad): 
+        startValue = quad['leftOp']
+        direction = quad['rightOp']
+        length = quad['result']
+        currArray = []
+        startDirection = startValue
+        endDirection = startValue + length
+
+        while(startDirection < endDirection): 
+            currArray.append(
+                self.virtualMemory.getValue(startDirection)
+            )
+            startDirection += 1
+        value = mode(currArray)
+        self.virtualMemory.updateMemory(
+            direction, 
+            value
+        )
+    
+    def variance(self, quad): 
+        startValue = quad['leftOp']
+        direction = quad['rightOp']
+        length = quad['result']
+        currArray = []
+        startDirection = startValue
+        endDirection = startValue + length
+
+        while(startDirection < endDirection): 
+            currArray.append(
+                self.virtualMemory.getValue(startDirection)
+            )
+            startDirection += 1
+        value = variance(currArray)
+        self.virtualMemory.updateMemory(
+            direction, 
+            value
+        )
+
+    def plot(self, quad): 
+        startValueArr1 = quad['leftOp']
+        startValueArr2 = quad['rightOp']
+        lengthArr1 = quad['result']['SizeArray1']
+        length1Arr2 = quad['result']['SizeArray2']
+        currArrayX = []
+        currArrayY = []
+        startDirectionX = startValueArr1
+        endDirectionX = startValueArr1 + lengthArr1
+
+        startDirectionY = startValueArr2
+        endDirectionY = startValueArr2 + length1Arr2
+
+
+        while(startDirectionX < endDirectionX): 
+            currArrayX.append(
+                self.virtualMemory.getValue(startDirectionX)
+            )
+            startDirectionX += 1
+        
+        while(startDirectionY < endDirectionY): 
+            currArrayY.append(
+                self.virtualMemory.getValue(startDirectionY)
+            )
+            startDirectionY += 1
+        
+        plt.scatter(currArrayX, currArrayY)
+        plt.show()
+
+        return None 
+
+
+
+
     
 
     

@@ -4,19 +4,25 @@ VARS int: g1, arregloGlobal[4];
 principal()
 {
     VARS int: a, b, c, d, arreglo[4]; 
-    a = 1; 
+    float: j, z, x; 
+    a = 3; 
     b = 2; 
     c = 401; 
     d = 0; 
-    while(d < 4) do {
-        read(a); 
-        arreglo[d] = a; 
-        d = d + 1; 
-    } 
-    sort(arreglo); 
-    write(arreglo[0]);
-    write(arreglo[1]);
-    write(arreglo[2]);
-    write(arreglo[3]);
-
+    arreglo[0] = 1; 
+    arreglo[1] = 2;
+    arreglo[2] = 3;
+    arreglo[3] = 4;
+    arregloGlobal[0] = 8; 
+    arregloGlobal[1] = 7; 
+    arregloGlobal[2] = 4; 
+    arregloGlobal[3] = 6; 
+    j = mean(arreglo);
+    read(a); 
+    c = find(arreglo, a);
+    z = mode(arreglo); 
+    x = variance(arreglo);
+    write(z);
+    write(x);  
+    plot(arreglo, arregloGlobal); 
 }

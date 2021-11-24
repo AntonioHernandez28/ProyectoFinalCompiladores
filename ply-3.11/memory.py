@@ -29,7 +29,12 @@ class Memory:
             'GotoV' : 25, 
             'VER' : 26, 
             'RETURN': 27,
-            'sort' : 28 
+            'sort' : 28, 
+            'find' : 29,
+            'mean' : 30, 
+            'mode' : 31, 
+            'variance' : 32, 
+            'plot' : 33
         }
         
         self.COUNTERS = {

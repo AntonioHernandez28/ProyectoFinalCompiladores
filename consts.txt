@@ -1,3 +1,2 @@
-{"constant": 0, "address": 28001}
-{"constant": 1, "address": 28002}
-{"constant": 5, "address": 28003}
+{"constant": 1, "address": 28001}
+{"constant": 7, "address": 28002}

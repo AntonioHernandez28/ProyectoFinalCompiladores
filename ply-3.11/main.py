@@ -1,4 +1,5 @@
 from typing import Type
+from numpy.core.fromnumeric import mean, var
 import ply.lex as lex 
 import ply.yacc as yacc 
 from VariablesTable import VariablesTable, Var
@@ -43,7 +44,12 @@ reserved = {
     'simpleregression' : 'SIMPLEREGRESSION', 
     'plotxy' : 'PLOTXY', 
     'do' : 'DO',
-    'sort' : 'SORT'
+    'sort' : 'SORT',
+    'mean' : 'MEAN',
+    'find' : 'FIND', 
+    'mode' : 'MODE', 
+    'variance' : 'VARIANCE', 
+    'plot' : 'PLOT'
 }
 
 # =====================================================================
@@ -257,6 +263,7 @@ def p_statements(p):
         | if statements 
         | return SEMMICOLON statements 
         | sort statements SEMMICOLON statements 
+        | plot statements SEMMICOLON statements
         | empty
     '''
 
@@ -265,11 +272,16 @@ def p_assign(p):
     assign : ID add_id2 EQUALS saveOperator exp generateAssignQuad
             | ID arrStatement EQUALS saveOperator exp generateAssignQuad
             | ID add_id2 EQUALS saveOperator functionCall generateAssignQuad
+            | ID add_id2 EQUALS saveOperator mean generateAssignQuad
+            | ID add_id2 EQUALS saveOperator find generateAssignQuad
+            | ID add_id2 EQUALS saveOperator mode generateAssignQuad
+            | ID add_id2 EQUALS saveOperator variance generateAssignQuad
     '''
 
 def p_generateAssignQuad(p): 
     '''generateAssignQuad : '''
     global TypeStack, NameStack, OperatorsStack, Quads, FunctionID
+    print("ENTRO AL ASIGN DESPUES DEL MEAN!!!")
     OperatorsStack.print()
     if OperatorsStack.size() > 0: 
         if OperatorsStack.top() == '=': 
@@ -324,6 +336,7 @@ def p_add_id2(p):
     if not varID == None: 
         if functionsDirectory.searchVariable(FunctionID, varID): 
             types = functionsDirectory.getVarType(FunctionID, varID)
+            print("METIO EL: ", types )
             TypeStack.push(types)
             NameStack.push(varAddress)
     
@@ -639,6 +652,221 @@ def p_generateQuadSORT(p):
         Quads2.append(currQuad)
         Quads.addQuad(currOp, value, None, sizeArray)
 
+
+
+# =====================================================================
+# -------------------------------- FIND  -----------------------------
+# =====================================================================
+
+def p_find(p): 
+    '''
+    find : FIND findOperator LPAREN ID add_id2 verifyArray COMMA ID add_id2 RPAREN generateQuadFIND
+    '''
+
+def p_findOperator(p): 
+    '''
+    findOperator : 
+    '''
+    global OperatorsStack
+    print("CHEK4")
+    OperatorsStack.push('find')
+
+def p_generateQuadFIND(p): 
+    '''
+    generateQuadFIND : 
+    '''
+    print("BRBR: ", p[-7])
+    global varID, TypeStack, FunctionID, OperatorsStack
+    FindAddress = memory.assignMemory('global', 'float')
+    TypeStack.pop()
+    TypeStack.pop()
+    functionsDirectory.addVariable('program', 'float', 'find', FindAddress)
+    sizeArray = functionsDirectory.getSizeForArray(FunctionID, p[-7])
+    valueToFind = NameStack.pop()
+    arrDirection = NameStack.pop()
+    print("Value to find: ", valueToFind)
+    print("Array Direction: ", arrDirection)
+    currentQ = ('FIND', arrDirection, valueToFind, FindAddress, sizeArray)
+    Quads2.append(currentQ)
+    currOp = OperatorsStack.pop()
+    currOp = memory.getOperatorCode(currOp)
+    Quads.addQuad(currOp, {'startDirection' : arrDirection, 'valueToFind' : valueToFind}, FindAddress, sizeArray)
+    TypeStack.push('int')
+    NameStack.push(FindAddress)
+
+# =====================================================================
+# -------------------------------- MEAN -----------------------------
+# =====================================================================
+
+def p_mean(p): 
+    '''
+    mean : MEAN meanOperator LPAREN ID add_id2 verifyArray RPAREN generateQuadMEAN 
+         | empty
+    '''
+
+def p_meanOperator(p): 
+    '''
+    meanOperator : 
+    '''
+    global OperatorsStack 
+    OperatorsStack.push('mean')
+
+def p_generateQuadMEAN(p): 
+    '''
+    generateQuadMEAN :
+    '''
+    global varID, TypeStack, FunctionID
+    meanAddress = memory.assignMemory('global', 'float')
+    TypeStack.pop()
+    functionsDirectory.addVariable('program', 'float', 'mean', meanAddress)
+    sizeArray = functionsDirectory.getSizeForArray(FunctionID, varID)
+    value = NameStack.pop()
+    CurrQuad = ('Mean', value, meanAddress, sizeArray)
+    Quads2.append(CurrQuad)
+    print("CURR MEAN QUAD: -> ", str(CurrQuad))
+    oper = OperatorsStack.pop()
+    TypeStack.push('float')
+    currOp = memory.getOperatorCode(oper)
+    Quads.addQuad(currOp, value, meanAddress, sizeArray)
+    NameStack.push(meanAddress)
+    
+
+
+# =====================================================================
+# -------------------------------- MODE -----------------------------
+# =====================================================================
+
+def p_mode(p): 
+    '''
+    mode : MODE modeOperator LPAREN ID add_id2 verifyArray RPAREN generateQuadMODE
+         | empty
+    '''
+
+def p_modeOperator(p): 
+    '''
+    modeOperator : 
+    '''
+    global OperatorsStack 
+    OperatorsStack.push('mode')
+
+def p_generateQuadMODE(p): 
+    '''
+    generateQuadMODE :
+    '''
+    global varID, TypeStack, FunctionID
+    meanAddress = memory.assignMemory('global', 'float')
+    TypeStack.pop()
+    functionsDirectory.addVariable('program', 'float', 'mode', meanAddress)
+    sizeArray = functionsDirectory.getSizeForArray(FunctionID, varID)
+    value = NameStack.pop()
+    CurrQuad = ('Mode', value, meanAddress, sizeArray)
+    Quads2.append(CurrQuad)
+    print("CURR MODE QUAD: -> ", str(CurrQuad))
+    oper = OperatorsStack.pop()
+    TypeStack.push('float')
+    currOp = memory.getOperatorCode(oper)
+    Quads.addQuad(currOp, value, meanAddress, sizeArray)
+    NameStack.push(meanAddress)
+    
+
+
+# =====================================================================
+# -------------------------------- VARIANCE -----------------------------
+# =====================================================================
+
+def p_variance(p): 
+    '''
+    variance : VARIANCE varianceOperator LPAREN ID add_id2 verifyArray RPAREN generateQuadVARIANCE
+         | empty
+    '''
+
+def p_varianceOperator(p): 
+    '''
+    varianceOperator : 
+    '''
+    global OperatorsStack 
+    OperatorsStack.push('variance')
+
+def p_generateQuadVARIANCE(p): 
+    '''
+    generateQuadVARIANCE :
+    '''
+    global varID, TypeStack, FunctionID
+    meanAddress = memory.assignMemory('global', 'float')
+    TypeStack.pop()
+    functionsDirectory.addVariable('program', 'float', 'variance', meanAddress)
+    sizeArray = functionsDirectory.getSizeForArray(FunctionID, varID)
+    value = NameStack.pop()
+    CurrQuad = ('variance', value, meanAddress, sizeArray)
+    Quads2.append(CurrQuad)
+    print("CURR VAR QUAD: -> ", str(CurrQuad))
+    oper = OperatorsStack.pop()
+    TypeStack.push('float')
+    currOp = memory.getOperatorCode(oper)
+    Quads.addQuad(currOp, value, meanAddress, sizeArray)
+    NameStack.push(meanAddress)
+    
+
+# =====================================================================
+# -------------------------------- PLOT -----------------------------
+# =====================================================================
+
+def p_plot(p): 
+    '''
+    plot : PLOT plotOperator LPAREN ID add_id2 verifyArray saveIDaux COMMA ID add_id2 verifyArrayForPlot RPAREN generateQuadPLOT 
+    '''
+    print("BRRRR")
+
+def p_plotOperator(p): 
+    '''
+    plotOperator : 
+    '''
+    global OperatorsStack
+    OperatorsStack.push('plot')
+
+def p_saveIDaux(p):
+    '''
+    saveIDaux : 
+    '''
+    global auxID, varID 
+    auxID = varID
+
+def p_verifyArrayForPlot(p): 
+    '''verifyArrayForPlot : '''
+    global FunctionID, currArray, varID 
+    print("AL VER ARR X PLOT ES: ", varID)
+    currID = p[-2]
+    currArray = currID
+    print("El ID es en verifai arrei2: ", currID)
+    print("Lo que kiero comparar antes del crash: ", functionsDirectory.getSizeForArray(FunctionID, currID))
+    if functionsDirectory.getSizeForArray(FunctionID, currID) <= 0: 
+        print("The variable: ", currID, " is NOT an array, so it can not be sorted.")
+        sys.exit() 
+    else: 
+        varID = currID
+    
+def p_generateQuadPLOT(p): 
+    '''
+    generateQuadPLOT : 
+    '''
+    global OperatorsStack, varID, FunctionID, auxID
+    print("EL VARID 1 es: ", auxID)
+    print("El varID2 es: ", varID)
+    if OperatorsStack.size() > 0: 
+        OperatorAux = OperatorsStack.pop()
+        currOperator = 'PLOT' 
+        value = NameStack.pop()
+        value2 = NameStack.pop()
+        sizeArray1 = functionsDirectory.getSizeForArray(FunctionID, auxID)
+        sizeArray2 = functionsDirectory.getSizeForArray(FunctionID, varID)
+        if sizeArray1 != sizeArray2: 
+            print("For plotting, both arrays need to be same size.")
+            sys.exit()
+
+        currQuad = ('PLOT', value, value2, sizeArray1, sizeArray2)
+        currOp = memory.getOperatorCode('plot')
+        Quads2.append(currQuad)
+        Quads.addQuad(currOp, value, value2, {'SizeArray1' : sizeArray1, 'SizeArray2' : sizeArray2})
 
 # =====================================================================
 # -------------------------------- LOOPS -----------------------------
@@ -1428,7 +1656,7 @@ parser = yacc.yacc()
 def main(): 
     global functionsDirectory
     try: 
-        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\arrays.txt'
+        fileName = 'c:\\Users\\ajhr9\\Documents\\Last Semester\\Compiladores\\Proyecto Minino++\\ProyectoFinalCompiladores\\ply-3.11\\factorialCycle.txt'
         currentFile = open(fileName, 'r')
         print("Current File is: " + fileName)
         info = currentFile.read() 
