@@ -14,15 +14,15 @@ class OperationHandler:
     def loadConstantTable(self, constants): 
         for i in constants: 
             currentConstant = json.loads(i)
-            print(str(currentConstant['constant']))
-            print(str(currentConstant['address']))
+            #print(str(currentConstant['constant']))
+            #print(str(currentConstant['address']))
             self.virtualMemory.updateMemory(
                 currentConstant['address'],
                 currentConstant['constant']
             )
         
     def assign(self, quad): 
-        print("Entro al assign")
+        #print("Entro al assign")
         leftOp = quad['leftOp']
         result = quad['result']
         if self.virtualMemory.checkIfPointer(result):
@@ -33,13 +33,14 @@ class OperationHandler:
         )
     
     def write(self, quad): 
-        print("WRITE QUAD -> ", quad)
+        #print("WRITE QUAD -> ", quad)
         value = self.virtualMemory.getValue(
             quad['result']
         )
         print("Compiler writes: ", value)
     
     def read(self, quad): 
+        print("Provide Input: ")
         value = input()
         try: 
             val = int(value)
@@ -70,11 +71,11 @@ class OperationHandler:
         return None 
     
     def plusOperator(self, quad): 
-        print("PLUS QUAD: ", str(quad))
+        #print("PLUS QUAD: ", str(quad))
         leftOp = self.virtualMemory.getValue(quad['leftOp'])
         rightOp = self.virtualMemory.getValue(quad['rightOp'])
-        print("Se trajo de get value el lefrOP: ", leftOp)
-        print("Se trajo de get value el rightOp que DEBE de ser la const con la base dir: ", rightOp)
+        #print("Se trajo de get value el lefrOP: ", leftOp)
+        #print("Se trajo de get value el rightOp que DEBE de ser la const con la base dir: ", rightOp)
         self.virtualMemory.updateMemory(
             quad['result'], 
             leftOp + rightOp
@@ -189,7 +190,7 @@ class OperationHandler:
         return None 
     
     def param(self, quad):
-        print("Param Quad: ", str(quad))
+        #print("Param Quad: ", str(quad))
         self.virtualMemory.insertParameter(
             self.virtualMemory.getValue(quad['rightOp'])
         )
@@ -277,7 +278,7 @@ class OperationHandler:
         
         indexResult = -1 
         counter = 0 
-        print("EN VM el valor a buscar es: ", valueToFind)
+        #print("EN VM el valor a buscar es: ", valueToFind)
         for i in currArray: 
             if i == valueToFind: 
                 indexResult = counter 

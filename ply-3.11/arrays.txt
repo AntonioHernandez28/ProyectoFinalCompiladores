@@ -17,12 +17,18 @@ principal()
     arregloGlobal[1] = 7; 
     arregloGlobal[2] = 4; 
     arregloGlobal[3] = 6; 
-    j = mean(arreglo);
-    read(a); 
-    c = find(arreglo, a);
+
+    write("Media"); 
+    j = mean(arreglo); 
+    write(j); 
+
+    write("Moda"); 
     z = mode(arreglo); 
+    write(z); 
+
+    write("Varianza"); 
     x = variance(arreglo);
-    write(z);
-    write(x);  
+    write(x); 
+ 
     plot(arreglo, arregloGlobal); 
 }

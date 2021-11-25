@@ -26,3 +26,4 @@ principal()
     b = fibo(a); 
     write(b);     
 }
+

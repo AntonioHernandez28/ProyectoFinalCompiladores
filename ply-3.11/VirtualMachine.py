@@ -91,7 +91,7 @@ def main():
 
     while quadCounter < len(quadruples): 
         #print("Entro a los quad we")
-        print(quadruples[quadCounter]['operator'])
+        #print(quadruples[quadCounter]['operator'])
         newQuadNumber = hashMapHandler[quadruples[quadCounter]['operator']](quadruples[quadCounter])
         if newQuadNumber: 
             quadCounter = newQuadNumber

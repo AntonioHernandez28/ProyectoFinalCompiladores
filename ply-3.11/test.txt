@@ -1,39 +1,31 @@
-Program MyRlike; 
+Program programForTesting;
 VARS 
-    int: z, j, p; 
-    float: valor; 
+int: globalA; 
 
-function int fact (int: j)
-VARS int: i, j, p ;
+principal()
 {
-    i = j + p; 
-    if(j > 1) then 
-    { return (j); }
-    else 
-    { return (j * fact(j - 1)); }    
-} 
-
-function int funint (int : h) 
-VARS int: n; 
-{
-    return(n + h); 
-}
-
-function void calcula (int: y)
-VARS int: x; 
-{
-    x = 1; 
-    while(x < 11) do 
-    {
-        x = x * arreglo[x];
-        x = x + 1; 
+    VARS int: a, b, d, arreglo[4]; 
+    a = 0; 
+    arreglo[0] = 8;    
+    arreglo[1] = 7;  
+    arreglo[2] = 6;  
+    arreglo[3] = 1; 
+    write("Arrelgo antes del sort"); 
+     while(a < 4) do {
+        write(arreglo[a]); 
+        a = a + 1; 
     }
+
+    a = 0; 
+    sort(arreglo); 
+    write("Arreglo despues del sort"); 
+    while(a < 4) do {
+        write(arreglo[a]); 
+        a = a + 1; 
+    }
+    d = 7;
+    b = find(arreglo, d); 
+    write("El index de la variable d en el arreglo es"); 
+    write(b); 
 }
 
-principal() 
-{
-    VARS int: heh, brr, j;  
-    read(p); 
-    j = p*2; 
-    heh = 1;
-}

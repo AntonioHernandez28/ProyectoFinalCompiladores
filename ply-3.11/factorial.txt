@@ -17,3 +17,4 @@ principal()
     b = factorial(a); 
     write(b);     
 }
+

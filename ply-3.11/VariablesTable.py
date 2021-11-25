@@ -11,10 +11,10 @@ class VariablesTable:
             'address': virAddress, 
             'dim' : 0
         }
-        print("Se asigno memoria a: ", id, " que fue la: ", virAddress)
+        #print("Se asigno memoria a: ", id, " que fue la: ", virAddress)
     
     def getAddress(self, id): 
-        print("Si esta buscando en el ID: ", id)
+        #print("Si esta buscando en el ID: ", id)
         return self.variablesList[id]['address'] 
     
     def searchVariable(self, id): 
@@ -35,12 +35,12 @@ class VariablesTable:
 
     
     def getSizeArray(self, id): 
-        print("ID en getSizeArray es: ", id)
+        #print("ID en getSizeArray es: ", id)
         if not id in self.variablesList: 
             print("Var has not been declared in this scope") 
             return None 
         if self.variablesList[id]['dim'] == 0: 
-            print("This variable is NOT an array.")
+            print("Compilation Error -> This variable is NOT an array.")
             sys.exit()
             return None 
         else: 
