@@ -13,6 +13,7 @@ VARS int: b;
 {
     a = 11; 
     b = 1; 
+    write(a); 
 }
 
 principal()

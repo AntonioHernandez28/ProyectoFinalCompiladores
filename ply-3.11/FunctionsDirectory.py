@@ -19,10 +19,10 @@ class FunctionsDirectory():
                 'numberVars' : numberVars,  # VariablesTable.size()? 
                 'totalSize' : totalSize
             }
-            print("Function successfuly added: ", funcID, ' ', type)
+            #print("Function successfuly added: ", funcID, ' ', type)
         
         else: 
-            print("Error, function already exists in Directory: ", funcID)
+            #print("Error, function already exists in Directory: ", funcID)
             sys.exit()
         
     
@@ -32,7 +32,7 @@ class FunctionsDirectory():
         elif self.funcDirectory[funcID]['localVariables'].searchVariable(varID):
             return self.funcDirectory[funcID]['localVariables'].getSizeArray(varID)
         else:
-            print("Variable has not been declared.")
+            #print("Variable has not been declared.")
             sys.exit()
 
     def setSizeForArray(self, funcID, varID, size): 
@@ -62,7 +62,7 @@ class FunctionsDirectory():
             print("This variable already exists for this function: ", currentId)
         else: 
             self.funcDirectory[funcID]['localVariables'].add(currentId, type, currentAddress) 
-            print("Variable successfully added to function's local variables: ", currentId, " of type: ", type, " -> ",funcID)
+            #print("Variable successfully added to function's local variables: ", currentId, " of type: ", type, " -> ",funcID)
     
     def printFunctionVariables(self, funcID): 
         if funcID in self.funcDirectory: 

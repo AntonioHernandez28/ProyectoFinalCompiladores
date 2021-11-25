@@ -30,7 +30,7 @@ class VirtualMemory:
         }
 
     def updateAddress(self, virtualAddress, context, value): 
-        print("Entro a guardar la hdp address: ", virtualAddress, " value: ", value)
+        #print("Entro a guardar la hdp address: ", virtualAddress, " value: ", value)
         self.memory[context][virtualAddress] = value
         #print("checalo we: ", self.getValue(virtualAddress))
     
@@ -47,7 +47,7 @@ class VirtualMemory:
         self.localCounter = self.BOUNDARIES['local_iLimit']
     
     def insertParameter(self, value): 
-        print("Param inserted in address: ", self.localCounter)
+        #print("Param inserted in address: ", self.localCounter)
         self.new_local_mem_cache[self.localCounter] = value 
         self.localCounter += 1
     
@@ -76,7 +76,7 @@ class VirtualMemory:
         return self.checkValueInMemory(address, 'pointers')
     
     def getValue(self, address): 
-        print("ADRESS IN GET VALUE: ", address)
+        #print("ADRESS IN GET VALUE: ", address)
         if (address >= self.BOUNDARIES['global_iLimit'] and address <= self.BOUNDARIES['global_sLimit']): #Global Memory
             return self.checkValueInMemory(address, 'global')
         if (address >= self.BOUNDARIES['local_iLimit'] and address <= self.BOUNDARIES['local_sLimit']): #Local Memory
@@ -90,7 +90,7 @@ class VirtualMemory:
         
     
     def updateMemory(self, address, value): 
-        print("Entro a memoria: ", address, " valor: ", value)
+        #print("Entro a memoria: ", address, " valor: ", value)
         if (address >= self.BOUNDARIES['global_iLimit'] and address <= self.BOUNDARIES['global_sLimit']): #Global Memory
             return self.updateAddress(address, 'global', value)
         if (address >= self.BOUNDARIES['local_iLimit'] and address <= self.BOUNDARIES['local_sLimit']): #Global Memory

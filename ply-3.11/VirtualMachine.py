@@ -60,7 +60,12 @@ hashMapHandler = {
     25 : operations.gotoTrue, 
     26 : operations.ver, 
     27 : operations.returnVal, 
-    28 : operations.sort
+    28 : operations.sort, 
+    29 : operations.find,
+    30 : operations.mean,
+    31 : operations.mode, 
+    32 : operations.variance,
+    33 : operations.plot
 }
 
 quadruples = []
@@ -86,7 +91,7 @@ def main():
 
     while quadCounter < len(quadruples): 
         #print("Entro a los quad we")
-        print(quadruples[quadCounter]['operator'])
+        #print(quadruples[quadCounter]['operator'])
         newQuadNumber = hashMapHandler[quadruples[quadCounter]['operator']](quadruples[quadCounter])
         if newQuadNumber: 
             quadCounter = newQuadNumber
