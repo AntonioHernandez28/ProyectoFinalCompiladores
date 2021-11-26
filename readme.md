@@ -38,7 +38,7 @@
   <p align="center">
     The best compiler for learning programming and also Statistics :) 
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore User Manual »</strong></a>
+    <a href="https://drive.google.com/file/d/1sb6xhJAsnpZrLnZi55nVxvVo4CLCXS4c/view?usp=sharing"><strong>Explore User Manual »</strong></a>
     <br />
     <br />
     <a href="https://drive.google.com/file/d/1OPOyR4mE2Wuj9rCbtIvrdcWGDWuMj58L/view?usp=sharing">View Demo</a>
